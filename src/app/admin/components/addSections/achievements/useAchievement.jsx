@@ -1,10 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { achievements } from '@/utils/schema';
-import { db } from '@/utils/db';
-import { desc, eq } from 'drizzle-orm';
-import toast from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
+import { Achievement } from '@/models/models';
 
 export const useAchievements = () => {
   const [achievementList, setAchievementList] = useState([]);
@@ -17,12 +15,9 @@ export const useAchievements = () => {
     try {
       setIsLoading(true);
       setError(null);
-      
-      const achievementListData = await db
-        .select()
-        .from(achievements)
-        .orderBy(desc(achievements.date));
 
+      // Fetch achievements sorted by date descending
+      const achievementListData = await Achievement.find().sort({ date: -1 });
       setAchievementList(achievementListData);
     } catch (error) {
       console.error('Error fetching achievements:', error);
@@ -44,7 +39,7 @@ export const useAchievements = () => {
 
   const handleDeleteAchievement = async (achievementId) => {
     try {
-      await db.delete(achievements).where(eq(achievements.id, achievementId));
+      await Achievement.findByIdAndDelete(achievementId);
       toast.success('Achievement deleted successfully');
       getAchievementList();
     } catch (error) {
@@ -83,3 +78,5 @@ export const useAchievements = () => {
     closeAddModal
   };
 };
+
+export default useAchievements;

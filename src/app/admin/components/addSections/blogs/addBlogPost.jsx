@@ -1,12 +1,10 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
-import { Link2, Camera } from 'lucide-react';
-import { db } from '@/utils/db';
-import { blogPosts } from '@/utils/schema';
+import React, { useState, useEffect, useRef } from 'react';
+import { Camera } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { uploadImage } from '@/utils/uploadImage';
-import { eq } from 'drizzle-orm';
+import { BlogPost } from '@/models/models';
 
 export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
   const fileInputRef = useRef(null);
@@ -75,17 +73,22 @@ export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
 
     try {
       if (editingPost) {
-        await db.update(blogPosts)
-          .set(formData)
-          .where(eq(blogPosts.id, editingPost.id));
+        // Update existing blog post using Mongoose's findByIdAndUpdate
+        await BlogPost.findByIdAndUpdate(
+          editingPost._id || editingPost.id,
+          formData,
+          { new: true }
+        );
         toast.success('Post updated successfully!');
       } else {
-        await db.insert(blogPosts).values({
-          userId: "1",
+        // Insert new blog post
+        const newPost = new BlogPost({
+          userId: "1", // Replace with dynamic user ID if needed
           title: formData.title,
           content: formData.content,
           imageUrl: formData.imageUrl || null
         });
+        await newPost.save();
         toast.success('Post published successfully!');
       }
       onPostAdded();
@@ -195,3 +198,5 @@ export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
     </div>
   );
 };
+
+export default AddBlogPost;

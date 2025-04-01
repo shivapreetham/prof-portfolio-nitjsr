@@ -2,11 +2,8 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { FileText, Calendar, Upload, Link2 } from 'lucide-react';
-import { db } from '@/utils/db';
-import { researchPapers } from '@/utils/schema';
 import { toast } from 'react-hot-toast';
-import { eq } from 'drizzle-orm';
-import { uploadFile } from '@/utils/uploadFile'; // Import the uploadFile function
+import { uploadFile } from '@/utils/uploadFile';
 
 export const AddResearchPaper = ({ isOpen, onClose, editingPaper, onPaperAdded }) => {
   const fileInputRef = useRef(null);
@@ -42,31 +39,20 @@ export const AddResearchPaper = ({ isOpen, onClose, editingPaper, onPaperAdded }
   };
 
   const handleFileUpload = async (event) => {
-    console.log("file got")
     const file = event.target.files?.[0];
-
     if (!file) return;
-    console.log('File selected:', {
-        name: file.name,
-        type: file.type,
-        size: file.size
-      });
     if (file.type !== 'application/pdf') {
       toast.error('Please upload a PDF file');
       return;
     }
-
     setIsUploading(true);
 
     try {
-        console.log(pdfFile)
-        console.log("sent file")
-        const result = await uploadFile(pdfFile, {
-            bucketName: 'files',
-            folderPath: 'pdfs',
-            maxFileSize: 20 * 1024 * 1024 // 20MB
-          });
-          console.log("got the result and result is-", result)
+      const result = await uploadFile(file, {
+        bucketName: 'files',
+        folderPath: 'pdfs',
+        maxFileSize: 20 * 1024 * 1024 // 20MB
+      });
       if (result.success) {
         setFormData((prev) => ({ ...prev, pdfUrl: result.url }));
         toast.success('PDF uploaded successfully!');
@@ -74,7 +60,6 @@ export const AddResearchPaper = ({ isOpen, onClose, editingPaper, onPaperAdded }
         throw new Error(result.error);
       }
     } catch (error) {
-      console.error('Error uploading PDF:', error);
       toast.error(error.message || 'Failed to upload PDF');
     } finally {
       setIsUploading(false);
@@ -84,34 +69,23 @@ export const AddResearchPaper = ({ isOpen, onClose, editingPaper, onPaperAdded }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!formData.title || !formData.abstract) {
       toast.error('Title and abstract are required');
       return;
     }
-
     try {
-      if (editingPaper) {
-        await db.update(researchPapers)
-          .set({
-            ...formData,
-            publishedAt: new Date(formData.publishedAt)
-          })
-          .where(eq(researchPapers.id, editingPaper.id));
-      } else {
-        await db.insert(researchPapers).values({
-          userId: "1",
-          title: formData.title,
-          abstract: formData.abstract,
-          pdfUrl: formData.pdfUrl || null,
-          publishedAt: new Date(formData.publishedAt)
-        });
-      }
+      const response = await fetch('/api/research-papers', {
+        method: editingPaper ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...formData, id: editingPaper?._id })
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message);
       onPaperAdded();
       onClose();
+      toast.success('Research paper saved successfully!');
     } catch (error) {
-      console.error('Error saving paper:', error);
-      toast.error('Failed to save paper');
+      toast.error(error.message || 'Failed to save paper');
     }
   };
 
@@ -158,9 +132,7 @@ export const AddResearchPaper = ({ isOpen, onClose, editingPaper, onPaperAdded }
             <label className="label py-1">
               <span className="label-text text-sm">PDF Document</span>
             </label>
-            
             <div className="space-y-2">
-              {/* File Upload Option */}
               <div className="flex items-center gap-2">
                 <input
                   type="file"
@@ -182,14 +154,12 @@ export const AddResearchPaper = ({ isOpen, onClose, editingPaper, onPaperAdded }
                 {isUploading && <span className="loading loading-spinner loading-sm"></span>}
               </div>
 
-              {/* OR Divider */}
               <div className="flex items-center gap-4">
                 <div className="flex-1 h-px bg-base-content/20"></div>
                 <span className="text-xs text-base-content/50">OR</span>
                 <div className="flex-1 h-px bg-base-content/20"></div>
               </div>
 
-              {/* URL Input Option */}
               <label className="input input-sm input-bordered flex items-center gap-2">
                 <Link2 className="w-4 h-4" />
                 <input
@@ -208,34 +178,19 @@ export const AddResearchPaper = ({ isOpen, onClose, editingPaper, onPaperAdded }
             <label className="label py-1">
               <span className="label-text text-sm">Publication Date</span>
             </label>
-            <label className="input input-sm input-bordered flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              <input
-                type="date"
-                name="publishedAt"
-                className="grow bg-transparent outline-none text-sm"
-                value={formData.publishedAt}
-                onChange={handleInputChange}
-                required
-              />
-            </label>
+            <input
+              type="date"
+              name="publishedAt"
+              className="input input-sm input-bordered w-full"
+              value={formData.publishedAt}
+              onChange={handleInputChange}
+              required
+            />
           </div>
 
           <div className="card-actions justify-end mt-4">
-            <button
-              type="button"
-              className="btn btn-sm btn-ghost"
-              onClick={onClose}
-            >
-              Cancel
-            </button>
-            <button 
-              type="submit" 
-              className="btn btn-sm btn-primary"
-              disabled={isUploading}
-            >
-              {editingPaper ? 'Save Changes' : 'Add Paper'}
-            </button>
+            <button type="button" className="btn btn-sm btn-ghost" onClick={onClose}>Cancel</button>
+            <button type="submit" className="btn btn-sm btn-primary" disabled={isUploading}>{editingPaper ? 'Save Changes' : 'Add Paper'}</button>
           </div>
         </form>
       </div>

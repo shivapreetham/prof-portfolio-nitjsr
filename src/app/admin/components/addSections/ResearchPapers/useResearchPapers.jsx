@@ -1,9 +1,8 @@
 'use client';
-    
+
 import { useState, useEffect } from 'react';
-import { researchPapers } from '@/utils/schema';
-import { db } from '@/utils/db';
-import { desc, eq } from 'drizzle-orm';
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
 
 export const useResearchPapers = () => {
   const [papersList, setPapersList] = useState([]);
@@ -17,12 +16,8 @@ export const useResearchPapers = () => {
       setIsLoading(true);
       setError(null);
       
-      const papersListData = await db
-        .select()
-        .from(researchPapers)
-        .orderBy(desc(researchPapers.publishedAt));
-
-      setPapersList(papersListData);
+      const response = await axios.get('/api/research-papers');
+      setPapersList(response.data);
     } catch (error) {
       console.error('Error fetching papers list:', error);
       setError('Failed to fetch research papers');
@@ -42,7 +37,7 @@ export const useResearchPapers = () => {
 
   const handleDeletePaper = async (paperId) => {
     try {
-      await db.delete(researchPapers).where(eq(researchPapers.id, paperId));
+      await axios.delete(`/api/research-papers/${paperId}`);
       toast.success('Paper deleted successfully!');
       getPapersList();
     } catch (error) {

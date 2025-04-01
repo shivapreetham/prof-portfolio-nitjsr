@@ -1,10 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { db } from '@/utils/db';
-import { achievements } from '@/utils/schema';
 import { toast } from 'react-hot-toast';
-import { eq } from 'drizzle-orm';
+import { Achievement } from '@/models/models';
 
 export const AddAchievement = ({ isOpen, onClose, editingAchievement, onAchievementAdded }) => {
   const [formData, setFormData] = useState({
@@ -44,21 +42,26 @@ export const AddAchievement = ({ isOpen, onClose, editingAchievement, onAchievem
 
     try {
       if (editingAchievement) {
-        await db.update(achievements)
-          .set({
+        // Update the existing achievement
+        await Achievement.findByIdAndUpdate(
+          editingAchievement._id || editingAchievement.id,
+          {
             title: formData.title,
             description: formData.description,
             date: new Date(formData.date)
-          })
-          .where(eq(achievements.id, editingAchievement.id));
+          },
+          { new: true }
+        );
         toast.success('Achievement updated successfully!');
       } else {
-        await db.insert(achievements).values({
+        // Create a new achievement. Replace "1" with a dynamic user ID if needed.
+        const newAchievement = new Achievement({
           userId: "1",
           title: formData.title,
           description: formData.description,
           date: new Date(formData.date)
         });
+        await newAchievement.save();
         toast.success('Achievement added successfully!');
       }
       onAchievementAdded();
@@ -73,7 +76,7 @@ export const AddAchievement = ({ isOpen, onClose, editingAchievement, onAchievem
 
   return (
     <div className="card bg-zinc-900 shadow-lg max-w-full mt-5">
-      <div className="card-body  bg-zinc-900 p-4">
+      <div className="card-body bg-zinc-900 p-4">
         <form onSubmit={handleSubmit} className="space-y-3">
           <h3 className="card-title text-base mb-2">
             {editingAchievement ? 'Edit Achievement' : 'Add New Achievement'}
@@ -130,10 +133,7 @@ export const AddAchievement = ({ isOpen, onClose, editingAchievement, onAchievem
             >
               Cancel
             </button>
-            <button 
-              type="submit" 
-              className="btn btn-sm btn-primary"
-            >
+            <button type="submit" className="btn btn-sm btn-primary">
               {editingAchievement ? 'Save Changes' : 'Add Achievement'}
             </button>
           </div>

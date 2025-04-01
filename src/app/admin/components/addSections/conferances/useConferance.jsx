@@ -1,10 +1,8 @@
-// useConferences.js
-'use client'
+'use client';
+
 import { useState, useEffect } from 'react';
-import { conferences } from '@/utils/schema';
-import { db } from '@/utils/db';
-import { desc, eq } from 'drizzle-orm';
 import { toast } from 'react-hot-toast';
+import { Conference } from '@/models/models';
 
 export const useConferences = () => {
   const [conferencesList, setConferencesList] = useState([]);
@@ -18,15 +16,13 @@ export const useConferences = () => {
       setIsLoading(true);
       setError(null);
       
-      const conferencesListData = await db
-        .select()
-        .from(conferences)
-        .orderBy(desc(conferences.date));
-
+      // Fetch conferences sorted by date descending using Mongoose
+      const conferencesListData = await Conference.find().sort({ date: -1 });
       setConferencesList(conferencesListData);
     } catch (error) {
       console.error('Error fetching conferences list:', error);
       setError('Failed to fetch conferences');
+      toast.error('Failed to fetch conferences');
     } finally {
       setIsLoading(false);
     }
@@ -43,7 +39,7 @@ export const useConferences = () => {
 
   const handleDeleteConference = async (conferenceId) => {
     try {
-      await db.delete(conferences).where(eq(conferences.id, conferenceId));
+      await Conference.findByIdAndDelete(conferenceId);
       toast.success('Conference deleted successfully!');
       getConferencesList();
     } catch (error) {
@@ -83,3 +79,5 @@ export const useConferences = () => {
     closeAddModal
   };
 };
+
+export default useConferences;

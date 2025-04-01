@@ -2,11 +2,9 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { Link2, Camera } from 'lucide-react';
-import { db } from '@/utils/db';
-import { projects } from '@/utils/schema';
 import { toast } from 'react-hot-toast';
 import { uploadImage } from '@/utils/uploadImage';
-import { eq } from 'drizzle-orm';
+import { Project } from '@/models/models';
 
 const AddProject = ({ isOpen, onClose, editingProject, onProjectAdded }) => {
   const fileInputRef = useRef(null);
@@ -81,17 +79,22 @@ const AddProject = ({ isOpen, onClose, editingProject, onProjectAdded }) => {
 
     try {
       if (editingProject) {
-        await db.update(projects).set(formData).where(eq(projects.id, editingProject.id));
+        await Project.findByIdAndUpdate(
+          editingProject._id || editingProject.id,
+          formData,
+          { new: true }
+        );
         toast.success('Project updated successfully!');
       } else {
-        await db.insert(projects).values({
-          userId: "1",
+        const newProject = new Project({
+          userId: "1", // Replace with dynamic user ID if needed
           title: formData.title,
           description: formData.description,
           collaborators: formData.collaborators || null,
           videoUrl: formData.videoUrl || null,
           banner: formData.banner || null
         });
+        await newProject.save();
         toast.success('Project added successfully!');
       }
       onProjectAdded();

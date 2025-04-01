@@ -1,11 +1,8 @@
 'use client';
 
-// useBlogPosts.js
 import { useState, useEffect } from 'react';
-import { blogPosts } from '@/utils/schema';
-import { db } from '@/utils/db';
-import { desc, eq } from 'drizzle-orm';
 import { toast } from 'react-hot-toast';
+import { BlogPost } from '@/models/models';
 
 export const useBlogPosts = () => {
   const [postsList, setPostsList] = useState([]);
@@ -18,16 +15,14 @@ export const useBlogPosts = () => {
     try {
       setIsLoading(true);
       setError(null);
-      
-      const postsListData = await db
-        .select()
-        .from(blogPosts)
-        .orderBy(desc(blogPosts.createdAt));
 
+      // Fetch blog posts sorted by createdAt descending using Mongoose
+      const postsListData = await BlogPost.find().sort({ createdAt: -1 });
       setPostsList(postsListData);
-    } catch (error) {
-      console.error('Error fetching blog posts:', error);
+    } catch (err) {
+      console.error('Error fetching blog posts:', err);
       setError('Failed to fetch blog posts');
+      toast.error('Failed to fetch blog posts');
     } finally {
       setIsLoading(false);
     }
@@ -44,11 +39,11 @@ export const useBlogPosts = () => {
 
   const handleDeletePost = async (postId) => {
     try {
-      await db.delete(blogPosts).where(eq(blogPosts.id, postId));
+      await BlogPost.findByIdAndDelete(postId);
       toast.success('Post deleted successfully!');
       getPostsList();
-    } catch (error) {
-      console.error('Error deleting post:', error);
+    } catch (err) {
+      console.error('Error deleting post:', err);
       toast.error('Failed to delete post');
     }
   };
@@ -81,6 +76,8 @@ export const useBlogPosts = () => {
     handlePostAdded,
     getPostsList,
     openAddModal,
-    closeAddModal
+    closeAddModal,
   };
 };
+
+export default useBlogPosts;

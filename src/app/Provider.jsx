@@ -1,15 +1,13 @@
 'use client'
-import { db } from '@/utils/db'
+import { connectDB } from '@/utils/db';
 import { 
-  user, projects, researchPapers, conferences, 
-  achievements, blogPosts, teachingExperience, 
-  awards, collaborations 
-} from '@/utils/schema'
-import { eq } from 'drizzle-orm'
-import { createContext, useContext, useEffect, useState } from 'react'
+  User, Project, ResearchPaper, Conference, 
+  Achievement, BlogPost, TeachingExperience, 
+  Award, Collaboration 
+} from '@/models/models';
+import { createContext, useContext, useEffect, useState } from 'react';
 
 const UserContext = createContext(null);
-
 export const useUser = () => useContext(UserContext);
 
 const Provider = ({ children }) => {
@@ -27,6 +25,9 @@ const Provider = ({ children }) => {
 
     const getUserData = async () => {
         try {
+            await connectDB(); // Ensure database is connected
+            const userId = "1"; // Replace with dynamic user ID retrieval
+            
             const [
                 userResult,
                 projectsResult,
@@ -38,19 +39,19 @@ const Provider = ({ children }) => {
                 awardsResult,
                 collaborationsResult
             ] = await Promise.all([
-                db.select().from(user).where(eq(user.id, "1")),
-                db.select().from(projects).where(eq(projects.userId, "1")),
-                db.select().from(researchPapers).where(eq(researchPapers.userId, "1")),
-                db.select().from(conferences).where(eq(conferences.userId, "1")),
-                db.select().from(achievements).where(eq(achievements.userId, "1")),
-                db.select().from(blogPosts).where(eq(blogPosts.userId, "1")),
-                db.select().from(teachingExperience).where(eq(teachingExperience.userId, "1")),
-                db.select().from(awards).where(eq(awards.userId, "1")),
-                db.select().from(collaborations).where(eq(collaborations.userId, "1"))
+                User.findById(userId),
+                Project.find({ userId }),
+                ResearchPaper.find({ userId }),
+                Conference.find({ userId }),
+                Achievement.find({ userId }),
+                BlogPost.find({ userId }),
+                TeachingExperience.find({ userId }),
+                Award.find({ userId }),
+                Collaboration.find({ userId })
             ]);
 
             setUserData({
-                user: userResult[0],
+                user: userResult,
                 projects: projectsResult,
                 researchPapers: papersResult,
                 conferences: conferencesResult,

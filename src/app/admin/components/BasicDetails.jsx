@@ -1,10 +1,9 @@
+'use client'
 import React, { useState, useRef } from 'react';
 import { Camera } from 'lucide-react';
-import { eq } from 'drizzle-orm';
-import { db } from '@/utils/db';
-import { user } from '@/utils/schema';
 import { toast } from 'react-hot-toast';
-import { uploadImage } from '@/utils/uploadImage'; // Import the uploadImage function
+import { uploadImage } from '@/utils/uploadImage'; 
+import { User } from '@/models/models';
 
 const BasicDetail = ({ userInfo }) => {
   const [details, setDetails] = useState({
@@ -27,11 +26,13 @@ const BasicDetail = ({ userInfo }) => {
     clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(async () => {
       try {
-        const result = await db.update(user)
-          .set({ [fieldName]: value })
-          .where(eq(user.id, "1"));
+        const updated = await User.findByIdAndUpdate(
+          "1", // Replace with dynamic user id if needed
+          { [fieldName]: value },
+          { new: true }
+        );
         toast.success('Changes saved successfully!');
-        console.log('Updated:', fieldName, result);
+        console.log('Updated:', fieldName, updated);
       } catch (error) {
         console.error('Error saving changes:', error);
         toast.error('Failed to save changes');
@@ -54,9 +55,7 @@ const BasicDetail = ({ userInfo }) => {
       if (result.success) {
         // Update state and database with new image URL
         setDetails(prev => ({ ...prev, profileImage: result.url }));
-        await db.update(user)
-          .set({ profileImage: result.url })
-          .where(eq(user.id, "1"));
+        await User.findByIdAndUpdate("1", { profileImage: result.url }, { new: true });
         toast.success('Profile image updated successfully!');
       } else {
         throw new Error(result.error);
@@ -124,8 +123,6 @@ const BasicDetail = ({ userInfo }) => {
           </div>
 
           <div className="space-y-4">
-            
-
             <div>
               <label className="label">
                 <span className="label-text text-xs text-base-content/70">Email Address</span>
@@ -151,30 +148,30 @@ const BasicDetail = ({ userInfo }) => {
               />
             </div>
             <div>
-          <label className="label">
-            <span className="label-text text-xs text-base-content/70">Location</span>
-          </label>
-          <input
-            type="text"
-            placeholder="Enter your location"
-            className="input input-bordered input-sm w-full bg-base-100 text-base-content/80"
-            value={details.location}
-            onChange={(e) => onInputChange(e, 'location')}
-          />
-        </div>
+              <label className="label">
+                <span className="label-text text-xs text-base-content/70">Location</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Enter your location"
+                className="input input-bordered input-sm w-full bg-base-100 text-base-content/80"
+                value={details.location}
+                onChange={(e) => onInputChange(e, 'location')}
+              />
+            </div>
 
-        <div>
-          <label className="label">
-            <span className="label-text text-xs text-base-content/70">LinkedIn Profile</span>
-          </label>
-          <input
-            type="url"
-            placeholder="Enter your LinkedIn URL"
-            className="input input-bordered input-sm w-full bg-base-100 text-base-content/80"
-            value={details.linkedIn}
-            onChange={(e) => onInputChange(e, 'linkedIn')}
-          />
-        </div>
+            <div>
+              <label className="label">
+                <span className="label-text text-xs text-base-content/70">LinkedIn Profile</span>
+              </label>
+              <input
+                type="url"
+                placeholder="Enter your LinkedIn URL"
+                className="input input-bordered input-sm w-full bg-base-100 text-base-content/80"
+                value={details.linkedIn}
+                onChange={(e) => onInputChange(e, 'linkedIn')}
+              />
+            </div>
           </div>
         </form>
       </div>
