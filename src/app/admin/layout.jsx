@@ -1,7 +1,6 @@
 import React from 'react';
 import SideNav from './components/SideNav';
 import { Toaster } from 'react-hot-toast';
-import Provider from './Provider';
 export default function AdminLayout({ children }) {
     return (
         <div>
@@ -10,9 +9,7 @@ export default function AdminLayout({ children }) {
                 <SideNav/>
             </div>
             <div className="ml-24">
-                <Provider> 
                 {children}
-                </Provider>
             </div>
         </div>
     );

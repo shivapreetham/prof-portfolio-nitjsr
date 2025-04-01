@@ -2,7 +2,7 @@
 import React from 'react';
 import BasicDetails from './BasicDetails';
 import ProjectSection from '@/app/admin/components/addSections/Project/ProjectSection';
-import { useUser } from '../Provider';
+import { useUser } from '../../Provider';
 import ResearchPaperSection from '@/app/admin/components/addSections/ResearchPapers/researchPaperSection';
 import {ConferenceSection} from '@/app/admin/components/addSections/conferances/conferanceSection';
 import { BlogSection } from './addSections/blogs/blogSection';

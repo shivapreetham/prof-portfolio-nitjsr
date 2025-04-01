@@ -1,5 +1,5 @@
 'use client'
-import { useUser } from './admin/Provider';
+import { useUser } from './Provider';
 import { Mail, Linkedin, MapPin, Download, Youtube, ExternalLink } from 'lucide-react';
 
 export default function Home() {
