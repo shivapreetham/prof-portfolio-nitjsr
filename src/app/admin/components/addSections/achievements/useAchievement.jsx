@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
-import { Achievement } from '@/models/models';
 
 export const useAchievements = () => {
   const [achievementList, setAchievementList] = useState([]);
@@ -16,12 +15,18 @@ export const useAchievements = () => {
       setIsLoading(true);
       setError(null);
 
-      // Fetch achievements sorted by date descending
-      const achievementListData = await Achievement.find().sort({ date: -1 });
-      setAchievementList(achievementListData);
+      const response = await fetch('/api/achievements');
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to fetch achievements');
+      }
+      
+      const data = await response.json();
+      setAchievementList(data.achievements);
     } catch (error) {
       console.error('Error fetching achievements:', error);
-      setError('Failed to fetch achievements');
+      setError(error.message || 'Failed to fetch achievements');
       toast.error('Could not load achievements');
     } finally {
       setIsLoading(false);
@@ -39,12 +44,20 @@ export const useAchievements = () => {
 
   const handleDeleteAchievement = async (achievementId) => {
     try {
-      await Achievement.findByIdAndDelete(achievementId);
+      const response = await fetch(`/api/achievements/${achievementId}`, {
+        method: 'DELETE'
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to delete achievement');
+      }
+      
       toast.success('Achievement deleted successfully');
       getAchievementList();
     } catch (error) {
       console.error('Error deleting achievement:', error);
-      toast.error('Failed to delete achievement');
+      toast.error(error.message || 'Failed to delete achievement');
     }
   };
 

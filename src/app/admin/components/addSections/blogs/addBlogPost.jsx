@@ -4,11 +4,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Camera } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { uploadImage } from '@/utils/uploadImage';
-import { BlogPost } from '@/models/models';
 
 export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
   const fileInputRef = useRef(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     content: '',
@@ -41,13 +41,11 @@ export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
     if (!file) return;
 
     setIsUploading(true);
-
     try {
       const result = await uploadImage(file, {
         bucketName: 'profile-images',
         folderPath: 'blog-posts'
       });
-
       if (result.success) {
         setFormData((prev) => ({ ...prev, imageUrl: result.url }));
         toast.success('Image uploaded successfully!');
@@ -65,37 +63,35 @@ export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!formData.title || !formData.content) {
       toast.error('Title and content are required');
       return;
     }
 
+    setIsSubmitting(true);
     try {
-      if (editingPost) {
-        // Update existing blog post using Mongoose's findByIdAndUpdate
-        await BlogPost.findByIdAndUpdate(
-          editingPost._id || editingPost.id,
-          formData,
-          { new: true }
-        );
-        toast.success('Post updated successfully!');
-      } else {
-        // Insert new blog post
-        const newPost = new BlogPost({
+      const endpoint = editingPost ? `/api/posts/${editingPost._id || editingPost.id}` : '/api/posts';
+      const method = editingPost ? 'PUT' : 'POST';
+      const response = await fetch(endpoint, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           userId: "1", // Replace with dynamic user ID if needed
-          title: formData.title,
-          content: formData.content,
-          imageUrl: formData.imageUrl || null
-        });
-        await newPost.save();
-        toast.success('Post published successfully!');
+          ...formData
+        })
+      });
+      if (!response.ok) {
+        throw new Error(editingPost ? 'Failed to update post' : 'Failed to create post');
       }
+      await response.json();
       onPostAdded();
       onClose();
+      toast.success(editingPost ? 'Post updated successfully!' : 'Post published successfully!');
     } catch (error) {
       console.error('Error saving post:', error);
-      toast.error('Failed to save post');
+      toast.error(error.message || 'Failed to save post');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -177,19 +173,15 @@ export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
           </div>
 
           <div className="card-actions justify-end mt-4">
-            <button
-              type="button"
-              className="btn btn-sm btn-ghost"
-              onClick={onClose}
-            >
+            <button type="button" className="btn btn-sm btn-ghost" onClick={onClose}>
               Cancel
             </button>
             <button 
               type="submit" 
               className="btn btn-sm btn-primary"
-              disabled={isUploading}
+              disabled={isUploading || isSubmitting}
             >
-              {isUploading && <span className="loading loading-spinner loading-xs"></span>}
+              {(isUploading || isSubmitting) && <span className="loading loading-spinner loading-xs"></span>}
               {editingPost ? 'Save Changes' : 'Publish Post'}
             </button>
           </div>

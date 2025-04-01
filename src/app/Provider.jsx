@@ -1,5 +1,5 @@
 'use client'
-import { connectDB } from '@/utils/db';
+import dbConnect from '@/utils/db';
 import { 
   User, Project, ResearchPaper, Conference, 
   Achievement, BlogPost, TeachingExperience, 
@@ -25,7 +25,7 @@ const Provider = ({ children }) => {
 
     const getUserData = async () => {
         try {
-            await connectDB(); // Ensure database is connected
+            await dbConnect(); // Ensure database is connected
             const userId = "1"; // Replace with dynamic user ID retrieval
             
             const [

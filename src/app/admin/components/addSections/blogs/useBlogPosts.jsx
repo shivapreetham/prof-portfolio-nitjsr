@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
-import { BlogPost } from '@/models/models';
 
 export const useBlogPosts = () => {
   const [postsList, setPostsList] = useState([]);
@@ -16,9 +15,10 @@ export const useBlogPosts = () => {
       setIsLoading(true);
       setError(null);
 
-      // Fetch blog posts sorted by createdAt descending using Mongoose
-      const postsListData = await BlogPost.find().sort({ createdAt: -1 });
-      setPostsList(postsListData);
+      const response = await fetch('/api/posts');
+      if (!response.ok) throw new Error('Failed to fetch posts');
+      const data = await response.json();
+      setPostsList(data);
     } catch (err) {
       console.error('Error fetching blog posts:', err);
       setError('Failed to fetch blog posts');
@@ -39,7 +39,8 @@ export const useBlogPosts = () => {
 
   const handleDeletePost = async (postId) => {
     try {
-      await BlogPost.findByIdAndDelete(postId);
+      const response = await fetch(`/api/posts/${postId}`, { method: 'DELETE' });
+      if (!response.ok) throw new Error('Failed to delete post');
       toast.success('Post deleted successfully!');
       getPostsList();
     } catch (err) {

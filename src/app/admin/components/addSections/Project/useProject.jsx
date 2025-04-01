@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Project } from '@/models/models';
 import axios from 'axios';
 
 export const useProjects = () => {
@@ -36,9 +35,11 @@ export const useProjects = () => {
   const handleDeleteProject = async (projectId) => {
     try {
       await axios.delete(`/api/projects/${projectId}`);
+      toast.success('Project deleted successfully');
       getProjectList();
     } catch (error) {
       console.error('Error deleting project:', error);
+      toast.error(error.response?.data?.message || 'Failed to delete project');
     }
   };
 

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
-import { Conference } from '@/models/models';
 
 export const useConferences = () => {
   const [conferencesList, setConferencesList] = useState([]);
@@ -16,8 +15,14 @@ export const useConferences = () => {
       setIsLoading(true);
       setError(null);
       
-      // Fetch conferences sorted by date descending using Mongoose
-      const conferencesListData = await Conference.find().sort({ date: -1 });
+      // Fetch conferences via API call
+      const response = await fetch('/api/conferences');
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch conferences');
+      }
+      
+      const conferencesListData = await response.json();
       setConferencesList(conferencesListData);
     } catch (error) {
       console.error('Error fetching conferences list:', error);
@@ -39,7 +44,14 @@ export const useConferences = () => {
 
   const handleDeleteConference = async (conferenceId) => {
     try {
-      await Conference.findByIdAndDelete(conferenceId);
+      const response = await fetch(`/api/conferences/${conferenceId}`, {
+        method: 'DELETE',
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to delete conference');
+      }
+      
       toast.success('Conference deleted successfully!');
       getConferencesList();
     } catch (error) {

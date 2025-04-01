@@ -21,6 +21,7 @@ export const useResearchPapers = () => {
     } catch (error) {
       console.error('Error fetching papers list:', error);
       setError('Failed to fetch research papers');
+      toast.error('Failed to fetch research papers');
     } finally {
       setIsLoading(false);
     }
@@ -77,3 +78,5 @@ export const useResearchPapers = () => {
     closeAddModal
   };
 };
+
+export default useResearchPapers;

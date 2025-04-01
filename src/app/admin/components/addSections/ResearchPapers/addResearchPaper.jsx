@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { FileText, Calendar, Upload, Link2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { uploadFile } from '@/utils/uploadFile';
+import axios from 'axios';
 
 export const AddResearchPaper = ({ isOpen, onClose, editingPaper, onPaperAdded }) => {
   const fileInputRef = useRef(null);
@@ -74,18 +75,18 @@ export const AddResearchPaper = ({ isOpen, onClose, editingPaper, onPaperAdded }
       return;
     }
     try {
-      const response = await fetch('/api/research-papers', {
-        method: editingPaper ? 'PUT' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, id: editingPaper?._id })
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message);
+      let response;
+      if (editingPaper) {
+        response = await axios.put(`/api/research-papers/${editingPaper._id}`, formData);
+      } else {
+        response = await axios.post('/api/research-papers', formData);
+      }
+      
       onPaperAdded();
       onClose();
       toast.success('Research paper saved successfully!');
     } catch (error) {
-      toast.error(error.message || 'Failed to save paper');
+      toast.error(error.response?.data?.message || 'Failed to save paper');
     }
   };
 

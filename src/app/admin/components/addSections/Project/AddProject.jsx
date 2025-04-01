@@ -4,11 +4,12 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Link2, Camera } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { uploadImage } from '@/utils/uploadImage';
-import { Project } from '@/models/models';
+import axios from 'axios';
 
 const AddProject = ({ isOpen, onClose, editingProject, onProjectAdded }) => {
   const fileInputRef = useRef(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -77,31 +78,26 @@ const AddProject = ({ isOpen, onClose, editingProject, onProjectAdded }) => {
       return;
     }
 
+    setIsSubmitting(true);
+
     try {
       if (editingProject) {
-        await Project.findByIdAndUpdate(
-          editingProject._id || editingProject.id,
-          formData,
-          { new: true }
-        );
+        await axios.put(`/api/projects/${editingProject._id || editingProject.id}`, formData);
         toast.success('Project updated successfully!');
       } else {
-        const newProject = new Project({
-          userId: "1", // Replace with dynamic user ID if needed
-          title: formData.title,
-          description: formData.description,
-          collaborators: formData.collaborators || null,
-          videoUrl: formData.videoUrl || null,
-          banner: formData.banner || null
+        await axios.post('/api/projects', {
+          ...formData,
+          userId: "1" // Replace with dynamic user ID if needed
         });
-        await newProject.save();
         toast.success('Project added successfully!');
       }
       onProjectAdded();
       onClose();
     } catch (error) {
       console.error('Error saving project:', error);
-      toast.error('Failed to save project');
+      toast.error(error.response?.data?.message || 'Failed to save project');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -224,9 +220,9 @@ const AddProject = ({ isOpen, onClose, editingProject, onProjectAdded }) => {
             <button 
               type="submit" 
               className="btn btn-sm btn-primary"
-              disabled={isUploading}
+              disabled={isUploading || isSubmitting}
             >
-              {isUploading && <span className="loading loading-spinner loading-xs"></span>}
+              {(isUploading || isSubmitting) && <span className="loading loading-spinner loading-xs"></span>}
               {editingProject ? 'Save Changes' : 'Add Project'}
             </button>
           </div>

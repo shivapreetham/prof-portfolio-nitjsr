@@ -1,23 +1,67 @@
 'use client'
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Camera } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-import { uploadImage } from '@/utils/uploadImage'; 
-import { User } from '@/models/models';
+import { uploadImage } from '@/utils/uploadImage';
 
 const BasicDetail = ({ userInfo }) => {
   const [details, setDetails] = useState({
-    name: userInfo?.name || '',
-    email: userInfo?.email || '',
-    profileImage: userInfo?.profileImage || '',
-    bio: userInfo?.bio || '',
-    location: userInfo?.location || '',
-    linkedIn: userInfo?.linkedIn || ''
+    name: '',
+    email: '',
+    profileImage: '',
+    bio: '',
+    location: '',
+    linkedIn: ''
   });
   
   const [isUploading, setIsUploading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const timeoutRef = useRef(null);
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    if (userInfo) {
+      setDetails({
+        name: userInfo.name || '',
+        email: userInfo.email || '',
+        profileImage: userInfo.profileImage || '',
+        bio: userInfo.bio || '',
+        location: userInfo.location || '',
+        linkedIn: userInfo.linkedIn || ''
+      });
+    }
+  }, [userInfo]);
+
+  const updateUserField = async (fieldName, value) => {
+    setIsSaving(true);
+    try {
+      const response = await fetch('/api/user/update', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          field: fieldName,
+          value: value
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to update user information');
+      }
+      
+      toast.success('Changes saved successfully!');
+      return data.user;
+    } catch (error) {
+      console.error('Error saving changes:', error);
+      toast.error(error.message || 'Failed to save changes');
+      throw error;
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const onInputChange = (event, fieldName) => {
     const { value } = event.target;
@@ -26,16 +70,9 @@ const BasicDetail = ({ userInfo }) => {
     clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(async () => {
       try {
-        const updated = await User.findByIdAndUpdate(
-          "1", // Replace with dynamic user id if needed
-          { [fieldName]: value },
-          { new: true }
-        );
-        toast.success('Changes saved successfully!');
-        console.log('Updated:', fieldName, updated);
+        await updateUserField(fieldName, value);
       } catch (error) {
-        console.error('Error saving changes:', error);
-        toast.error('Failed to save changes');
+        // Error already handled in updateUserField
       }
     }, 2000);
   };
@@ -53,10 +90,11 @@ const BasicDetail = ({ userInfo }) => {
       });
 
       if (result.success) {
-        // Update state and database with new image URL
+        // Update state with new image URL
         setDetails(prev => ({ ...prev, profileImage: result.url }));
-        await User.findByIdAndUpdate("1", { profileImage: result.url }, { new: true });
-        toast.success('Profile image updated successfully!');
+        
+        // Update the profile image in the database through API
+        await updateUserField('profileImage', result.url);
       } else {
         throw new Error(result.error);
       }
@@ -171,6 +209,7 @@ const BasicDetail = ({ userInfo }) => {
                 value={details.linkedIn}
                 onChange={(e) => onInputChange(e, 'linkedIn')}
               />
+              {isSaving && <p className="text-xs mt-1 text-primary">Saving changes...</p>}
             </div>
           </div>
         </form>

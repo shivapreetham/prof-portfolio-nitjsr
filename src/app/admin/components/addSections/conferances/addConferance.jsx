@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { Calendar } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-import { Conference } from '@/models/models';
 
 export const AddConference = ({ isOpen, onClose, editingConference, onConferenceAdded }) => {
   const [formData, setFormData] = useState({
@@ -49,28 +48,40 @@ export const AddConference = ({ isOpen, onClose, editingConference, onConference
 
     try {
       if (editingConference) {
-        // Update existing conference using Mongoose's findByIdAndUpdate
-        await Conference.findByIdAndUpdate(
-          editingConference._id || editingConference.id,
-          {
+        // Update existing conference via API
+        const response = await fetch(`/api/conferences/${editingConference._id || editingConference.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
             ...formData,
             date: new Date(formData.date)
-          },
-          { new: true }
-        );
-        toast.success('Conference updated successfully!');
-      } else {
-        // Insert a new conference
-        const newConference = new Conference({
-          userId: "1", // Replace with dynamic user id if needed
-          name: formData.name,
-          location: formData.location,
-          date: new Date(formData.date),
-          paperPresented: formData.paperPresented
+          }),
         });
-        await newConference.save();
-        toast.success('Conference added successfully!');
+
+        if (!response.ok) {
+          throw new Error('Failed to update conference');
+        }
+      } else {
+        // Create new conference via API
+        const response = await fetch('/api/conferences', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ...formData,
+            userId: "1", // Replace with dynamic user id if needed
+            date: new Date(formData.date)
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to add conference');
+        }
       }
+      
       onConferenceAdded();
       onClose();
     } catch (error) {
