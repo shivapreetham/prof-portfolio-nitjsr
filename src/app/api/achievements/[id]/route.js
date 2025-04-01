@@ -3,7 +3,6 @@
 import { Achievement } from '@/models/models';
 import { NextResponse } from 'next/server';
 
-// PUT - Update an existing achievement
 export async function PUT(request, { params }) {
   try {
     const { id } = params;
