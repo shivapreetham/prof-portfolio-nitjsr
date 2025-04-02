@@ -1,7 +1,11 @@
-
+import { NextResponse } from 'next/server';
+import { ObjectId } from 'mongodb';
+import connectDB from '@/lib/db';
 // app/api/research-papers/[id]/route.js
 export async function PUT(request, { params }) {
     try {
+          await connectDB();
+      
       const { id } = params;
       const data = await request.json();
       const { title, abstract, pdfUrl, publishedAt } = data;
@@ -38,6 +42,8 @@ export async function PUT(request, { params }) {
   
   export async function DELETE(request, { params }) {
     try {
+          await connectDB();
+      
       const { id } = params;
       
       const { db } = await connectToDatabase();

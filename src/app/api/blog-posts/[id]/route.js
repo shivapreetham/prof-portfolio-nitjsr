@@ -4,6 +4,8 @@ import { BlogPost } from '@/models/models';
 
 export async function PUT(request, { params }) {
   try {
+      await connectDB();
+    
     const { id } = params;
     const data = await request.json();
     
@@ -25,6 +27,8 @@ export async function PUT(request, { params }) {
 
 export async function DELETE(request, { params }) {
   try {
+        await connectDB();
+    
     const { id } = params;
     const deletedPost = await BlogPost.findByIdAndDelete(id);
     

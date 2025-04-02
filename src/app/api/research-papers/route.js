@@ -1,11 +1,11 @@
 // app/api/research-papers/route.js
 import { NextResponse } from 'next/server';
-import { connectToDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
+import connectDB from '@/lib/db';
 
 export async function GET() {
   try {
-    const { db } = await connectToDatabase();
+    const { db } = await connectDB();
     const papers = await db.collection('researchPapers').find({}).sort({ publishedAt: -1 }).toArray();
     
     return NextResponse.json(papers);
@@ -24,7 +24,7 @@ export async function POST(request) {
       return NextResponse.json({ message: 'Title and abstract are required' }, { status: 400 });
     }
     
-    const { db } = await connectToDatabase();
+    const { db } = await connectDB();
     
     const result = await db.collection('researchPapers').insertOne({
       title,

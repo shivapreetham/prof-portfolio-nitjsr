@@ -4,7 +4,10 @@ import { Conference } from '@/models/models';
 
 // GET /api/conferences
 export async function GET() {
+
   try {
+        await connectDB();
+    
     const conferences = await Conference.find().sort({ date: -1 });
     return NextResponse.json(conferences);
   } catch (error) {
@@ -19,6 +22,8 @@ export async function GET() {
 // POST /api/conferences
 export async function POST(request) {
   try {
+        await connectDB();
+    
     const data = await request.json();
     
     const newConference = new Conference({

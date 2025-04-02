@@ -1,9 +1,10 @@
 // File: /app/api/user/update/route.js
 import { User } from '@/models/models';
 import { NextResponse } from 'next/server';
-
+import connectDB from '@/lib/db';
 export async function PATCH(request) {
   try {
+        await connectDB();
     const { field, value } = await request.json();
     
     // Validate input

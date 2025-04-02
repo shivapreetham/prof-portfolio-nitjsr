@@ -1,8 +1,11 @@
 // app/api/posts/route.js
 import { BlogPost } from '@/models/models';
-
+import { Response } from 'next/server';
+import connectDB from '@/lib/db';
 export async function GET() {
   try {
+        await connectDB();
+    
     const posts = await BlogPost.find().sort({ createdAt: -1 });
     return Response.json(posts);
   } catch (error) {
@@ -13,6 +16,8 @@ export async function GET() {
 
 export async function POST(request) {
   try {
+        await connectDB();
+    
     const data = await request.json();
     
     const newPost = new BlogPost({

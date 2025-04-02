@@ -2,10 +2,12 @@
 // app/api/conferences/[id]/route.js
 import { NextResponse } from 'next/server';
 import { Conference } from '@/models/models';
-
+import connectDB from '@/lib/db';
 // PUT /api/conferences/[id]
 export async function PUT(request, { params }) {
   try {
+        await connectDB();
+    
     const { id } = params;
     const data = await request.json();
     
@@ -40,6 +42,8 @@ export async function PUT(request, { params }) {
 // DELETE /api/conferences/[id]
 export async function DELETE(request, { params }) {
   try {
+        await connectDB();
+    
     const { id } = params;
     
     const deletedConference = await Conference.findByIdAndDelete(id);

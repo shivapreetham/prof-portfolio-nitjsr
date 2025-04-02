@@ -2,9 +2,10 @@
 // File: /app/api/achievements/[id]/route.js
 import { Achievement } from '@/models/models';
 import { NextResponse } from 'next/server';
-
+import connectDB from '@/lib/db';
 export async function PUT(request, { params }) {
   try {
+    await connectDB();
     const { id } = params;
     const { title, description, date } = await request.json();
     
@@ -55,6 +56,8 @@ export async function PUT(request, { params }) {
 // DELETE - Remove an achievement
 export async function DELETE(request, { params }) {
   try {
+    await connectDB();
+
     const { id } = params;
     
     // Get user ID from session (implement auth)

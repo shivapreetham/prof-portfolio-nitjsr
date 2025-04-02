@@ -1,10 +1,12 @@
 // File: /app/api/achievements/route.js
 import { Achievement } from '@/models/models';
 import { NextResponse } from 'next/server';
-
+import connectDB from '@/lib/db';
 // POST - Create a new achievement
 export async function GET(request) {
     try {
+          await connectDB();
+      
       // Get user ID from session (implement auth)
       const userId = "1";
       
@@ -26,6 +28,8 @@ export async function GET(request) {
   }
 export async function POST(request) {
   try {
+        await connectDB();
+    
     const { title, description, date } = await request.json();
     
     // Validate input
