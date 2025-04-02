@@ -11,7 +11,7 @@ export const ResearchPaperListEdit = ({ papersList, onEdit, onDelete }) => {
   return (
     <div className="space-y-4">
       {papersList.map((paper) => (
-        <div key={paper.id} className="card bg-base-500 shadow-xl">
+        <div key={paper._id} className="card bg-base-500 shadow-xl">
           <div className="card-body bg-zinc-900 rounded-lg p-4">
             <div className="flex justify-between items-start">
               <div className="flex-1">
@@ -22,7 +22,9 @@ export const ResearchPaperListEdit = ({ papersList, onEdit, onDelete }) => {
                 <p className="text-base-content/70 mt-2">{paper.abstract}</p>
                 <div className="mt-3 flex items-center text-sm text-base-content/60">
                   <Calendar className="w-4 h-4 mr-1" />
-                  <span>Published: {new Date(paper.publishedAt).toLocaleDateString()}</span>
+                  <span>
+                    Published: {new Date(paper.publishedAt).toLocaleDateString()}
+                  </span>
                   {paper.pdfUrl && (
                     <a
                       href={paper.pdfUrl}
@@ -45,7 +47,7 @@ export const ResearchPaperListEdit = ({ papersList, onEdit, onDelete }) => {
                 </button>
                 <button
                   className="btn btn-square btn-sm btn-ghost text-error"
-                  onClick={() => onDelete(paper.id)}
+                  onClick={() => onDelete(paper._id)}
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
