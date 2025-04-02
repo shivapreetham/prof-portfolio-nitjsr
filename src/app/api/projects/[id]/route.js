@@ -1,6 +1,3 @@
-
-
-// File: /app/api/projects/[id]/route.js
 import { NextResponse } from 'next/server';
 import { Project } from '@/models/models';
 import connectDB from '@/utils/db';
@@ -9,14 +6,12 @@ export async function GET(request, { params }) {
   try {
     await connectDB();
     const project = await Project.findById(params.id);
-    
     if (!project) {
       return NextResponse.json(
         { message: 'Project not found' },
         { status: 404 }
       );
     }
-    
     return NextResponse.json(project);
   } catch (error) {
     console.error('Error fetching project:', error);
@@ -31,7 +26,6 @@ export async function PUT(request, { params }) {
   try {
     await connectDB();
     const data = await request.json();
-    
     const updatedProject = await Project.findByIdAndUpdate(
       params.id,
       {
@@ -43,14 +37,12 @@ export async function PUT(request, { params }) {
       },
       { new: true }
     );
-    
     if (!updatedProject) {
       return NextResponse.json(
         { message: 'Project not found' },
         { status: 404 }
       );
     }
-    
     return NextResponse.json(updatedProject);
   } catch (error) {
     console.error('Error updating project:', error);
@@ -65,14 +57,12 @@ export async function DELETE(request, { params }) {
   try {
     await connectDB();
     const deletedProject = await Project.findByIdAndDelete(params.id);
-    
     if (!deletedProject) {
       return NextResponse.json(
         { message: 'Project not found' },
         { status: 404 }
       );
     }
-    
     return NextResponse.json(
       { message: 'Project deleted successfully' },
       { status: 200 }

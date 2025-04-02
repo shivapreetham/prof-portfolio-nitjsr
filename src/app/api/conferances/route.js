@@ -1,13 +1,11 @@
-// app/api/conferences/route.js
 import { NextResponse } from 'next/server';
 import { Conference } from '@/models/models';
 import connectDB from '@/utils/db';
-// GET /api/conferences
-export async function GET() {
 
+// GET - Fetch all conferences (sorted by date descending)
+export async function GET() {
   try {
-        await connectDB();
-    
+    await connectDB();
     const conferences = await Conference.find().sort({ date: -1 });
     return NextResponse.json(conferences);
   } catch (error) {
@@ -19,23 +17,20 @@ export async function GET() {
   }
 }
 
-// POST /api/conferences
+// POST - Create a new conference
 export async function POST(request) {
   try {
-        await connectDB();
-    
+    await connectDB();
     const data = await request.json();
-    
+
     const newConference = new Conference({
-      userId: data.userId || "1",
       name: data.name,
       location: data.location,
       date: new Date(data.date),
       paperPresented: data.paperPresented
     });
-    
     await newConference.save();
-    
+
     return NextResponse.json(newConference, { status: 201 });
   } catch (error) {
     console.error('Error creating conference:', error);

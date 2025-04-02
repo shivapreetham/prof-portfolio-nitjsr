@@ -13,11 +13,11 @@ export default function AdminPage() {
     if (auth === "true") {
       setIsAuthorized(true);
     } else {
-      router.push("/login"); // Redirect to login if not authenticated
+      router.push("/login");
     }
   }, [router]);
 
-  if (!isAuthorized) return null; // Prevent flickering before redirect
+  if (!isAuthorized) return null; 
 
   return (
     <div className="p-7">

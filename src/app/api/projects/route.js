@@ -1,4 +1,3 @@
-// File: /app/api/projects/route.js
 import { NextResponse } from 'next/server';
 import { Project } from '@/models/models';
 import connectDB from '@/utils/db';
@@ -21,16 +20,13 @@ export async function POST(request) {
   try {
     await connectDB();
     const data = await request.json();
-    
     const newProject = new Project({
-      userId: data.userId,
       title: data.title,
       description: data.description,
       collaborators: data.collaborators || null,
       videoUrl: data.videoUrl || null,
       banner: data.banner || null
     });
-    
     await newProject.save();
     return NextResponse.json(
       { message: 'Project created successfully', project: newProject },

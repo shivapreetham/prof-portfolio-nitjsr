@@ -1,16 +1,14 @@
-
-// app/api/conferences/[id]/route.js
 import { NextResponse } from 'next/server';
 import { Conference } from '@/models/models';
 import connectDB from '@/utils/db';
-// PUT /api/conferences/[id]
+
+// PUT - Update a conference by ID
 export async function PUT(request, { params }) {
   try {
-        await connectDB();
-    
+    await connectDB();
     const { id } = params;
     const data = await request.json();
-    
+
     const updatedConference = await Conference.findByIdAndUpdate(
       id,
       {
@@ -21,14 +19,12 @@ export async function PUT(request, { params }) {
       },
       { new: true }
     );
-    
     if (!updatedConference) {
       return NextResponse.json(
         { error: 'Conference not found' },
         { status: 404 }
       );
     }
-    
     return NextResponse.json(updatedConference);
   } catch (error) {
     console.error('Error updating conference:', error);
@@ -39,22 +35,18 @@ export async function PUT(request, { params }) {
   }
 }
 
-// DELETE /api/conferences/[id]
+// DELETE - Remove a conference by ID
 export async function DELETE(request, { params }) {
   try {
-        await connectDB();
-    
+    await connectDB();
     const { id } = params;
-    
     const deletedConference = await Conference.findByIdAndDelete(id);
-    
     if (!deletedConference) {
       return NextResponse.json(
         { error: 'Conference not found' },
         { status: 404 }
       );
     }
-    
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting conference:', error);
