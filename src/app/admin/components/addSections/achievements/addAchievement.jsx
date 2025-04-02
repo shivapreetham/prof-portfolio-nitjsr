@@ -1,10 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { db } from '@/utils/db';
-import { achievements } from '@/utils/schema';
 import { toast } from 'react-hot-toast';
-import { eq } from 'drizzle-orm';
 
 export const AddAchievement = ({ isOpen, onClose, editingAchievement, onAchievementAdded }) => {
   const [formData, setFormData] = useState({
@@ -12,6 +9,7 @@ export const AddAchievement = ({ isOpen, onClose, editingAchievement, onAchievem
     description: '',
     date: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (editingAchievement) {
@@ -42,30 +40,41 @@ export const AddAchievement = ({ isOpen, onClose, editingAchievement, onAchievem
       return;
     }
 
+    setIsSubmitting(true);
+
     try {
-      if (editingAchievement) {
-        await db.update(achievements)
-          .set({
-            title: formData.title,
-            description: formData.description,
-            date: new Date(formData.date)
-          })
-          .where(eq(achievements.id, editingAchievement.id));
-        toast.success('Achievement updated successfully!');
-      } else {
-        await db.insert(achievements).values({
-          userId: "1",
-          title: formData.title,
-          description: formData.description,
-          date: new Date(formData.date)
-        });
-        toast.success('Achievement added successfully!');
+      const endpoint = editingAchievement 
+        ? `/api/achievements/${editingAchievement._id || editingAchievement.id}` 
+        : '/api/achievements';
+      
+      const method = editingAchievement ? 'PUT' : 'POST';
+      
+      const response = await fetch(endpoint, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Something went wrong');
       }
+
+      toast.success(editingAchievement 
+        ? 'Achievement updated successfully!' 
+        : 'Achievement added successfully!'
+      );
+      
       onAchievementAdded();
       onClose();
     } catch (error) {
       console.error('Error saving achievement:', error);
-      toast.error('Failed to save achievement');
+      toast.error(error.message || 'Failed to save achievement');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -73,7 +82,7 @@ export const AddAchievement = ({ isOpen, onClose, editingAchievement, onAchievem
 
   return (
     <div className="card bg-zinc-900 shadow-lg max-w-full mt-5">
-      <div className="card-body  bg-zinc-900 p-4">
+      <div className="card-body bg-zinc-900 p-4">
         <form onSubmit={handleSubmit} className="space-y-3">
           <h3 className="card-title text-base mb-2">
             {editingAchievement ? 'Edit Achievement' : 'Add New Achievement'}
@@ -127,14 +136,16 @@ export const AddAchievement = ({ isOpen, onClose, editingAchievement, onAchievem
               type="button"
               className="btn btn-sm btn-ghost"
               onClick={onClose}
+              disabled={isSubmitting}
             >
               Cancel
             </button>
             <button 
               type="submit" 
               className="btn btn-sm btn-primary"
+              disabled={isSubmitting}
             >
-              {editingAchievement ? 'Save Changes' : 'Add Achievement'}
+              {isSubmitting ? 'Saving...' : editingAchievement ? 'Save Changes' : 'Add Achievement'}
             </button>
           </div>
         </form>

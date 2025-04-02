@@ -9,15 +9,19 @@ const ProjectListEdit = ({ projectList, onEdit, onDelete }) => {
   return (
     <div className="space-y-4">
       {projectList.map((project) => (
-        <div key={project.id} className="card bg-base-500 shadow-xl">
+        <div key={project._id} className="card bg-base-500 shadow-xl">
           <div className="card-body bg-zinc-900 rounded-lg p-4">
             <div className="flex justify-between items-start">
               <div className="flex-1">
                 <h4 className="card-title">{project.title}</h4>
                 <p className="text-base-content/70 mt-1">{project.description}</p>
                 <div className="mt-2 text-sm text-base-content/60">
-                  <span className="mr-4">Start: {new Date(project.startDate).toLocaleDateString()}</span>
-                  <span>End: {new Date(project.endDate).toLocaleDateString()}</span>
+                  <span className="mr-4">
+                    Start: {new Date(project.startDate).toLocaleDateString()}
+                  </span>
+                  <span>
+                    End: {new Date(project.endDate).toLocaleDateString()}
+                  </span>
                 </div>
               </div>
               <div className="flex gap-2">
@@ -32,7 +36,7 @@ const ProjectListEdit = ({ projectList, onEdit, onDelete }) => {
                 </button>
                 <button
                   className="btn btn-square btn-sm btn-ghost text-error"
-                  onClick={() => onDelete(project.id)}
+                  onClick={() => onDelete(project._id)}
                 >
                   <Trash className="h-4 w-4" />
                 </button>

@@ -1,8 +1,5 @@
-// hooks/useProjects.js
 import { useState, useEffect } from 'react';
-import { projects } from '@/utils/schema';
-import { db } from '@/utils/db';
-import { desc, eq } from 'drizzle-orm';
+import axios from 'axios';
 
 export const useProjects = () => {
   const [projectList, setProjectList] = useState([]);
@@ -15,17 +12,12 @@ export const useProjects = () => {
     try {
       setIsLoading(true);
       setError(null);
-      
-      const projectListData = await db
-        .select()
-        .from(projects)
-        .orderBy(desc(projects.createdAt));
 
-      setProjectList(projectListData);
+      const { data } = await axios.get('/api/projects');
+      setProjectList(data);
     } catch (error) {
       console.error('Error fetching project list:', error);
       setError('Failed to fetch projects');
-      document.getElementById('error-toast')?.showModal();
     } finally {
       setIsLoading(false);
     }
@@ -42,12 +34,13 @@ export const useProjects = () => {
 
   const handleDeleteProject = async (projectId) => {
     try {
-      await db.delete(projects).where(eq(projects.id, projectId));
-      document.getElementById('success-toast')?.showModal();
+      
+      await axios.delete(`/api/projects/${projectId}`);
+      toast.success('Project deleted successfully');
       getProjectList();
     } catch (error) {
       console.error('Error deleting project:', error);
-      document.getElementById('error-toast')?.showModal();
+      toast.error(error.response?.data?.message || 'Failed to delete project');
     }
   };
 
@@ -55,7 +48,6 @@ export const useProjects = () => {
     getProjectList();
     setEditingProject(null);
     setIsAddModalOpen(false);
-    document.getElementById('success-toast')?.showModal();
   };
 
   const openAddModal = () => {

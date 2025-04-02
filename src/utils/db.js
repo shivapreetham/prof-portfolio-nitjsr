@@ -1,13 +1,26 @@
-// db.js
-import { neon } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-http';
-import * as schema from './schema'; // Your schema file with table definitions
-const DATABASE_URL='postgresql://neondb_owner:npg_eiPh74BFjTtw@ep-odd-river-a1cx6453-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require'
+import mongoose from 'mongoose';
 
-if (!DATABASE_URL) {
-    throw new Error("DATABASE_URL is missing! Check your .env file.");
+const MONGODB_URI="mongodb+srv://2005shadowme:S5quug2t2WfmiabD@shatterbox.qksgz.mongodb.net/KKsir?retryWrites=true&w=majority"
+if (!MONGODB_URI) {
+  throw new Error('MONGODB_URI is missing in .env file');
+}
+let cached = global._mongoose || { conn: null, promise: null };
+async function dbConnect() {
+  if (cached.conn) return cached.conn;
+
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(MONGODB_URI).then((mongoose) => {
+      console.log('MongoDB Connected');
+      return mongoose;
+    }).catch((err) => {
+      console.error(' MongoDB Connection Error:', err);
+      process.exit(1);
+    });
   }
-// Use the connection URL from your environment variables
-const sql = neon(DATABASE_URL);
-// Alternatively, if you prefer to build the URL from individual env vars, you can do that here.
-export const db = drizzle(sql, schema);
+  cached.conn = await cached.promise;
+  return cached.conn;
+}
+
+global._mongoose = cached;
+
+export default dbConnect;
