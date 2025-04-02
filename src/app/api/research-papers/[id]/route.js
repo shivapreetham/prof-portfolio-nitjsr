@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { ObjectId } from 'mongodb';
 import connectDB from '@/utils/db';
-
+import { ResearchPaper } from '@/models/models';
 const HARDCODED_USER_ID = "67ed468b5b281d81f91a0a78";
 
 export async function PUT(request, { params }) {
@@ -20,7 +20,7 @@ export async function PUT(request, { params }) {
     }
 
     const { db } = await connectDB();
-    const result = await db.collection('researchPapers').updateOne(
+    const result = await ResearchPaper.updateOne(
       { _id: new ObjectId(id), userId: HARDCODED_USER_ID },
       {
         $set: {
@@ -55,7 +55,7 @@ export async function DELETE(request, { params }) {
     await connectDB();
     const { id } = params;
     const { db } = await connectDB();
-    const result = await db.collection('researchPapers').deleteOne({
+    const result = await ResearchPaper.deleteOne({
       _id: new ObjectId(id),
       userId: HARDCODED_USER_ID
     });
