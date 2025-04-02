@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import dbConnect from '@/utils/dbConnect';
+import dbConnect from '@/utils/db';
 import {
   User,
   Project,
@@ -62,7 +62,7 @@ export async function GET() {
       awards,
       collaborations
     };
-
+    console.log(portfolioData)
     return NextResponse.json({ success: true, data: portfolioData });
 
   } catch (error) {

@@ -13,7 +13,7 @@ async function dbConnect() {
       console.log('MongoDB Connected');
       return mongoose;
     }).catch((err) => {
-      console.error('❌ MongoDB Connection Error:', err);
+      console.error(' MongoDB Connection Error:', err);
       process.exit(1);
     });
   }

@@ -13,69 +13,25 @@ const Provider = ({ children }) => {
     conferences: [],
     achievements: [],
     blogPosts: [],
-    teachingExperience: [],
+    teachingExperiences: [],
     awards: [],
     collaborations: []
   });
 
   const getUserData = async () => {
     try {
-      // Replace these endpoints with your actual API routes.
-      const [
-        userRes,
-        projectsRes,
-        papersRes,
-        conferencesRes,
-        achievementsRes,
-        postsRes,
-        teachingRes,
-        awardsRes,
-        collaborationsRes
-      ] = await Promise.all([
-        fetch('/api/user'),
-        fetch('/api/projects'),
-        fetch('/api/research-papers'),
-        fetch('/api/conferences'),
-        fetch('/api/achievements'),
-        fetch('/api/blog-posts'),
-        fetch('/api/teaching-experience'),
-        fetch('/api/awards'),
-        fetch('/api/collaborations')
-      ]);
+      const res = await fetch('/api/getAllData');
 
-      if (!userRes.ok) throw new Error('Failed to fetch user');
-      if (!projectsRes.ok) throw new Error('Failed to fetch projects');
-      if (!papersRes.ok) throw new Error('Failed to fetch research papers');
-      if (!conferencesRes.ok) throw new Error('Failed to fetch conferences');
-      if (!achievementsRes.ok) throw new Error('Failed to fetch achievements');
-      if (!postsRes.ok) throw new Error('Failed to fetch blog posts');
-      if (!teachingRes.ok) throw new Error('Failed to fetch teaching experience');
-      if (!awardsRes.ok) throw new Error('Failed to fetch awards');
-      if (!collaborationsRes.ok) throw new Error('Failed to fetch collaborations');
+      if (!res.ok) {
+        throw new Error('Failed to fetch user data');
+      }
 
-      const userDataJson = await userRes.json();
-      const projectsData = await projectsRes.json();
-      const papersData = await papersRes.json();
-      const conferencesData = await conferencesRes.json();
-      const achievementsData = await achievementsRes.json();
-      const postsData = await postsRes.json();
-      const teachingData = await teachingRes.json();
-      const awardsData = await awardsRes.json();
-      const collaborationsData = await collaborationsRes.json();
+      const { success, data } = await res.json();
+      if (!success) throw new Error('Data fetch unsuccessful');
 
-      setUserData({
-        user: userDataJson,
-        projects: projectsData,
-        researchPapers: papersData,
-        conferences: conferencesData,
-        achievements: achievementsData,
-        blogPosts: postsData,
-        teachingExperience: teachingData,
-        awards: awardsData,
-        collaborations: collaborationsData
-      });
+      setUserData(data);
     } catch (error) {
-      console.error("Failed to fetch user data:", error);
+      console.error('Failed to fetch user data:', error);
     }
   };
 

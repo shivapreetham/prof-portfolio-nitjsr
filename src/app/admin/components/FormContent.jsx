@@ -9,6 +9,7 @@ import { BlogSection } from './addSections/blogs/blogSection';
 import { AchievementsSection } from './addSections/achievements/achievementSection';
 const FormContent = () => {
   const userData = useUser();
+  console.log(userData)
   const userInfo = userData?.user;
   if (!userInfo) {
     return (
