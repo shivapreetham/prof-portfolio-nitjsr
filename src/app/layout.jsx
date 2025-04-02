@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
 
       <html lang="en">
         <Provider>
-        <body data-theme="dark">
+        <body data-theme="light">
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
           {children}
         </body>

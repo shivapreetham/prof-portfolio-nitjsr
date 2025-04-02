@@ -1,6 +1,6 @@
 'use client'
 import { useUser } from './Provider';
-import { Mail, Linkedin, MapPin, Download, Youtube, ExternalLink } from 'lucide-react';
+import { Mail, Linkedin, MapPin, Download, Youtube } from 'lucide-react';
 
 export default function Home() {
   const userData = useUser();
@@ -134,44 +134,47 @@ export default function Home() {
             </div>
           </section>
         )}
-         {userData.conferences.length > 0 && (
-  <section className="py-12">
-    <h2 className="text-3xl font-bold text-center mb-12">
-      Conference Appearances
-    </h2>
-    <div className="flex flex-col gap-6">
-      {userData.conferences.map((conference) => (
-        <div key={conference.id} 
-             className="group relative bg-base-100 rounded-lg shadow-lg overflow-hidden">
-          <div className="absolute top-0 left-0 w-2 h-full bg-primary"></div>
-          <div className="p-6 pl-8">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="flex-1">
-                <h3 className="text-xl font-bold group-hover:text-primary transition-colors">
-                  {conference.name}
-                </h3>
-                {conference.paperPresented && (
-                  <div className="badge badge-primary mt-2">Paper Presented</div>
-                )}
-              </div>
-              
-              <div className="flex flex-col items-end gap-2">
-                {conference.location && (
-                  <div className="badge badge-lg badge-outline p-4">
-                    <MapPin className="w-4 h-4 mr-2" />
-                    {conference.location}
+
+        {/* Conference Appearances */}
+        {userData.conferences.length > 0 && (
+          <section className="py-12">
+            <h2 className="text-3xl font-bold text-center mb-12">
+              Conference Appearances
+            </h2>
+            <div className="flex flex-col gap-6">
+              {userData.conferences.map(conference => (
+                <div key={conference.id} 
+                     className="group relative bg-base-100 rounded-lg shadow-lg overflow-hidden">
+                  <div className="absolute top-0 left-0 w-2 h-full bg-primary"></div>
+                  <div className="p-6 pl-8">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold group-hover:text-primary transition-colors">
+                          {conference.name}
+                        </h3>
+                        {conference.paperPresented && (
+                          <div className="badge badge-primary mt-2">Paper Presented</div>
+                        )}
+                      </div>
+                      <div className="flex flex-col items-end gap-2">
+                        {conference.location && (
+                          <div className="badge badge-lg badge-outline p-4">
+                            <MapPin className="w-4 h-4 mr-2" />
+                            {conference.location}
+                          </div>
+                        )}
+                        <p className="text-sm opacity-70">
+                          {new Date(conference.date).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                )}
-                <p className="text-sm opacity-70">
-                  {new Date(conference.date).toLocaleDateString()}
-                </p>
-              </div>
+                </div>
+              ))}
             </div>
-          </div>
-        </div>
-       ))}
-      </div>
-      </section>)}
+          </section>
+        )}
+
         {/* Blog Posts */}
         {userData.blogPosts.length > 0 && (
           <section>
@@ -246,6 +249,69 @@ export default function Home() {
             </section>
           )}
         </div>
+
+        {/* Teaching Experiences */}
+        {userData.teachingExperiences && userData.teachingExperiences.length > 0 && (
+          <section className="bg-base-100 rounded-box p-8">
+            <h2 className="text-3xl font-bold text-center mb-12">
+              Teaching Experiences
+            </h2>
+            <div className="grid lg:grid-cols-2 gap-8">
+              {userData.teachingExperiences.map(exp => (
+                <div key={exp.id} className="card bg-base-200">
+                  <div className="card-body">
+                    <h3 className="card-title">{exp.subject}</h3>
+                    <p className="text-base-content/70">{exp.institution}</p>
+                    <div className="mt-4">
+                      <span className="text-sm opacity-70">
+                        {new Date(exp.startDate).toLocaleDateString()}
+                      </span>
+                      {exp.endDate && (
+                        <span className="text-sm opacity-70 ml-4">
+                          {new Date(exp.endDate).toLocaleDateString()}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Collaborations */}
+        {userData.collaborations && userData.collaborations.length > 0 && (
+          <section className="py-12">
+            <h2 className="text-3xl font-bold text-center mb-12">
+              Collaborations
+            </h2>
+            <div className="grid lg:grid-cols-2 gap-8">
+              {userData.collaborations.map(collab => (
+                <div key={collab.id} className="card bg-base-200">
+                  <div className="card-body">
+                    <h3 className="card-title">{collab.projectTitle}</h3>
+                    <p className="text-base-content/70">
+                      Collaborator: {collab.collaboratorName}
+                    </p>
+                    {collab.institution && (
+                      <p className="text-base-content/70">Institution: {collab.institution}</p>
+                    )}
+                    <div className="mt-4">
+                      <span className="text-sm opacity-70">
+                        {new Date(collab.startDate).toLocaleDateString()}
+                      </span>
+                      {collab.endDate && (
+                        <span className="text-sm opacity-70 ml-4">
+                          {new Date(collab.endDate).toLocaleDateString()}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
       </main>
     </div>
   );
