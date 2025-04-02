@@ -7,7 +7,6 @@ import MobilePreview from "./components/MobilePreview";
 export default function AdminPage() {
   const router = useRouter();
   const [isAuthorized, setIsAuthorized] = useState(false);
-
   useEffect(() => {
     const auth = localStorage.getItem("admin-auth");
     if (auth === "true") {
@@ -16,9 +15,7 @@ export default function AdminPage() {
       router.push("/login");
     }
   }, [router]);
-
   if (!isAuthorized) return null; 
-
   return (
     <div className="p-7">
     <div className="grid grid-cols-1 lg:grid-cols-3">
