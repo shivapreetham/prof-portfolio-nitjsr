@@ -1,15 +1,27 @@
 import { BlogPost } from '@/models/models';
 import connectDB from '@/utils/db';
 import { NextResponse } from 'next/server';
+import { ObjectId } from 'mongodb';
+
+const HARDCODED_USER_ID = "67ed468b5b281d81f91a0a78";
+
 export async function PUT(request, { params }) {
   try {
     await connectDB();
-    const { id } = params;
+    // Await params to ensure it’s resolved before destructuring
+    const { id } = await params;
     const data = await request.json();
 
-    // Optionally, you could filter by userId here if desired
+    // Remove userId from the payload to avoid conflicts
+    if (data.userId) {
+      delete data.userId;
+    }
+
+    const postId = new ObjectId(id);
+    const userObjectId = new ObjectId(HARDCODED_USER_ID);
+
     const updatedPost = await BlogPost.findOneAndUpdate(
-      { _id: id, userId: HARDCODED_USER_ID },
+      { _id: postId, userId: userObjectId },
       data,
       { new: true }
     );
@@ -29,8 +41,14 @@ export async function PUT(request, { params }) {
 export async function DELETE(request, { params }) {
   try {
     await connectDB();
-    const { id } = params;
-    const deletedPost = await BlogPost.findOneAndDelete({ _id: id, userId: HARDCODED_USER_ID });
+    const { id } = await params;
+    const postId = new ObjectId(id);
+    const userObjectId = new ObjectId(HARDCODED_USER_ID);
+
+    const deletedPost = await BlogPost.findOneAndDelete({
+      _id: postId,
+      userId: userObjectId
+    });
     if (!deletedPost) {
       return NextResponse.json({ error: 'Post not found' }, { status: 404 });
     }

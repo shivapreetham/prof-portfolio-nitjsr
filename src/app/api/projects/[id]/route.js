@@ -2,8 +2,10 @@ import { NextResponse } from 'next/server';
 import { Project } from '@/models/models';
 import connectDB from '@/utils/db';
 
-// GET, PUT, DELETE for individual projects can also filter by userId if desired
-export async function GET_BY_ID(request, { params }) {
+const HARDCODED_USER_ID = "67ed468b5b281d81f91a0a78";
+
+// GET - Fetch a project by ID for the hardcoded user
+export async function GET(request, { params }) {
   try {
     await connectDB();
     const project = await Project.findOne({ _id: params.id, userId: HARDCODED_USER_ID });
@@ -23,7 +25,8 @@ export async function GET_BY_ID(request, { params }) {
   }
 }
 
-export async function PUT_BY_ID(request, { params }) {
+// PUT - Update a project by ID for the hardcoded user
+export async function PUT(request, { params }) {
   try {
     await connectDB();
     const data = await request.json();
@@ -54,25 +57,35 @@ export async function PUT_BY_ID(request, { params }) {
   }
 }
 
-export async function DELETE_BY_ID(request, { params }) {
+// DELETE - Remove a project by ID for the hardcoded user
+export async function DELETE(request, { params }) {
   try {
     await connectDB();
-    const deletedProject = await Project.findOneAndDelete({ _id: params.id, userId: HARDCODED_USER_ID });
-    if (!deletedProject) {
-      return NextResponse.json(
-        { message: 'Project not found' },
-        { status: 404 }
-      );
+    const { id } = params;
+    
+    // Check if id exists
+    if (!id) {
+      return NextResponse.json({ message: 'Missing project id' }, { status: 400 });
     }
-    return NextResponse.json(
-      { message: 'Project deleted successfully' },
-      { status: 200 }
-    );
+    
+    // Validate the id format
+    let objectId;
+    try {
+      objectId = new ObjectId(id);
+    } catch (err) {
+      return NextResponse.json({ message: 'Invalid project id' }, { status: 400 });
+    }
+    
+    // Delete the project filtering by _id and hardcoded userId
+    const deletedProject = await Project.findOneAndDelete({ _id: objectId, userId: HARDCODED_USER_ID });
+    
+    if (!deletedProject) {
+      return NextResponse.json({ message: 'Project not found' }, { status: 404 });
+    }
+    
+    return NextResponse.json({ message: 'Project deleted successfully' });
   } catch (error) {
     console.error('Error deleting project:', error);
-    return NextResponse.json(
-      { message: 'Failed to delete project' },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: 'Failed to delete project' }, { status: 500 });
   }
 }

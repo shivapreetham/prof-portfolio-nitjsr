@@ -34,6 +34,7 @@ export const useProjects = () => {
 
   const handleDeleteProject = async (projectId) => {
     try {
+      
       await axios.delete(`/api/projects/${projectId}`);
       toast.success('Project deleted successfully');
       getProjectList();
