@@ -1,7 +1,7 @@
 
 // app/api/posts/[id]/route.js
 import { BlogPost } from '@/models/models';
-
+import connectDB from '@/utils/db';
 export async function PUT(request, { params }) {
   try {
       await connectDB();

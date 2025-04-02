@@ -1,7 +1,7 @@
 // File: /app/api/user/update/route.js
 import { User } from '@/models/models';
 import { NextResponse } from 'next/server';
-import connectDB from '@/lib/db';
+import connectDB from '@/utils/db';
 export async function PATCH(request) {
   try {
         await connectDB();

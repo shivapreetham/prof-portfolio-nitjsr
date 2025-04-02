@@ -1,7 +1,7 @@
 // app/api/posts/route.js
 import { BlogPost } from '@/models/models';
 import { Response } from 'next/server';
-import connectDB from '@/lib/db';
+import connectDB from '@/utils/db';
 export async function GET() {
   try {
         await connectDB();

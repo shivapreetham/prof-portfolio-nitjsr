@@ -3,7 +3,7 @@
 // File: /app/api/projects/[id]/route.js
 import { NextResponse } from 'next/server';
 import { Project } from '@/models/models';
-import connectDB from '@/lib/db';
+import connectDB from '@/utils/db';
 
 export async function GET(request, { params }) {
   try {

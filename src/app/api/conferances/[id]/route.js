@@ -2,7 +2,7 @@
 // app/api/conferences/[id]/route.js
 import { NextResponse } from 'next/server';
 import { Conference } from '@/models/models';
-import connectDB from '@/lib/db';
+import connectDB from '@/utils/db';
 // PUT /api/conferences/[id]
 export async function PUT(request, { params }) {
   try {

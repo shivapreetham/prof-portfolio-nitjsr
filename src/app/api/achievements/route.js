@@ -1,7 +1,7 @@
 // File: /app/api/achievements/route.js
 import { Achievement } from '@/models/models';
 import { NextResponse } from 'next/server';
-import connectDB from '@/lib/db';
+import connectDB from '@/utils/db';
 // POST - Create a new achievement
 export async function GET(request) {
     try {

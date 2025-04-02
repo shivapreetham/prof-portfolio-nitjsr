@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { ObjectId } from 'mongodb';
-import connectDB from '@/lib/db';
+import connectDB from '@/utils/db';
 // app/api/research-papers/[id]/route.js
 export async function PUT(request, { params }) {
     try {

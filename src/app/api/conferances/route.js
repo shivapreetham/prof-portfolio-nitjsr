@@ -1,7 +1,7 @@
 // app/api/conferences/route.js
 import { NextResponse } from 'next/server';
 import { Conference } from '@/models/models';
-
+import connectDB from '@/utils/db';
 // GET /api/conferences
 export async function GET() {
 

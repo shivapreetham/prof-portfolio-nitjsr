@@ -2,7 +2,7 @@
 // File: /app/api/achievements/[id]/route.js
 import { Achievement } from '@/models/models';
 import { NextResponse } from 'next/server';
-import connectDB from '@/lib/db';
+import connectDB from '@/utils/db';
 export async function PUT(request, { params }) {
   try {
     await connectDB();
