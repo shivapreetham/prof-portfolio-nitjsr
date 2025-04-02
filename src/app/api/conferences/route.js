@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { Conference } from '@/models/models';
 import connectDB from '@/utils/db';
 
-// GET - Fetch all conferences (sorted by date descending)
 export async function GET() {
   try {
     await connectDB();
@@ -17,7 +16,6 @@ export async function GET() {
   }
 }
 
-// POST - Create a new conference
 export async function POST(request) {
   try {
     await connectDB();
