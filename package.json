@@ -8,10 +8,13 @@
     "start": "next start"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.779.0",
+    "@aws-sdk/s3-request-presigner": "^3.779.0",
     "@paralleldrive/cuid2": "^2.2.2",
     "@radix-ui/react-label": "^2.1.2",
     "@supabase/supabase-js": "^2.48.1",
     "@tailwindcss/postcss": "^4.0.5",
+    "axios": "^1.8.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^16.4.7",

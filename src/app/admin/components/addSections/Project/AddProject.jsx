@@ -8,6 +8,7 @@ import axios from 'axios';
 
 const AddProject = ({ isOpen, onClose, editingProject, onProjectAdded }) => {
   const fileInputRef = useRef(null);
+  const videoInputRef = useRef(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
@@ -67,6 +68,43 @@ const AddProject = ({ isOpen, onClose, editingProject, onProjectAdded }) => {
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const handleVideoUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    
+    setIsUploading(true);
+    
+    try {
+      // Request a presigned URL from our Cloudflare R2 upload API
+      const res = await fetch('/api/cloudFlareUpload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename: file.name, contentType: file.type }),
+      });
+      
+      const data = await res.json();
+      if (data.success) {
+        // Upload the video file using the presigned URL
+        await fetch(data.presignedUrl, {
+          method: 'PUT',
+          headers: { 'Content-Type': file.type },
+          body: file,
+        });
+        // Save the public URL of the uploaded video
+        setFormData((prev) => ({ ...prev, videoUrl: data.publicUrl }));
+        toast.success('Video uploaded successfully!');
+      } else {
+        throw new Error(data.error);
+      }
+    } catch (error) {
+      console.error('Error uploading video:', error);
+      toast.error(error.message || 'Failed to upload video');
+    } finally {
+      setIsUploading(false);
+      if (videoInputRef.current) videoInputRef.current.value = '';
     }
   };
 
@@ -192,21 +230,24 @@ const AddProject = ({ isOpen, onClose, editingProject, onProjectAdded }) => {
             />
           </div>
 
+          {/* Replace the Video URL field with Video Upload */}
           <div className="form-control w-full">
             <label className="label py-1">
-              <span className="label-text text-sm">Video URL</span>
+              <span className="label-text text-sm">Upload Video</span>
             </label>
-            <label className="input input-sm input-bordered flex items-center gap-2">
-              <Link2 className="w-4 h-4" />
-              <input
-                type="url"
-                name="videoUrl"
-                className="grow bg-transparent outline-none text-sm"
-                placeholder="Enter video URL"
-                value={formData.videoUrl}
-                onChange={handleInputChange}
-              />
-            </label>
+            <input 
+              type="file" 
+              accept="video/*" 
+              ref={videoInputRef}
+              onChange={handleVideoUpload}
+              className="mb-4"
+              disabled={isUploading}
+            />
+            {formData.videoUrl && (
+              <div className="mt-2">
+                <video src={formData.videoUrl} controls className="w-full" />
+              </div>
+            )}
           </div>
 
           <div className="card-actions justify-end mt-4">
