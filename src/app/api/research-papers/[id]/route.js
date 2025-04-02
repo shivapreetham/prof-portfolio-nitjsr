@@ -2,8 +2,11 @@ import { NextResponse } from 'next/server';
 import { ObjectId } from 'mongodb';
 import connectDB from '@/utils/db';
 
+const HARDCODED_USER_ID = "67ed468b5b281d81f91a0a78";
+
 export async function PUT(request, { params }) {
   try {
+    // Ensure connection is established
     await connectDB();
     const { id } = params;
     const data = await request.json();
@@ -18,7 +21,7 @@ export async function PUT(request, { params }) {
 
     const { db } = await connectDB();
     const result = await db.collection('researchPapers').updateOne(
-      { _id: new ObjectId(id) },
+      { _id: new ObjectId(id), userId: HARDCODED_USER_ID },
       {
         $set: {
           title,
@@ -52,7 +55,10 @@ export async function DELETE(request, { params }) {
     await connectDB();
     const { id } = params;
     const { db } = await connectDB();
-    const result = await db.collection('researchPapers').deleteOne({ _id: new ObjectId(id) });
+    const result = await db.collection('researchPapers').deleteOne({
+      _id: new ObjectId(id),
+      userId: HARDCODED_USER_ID
+    });
 
     if (result.deletedCount === 0) {
       return NextResponse.json(

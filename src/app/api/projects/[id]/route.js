@@ -2,10 +2,11 @@ import { NextResponse } from 'next/server';
 import { Project } from '@/models/models';
 import connectDB from '@/utils/db';
 
-export async function GET(request, { params }) {
+// GET, PUT, DELETE for individual projects can also filter by userId if desired
+export async function GET_BY_ID(request, { params }) {
   try {
     await connectDB();
-    const project = await Project.findById(params.id);
+    const project = await Project.findOne({ _id: params.id, userId: HARDCODED_USER_ID });
     if (!project) {
       return NextResponse.json(
         { message: 'Project not found' },
@@ -22,12 +23,12 @@ export async function GET(request, { params }) {
   }
 }
 
-export async function PUT(request, { params }) {
+export async function PUT_BY_ID(request, { params }) {
   try {
     await connectDB();
     const data = await request.json();
-    const updatedProject = await Project.findByIdAndUpdate(
-      params.id,
+    const updatedProject = await Project.findOneAndUpdate(
+      { _id: params.id, userId: HARDCODED_USER_ID },
       {
         title: data.title,
         description: data.description,
@@ -53,10 +54,10 @@ export async function PUT(request, { params }) {
   }
 }
 
-export async function DELETE(request, { params }) {
+export async function DELETE_BY_ID(request, { params }) {
   try {
     await connectDB();
-    const deletedProject = await Project.findByIdAndDelete(params.id);
+    const deletedProject = await Project.findOneAndDelete({ _id: params.id, userId: HARDCODED_USER_ID });
     if (!deletedProject) {
       return NextResponse.json(
         { message: 'Project not found' },

@@ -1,8 +1,9 @@
-
-// File: /app/api/achievements/[id]/route.js
 import { Achievement } from '@/models/models';
 import { NextResponse } from 'next/server';
 import connectDB from '@/utils/db';
+
+const HARDCODED_USER_ID = "67ed468b5b281d81f91a0a78";
+
 export async function PUT(request, { params }) {
   try {
     await connectDB();
@@ -12,18 +13,14 @@ export async function PUT(request, { params }) {
     // Validate input
     if (!title || !description || !date) {
       return NextResponse.json(
-        { message: 'All fields are required' }, 
+        { message: 'All fields are required' },
         { status: 400 }
       );
     }
     
-    // Get user ID from session (implement auth)
-    // Using hardcoded ID for now
-    const userId = "1";
-    
-    // Find and update the achievement
+    // Update achievement filtering by _id and hardcoded userId
     const updatedAchievement = await Achievement.findOneAndUpdate(
-      { _id: id, userId }, // Ensure user only updates their own achievements
+      { _id: id, userId: HARDCODED_USER_ID },
       {
         title,
         description,
@@ -34,7 +31,7 @@ export async function PUT(request, { params }) {
     
     if (!updatedAchievement) {
       return NextResponse.json(
-        { message: 'Achievement not found or you do not have permission' }, 
+        { message: 'Achievement not found or you do not have permission' },
         { status: 404 }
       );
     }
@@ -47,31 +44,26 @@ export async function PUT(request, { params }) {
   } catch (error) {
     console.error('Error updating achievement:', error);
     return NextResponse.json(
-      { message: 'Failed to update achievement' }, 
+      { message: 'Failed to update achievement' },
       { status: 500 }
     );
   }
 }
 
-// DELETE - Remove an achievement
 export async function DELETE(request, { params }) {
   try {
     await connectDB();
-
     const { id } = params;
     
-    // Get user ID from session (implement auth)
-    const userId = "1";
-    
-    // Find and delete the achievement
+    // Delete achievement filtering by _id and hardcoded userId
     const achievement = await Achievement.findOneAndDelete({ 
       _id: id, 
-      userId 
+      userId: HARDCODED_USER_ID
     });
     
     if (!achievement) {
       return NextResponse.json(
-        { message: 'Achievement not found or you do not have permission' }, 
+        { message: 'Achievement not found or you do not have permission' },
         { status: 404 }
       );
     }
@@ -83,7 +75,7 @@ export async function DELETE(request, { params }) {
   } catch (error) {
     console.error('Error deleting achievement:', error);
     return NextResponse.json(
-      { message: 'Failed to delete achievement' }, 
+      { message: 'Failed to delete achievement' },
       { status: 500 }
     );
   }

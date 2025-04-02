@@ -2,15 +2,17 @@ import { NextResponse } from 'next/server';
 import { Conference } from '@/models/models';
 import connectDB from '@/utils/db';
 
-// PUT - Update a conference by ID
+const HARDCODED_USER_ID = "67ed468b5b281d81f91a0a78";
+
+// PUT - Update a conference by ID (and hardcoded userId if required)
 export async function PUT(request, { params }) {
   try {
     await connectDB();
     const { id } = params;
     const data = await request.json();
 
-    const updatedConference = await Conference.findByIdAndUpdate(
-      id,
+    const updatedConference = await Conference.findOneAndUpdate(
+      { _id: id, userId: HARDCODED_USER_ID },
       {
         name: data.name,
         location: data.location,
@@ -35,12 +37,12 @@ export async function PUT(request, { params }) {
   }
 }
 
-// DELETE - Remove a conference by ID
+// DELETE - Remove a conference by ID (with userId filter)
 export async function DELETE(request, { params }) {
   try {
     await connectDB();
     const { id } = params;
-    const deletedConference = await Conference.findByIdAndDelete(id);
+    const deletedConference = await Conference.findOneAndDelete({ _id: id, userId: HARDCODED_USER_ID });
     if (!deletedConference) {
       return NextResponse.json(
         { error: 'Conference not found' },
