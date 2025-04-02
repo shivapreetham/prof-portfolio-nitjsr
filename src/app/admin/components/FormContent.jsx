@@ -4,12 +4,16 @@ import BasicDetails from './BasicDetails';
 import ProjectSection from '@/app/admin/components/addSections/Project/ProjectSection';
 import { useUser } from '../../Provider';
 import ResearchPaperSection from '@/app/admin/components/addSections/ResearchPapers/researchPaperSection';
-import {ConferenceSection} from '@/app/admin/components/addSections/conferances/conferanceSection';
+import { ConferenceSection } from '@/app/admin/components/addSections/conferances/conferanceSection';
 import { BlogSection } from './addSections/blogs/blogSection';
 import { AchievementsSection } from './addSections/achievements/achievementSection';
+import { TeachingExperienceSection } from '@/app/admin/components/addSections/teachingExperiences/teachingExperienceSection';
+import { AwardSection } from '@/app/admin/components/addSections/awards/awardSection';
+import { CollaborationSection } from '@/app/admin/components/addSections/collaborations/collaborationSection';
+
 const FormContent = () => {
   const userData = useUser();
-  console.log(userData)
+  console.log(userData);
   const userInfo = userData?.user;
   if (!userInfo) {
     return (
@@ -42,7 +46,12 @@ const FormContent = () => {
         <div className="divider"></div>
         <AchievementsSection />
         <div className="divider"></div>
-
+        <TeachingExperienceSection />
+        <div className="divider"></div>
+        <AwardSection />
+        <div className="divider"></div>
+        <CollaborationSection />
+        <div className="divider"></div>
       </div>
     </div>
   );
