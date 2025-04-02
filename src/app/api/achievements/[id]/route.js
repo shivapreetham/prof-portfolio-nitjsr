@@ -49,34 +49,20 @@ export async function PUT(request, { params }) {
     );
   }
 }
-
 export async function DELETE(request, { params }) {
   try {
     await connectDB();
     const { id } = params;
     
-    // Delete achievement filtering by _id and hardcoded userId
-    const achievement = await Achievement.findOneAndDelete({ 
-      _id: id, 
-      userId: HARDCODED_USER_ID
-    });
+    const deletedAchievement = await Achievement.findOneAndDelete({ _id: id, userId: HARDCODED_USER_ID });
     
-    if (!achievement) {
-      return NextResponse.json(
-        { message: 'Achievement not found or you do not have permission' },
-        { status: 404 }
-      );
+    if (!deletedAchievement) {
+      return NextResponse.json({ message: 'Achievement not found' }, { status: 404 });
     }
     
-    return NextResponse.json({
-      message: 'Achievement deleted successfully'
-    });
-    
+    return NextResponse.json({ message: 'Achievement deleted successfully' });
   } catch (error) {
     console.error('Error deleting achievement:', error);
-    return NextResponse.json(
-      { message: 'Failed to delete achievement' },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: 'Failed to delete achievement' }, { status: 500 });
   }
 }

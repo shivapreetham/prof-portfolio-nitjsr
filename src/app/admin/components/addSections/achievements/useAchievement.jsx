@@ -16,14 +16,13 @@ export const useAchievements = () => {
       setError(null);
 
       const response = await fetch('/api/achievements');
-      
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to fetch achievements');
       }
       
       const data = await response.json();
-      setAchievementList(data.achievements);
+      setAchievementList(data.achievements || []);
     } catch (error) {
       console.error('Error fetching achievements:', error);
       setError(error.message || 'Failed to fetch achievements');
@@ -47,12 +46,10 @@ export const useAchievements = () => {
       const response = await fetch(`/api/achievements/${achievementId}`, {
         method: 'DELETE'
       });
-      
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to delete achievement');
       }
-      
       toast.success('Achievement deleted successfully');
       getAchievementList();
     } catch (error) {

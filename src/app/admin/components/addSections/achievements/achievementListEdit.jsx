@@ -19,7 +19,7 @@ export const AchievementListEdit = ({
     <div className="space-y-4">
       {achievementList.map((achievement) => (
         <div 
-          key={achievement.id} 
+          key={achievement.id || achievement._id} 
           className="card bg-base-300 shadow-md hover:shadow-lg transition-shadow"
         >
           <div className="card-body">
@@ -49,7 +49,7 @@ export const AchievementListEdit = ({
                   <Pencil className="w-4 h-4" />
                 </button>
                 <button
-                  onClick={() => onDelete(achievement.id)}
+                  onClick={() => onDelete(achievement.id || achievement._id)}
                   className="btn btn-ghost btn-sm btn-square text-error"
                   aria-label="Delete achievement"
                 >
