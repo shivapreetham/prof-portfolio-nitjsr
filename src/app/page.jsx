@@ -3,7 +3,7 @@ import { useUser } from './Provider';
 import { Mail, Linkedin, MapPin, Download, Youtube } from 'lucide-react';
 
 export default function Home() {
-  const userData = useUser();
+  const {userData} = useUser();
   
   if (!userData?.user) {
     return (

@@ -12,7 +12,7 @@ import { AwardSection } from '@/app/admin/components/addSections/awards/awardSec
 import { CollaborationSection } from '@/app/admin/components/addSections/collaborations/collaborationSection';
 
 const FormContent = () => {
-  const userData = useUser();
+  const { userData }= useUser();
   console.log(userData);
   const userInfo = userData?.user;
   if (!userInfo) {
