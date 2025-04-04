@@ -57,7 +57,6 @@ export async function PUT(request, { params }) {
   }
 }
 
-// DELETE - Remove a project by ID for the hardcoded user
 export async function DELETE(request, { params }) {
   try {
     await connectDB();
@@ -83,7 +82,44 @@ export async function DELETE(request, { params }) {
       return NextResponse.json({ message: 'Project not found' }, { status: 404 });
     }
     
-    return NextResponse.json({ message: 'Project deleted successfully' });
+    // Base URL for API calls (use NEXT_PUBLIC_VERCEL_URL or fallback to localhost)
+    const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL || 'http://localhost:3000';
+
+    // Delete associated banner (image) if it exists
+    if (deletedProject.banner) {
+      try {
+        const resBanner = await fetch(`${baseUrl}/api/cloudFlare/deleteImage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fileUrl: deletedProject.banner })
+        });
+        const dataBanner = await resBanner.json();
+        if (!dataBanner.success) {
+          console.warn('Banner deletion failed:', dataBanner.error);
+        }
+      } catch (err) {
+        console.error('Error deleting banner:', err);
+      }
+    }
+
+    // Delete associated video if it exists
+    if (deletedProject.videoUrl) {
+      try {
+        const resVideo = await fetch(`${baseUrl}/api/cloudFlare/deleteImage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fileUrl: deletedProject.videoUrl })
+        });
+        const dataVideo = await resVideo.json();
+        if (!dataVideo.success) {
+          console.warn('Video deletion failed:', dataVideo.error);
+        }
+      } catch (err) {
+        console.error('Error deleting video:', err);
+      }
+    }
+    
+    return NextResponse.json({ message: 'Project and associated assets deleted successfully' });
   } catch (error) {
     console.error('Error deleting project:', error);
     return NextResponse.json({ message: 'Failed to delete project' }, { status: 500 });

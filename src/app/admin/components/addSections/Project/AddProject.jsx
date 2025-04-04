@@ -79,7 +79,7 @@ const AddProject = ({ isOpen, onClose, editingProject, onProjectAdded }) => {
     
     try {
       // Request a presigned URL from our Cloudflare R2 upload API
-      const res = await fetch('/api/cloudFlareUpload', {
+      const res = await fetch('/api/cloudFlare/cloudFlareUpload', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ filename: file.name, contentType: file.type }),

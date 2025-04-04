@@ -27,12 +27,13 @@ export const uploadImage = async (file, config = {}) => {
       };
     }
 
-    // Generate unique file name
-    const fileExt = file.name.split('.').pop();
+    // Extract only the base file name (remove any folder paths)
+    const baseName = file.name.split('/').pop();
+    const fileExt = baseName.split('.').pop();
     const fileName = `${folderPath ? `${folderPath}/` : ''}${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
 
     // Request a presigned URL from your Cloudflare R2 API
-    const res = await fetch('/api/cloudFlareUpload', {
+    const res = await fetch('/api/cloudFlare/cloudFlareUpload', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ filename: fileName, contentType: file.type }),
