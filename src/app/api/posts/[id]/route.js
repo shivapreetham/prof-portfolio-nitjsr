@@ -47,11 +47,34 @@ export async function DELETE(request, { params }) {
 
     const deletedPost = await BlogPost.findOneAndDelete({
       _id: postId,
-      userId: userObjectId
+      userId: userObjectId,
     });
+
     if (!deletedPost) {
       return NextResponse.json({ error: 'Post not found' }, { status: 404 });
     }
+
+    // If an imageUrl exists, call the Cloudflare deletion API endpoint
+    if (deletedPost.imageUrl) {
+      try {
+        // Construct the absolute URL for the API endpoint.
+        // Use NEXT_PUBLIC_VERCEL_URL or fallback to localhost for local development.
+        const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL || 'http://localhost:3000';
+        const res = await fetch(`${baseUrl}/api/cloudFlare/deleteImage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ imageUrl: deletedPost.imageUrl }),
+        });
+        const data = await res.json();
+        if (!data.success) {
+          console.warn('Cloudflare image deletion failed:', data.error);
+        }
+        console.log('Cloudflare image deletion response:', data);
+      } catch (err) {
+        console.error('Error calling Cloudflare deletion API:', err);
+      }
+    }
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting post:', error);
