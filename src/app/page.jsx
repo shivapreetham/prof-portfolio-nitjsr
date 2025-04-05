@@ -321,8 +321,8 @@ import { useUser } from './Provider';
 import { Mail, Linkedin, MapPin } from 'lucide-react';
 
 export default function Home() {
-  const userData = useUser();
-
+  const {userData} = useUser();
+  
   if (!userData?.user) {
     return (
       <div className="min-h-screen flex items-center justify-center">

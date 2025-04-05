@@ -3,8 +3,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Camera } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { uploadImage } from '@/utils/uploadImage';
+import { useUser } from '@/app/Provider';
 
 const BasicDetail = ({ userInfo }) => {
+  const { userData, setUserData } = useUser();
+
+
   const [details, setDetails] = useState({
     name: '',
     email: '',
@@ -53,6 +57,13 @@ const BasicDetail = ({ userInfo }) => {
       }
       
       toast.success('Changes saved successfully!');
+
+      setUserData((prev) => ({
+        ...prev,
+        user: details
+      }));
+
+
       return data.user;
     } catch (error) {
       console.error('Error saving changes:', error);

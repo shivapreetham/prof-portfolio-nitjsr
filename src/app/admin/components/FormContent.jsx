@@ -7,12 +7,12 @@ import ResearchPaperSection from '@/app/admin/components/addSections/ResearchPap
 import { ConferenceSection } from '@/app/admin/components/addSections/conferances/conferanceSection';
 import { BlogSection } from './addSections/blogs/blogSection';
 import { AchievementsSection } from './addSections/achievements/achievementSection';
-import { TeachingExperienceSection } from '@/app/admin/components/addSections/teachingExperiences/teachingExperienceSection';
+import { TeachingExperienceSection } from '@/app/admin/components/addSections/teachingExperiences/TeachingExperienceSection';
 import { AwardSection } from '@/app/admin/components/addSections/awards/awardSection';
 import { CollaborationSection } from '@/app/admin/components/addSections/collaborations/collaborationSection';
 
 const FormContent = () => {
-  const userData = useUser();
+  const { userData }= useUser();
   console.log(userData);
   const userInfo = userData?.user;
   if (!userInfo) {

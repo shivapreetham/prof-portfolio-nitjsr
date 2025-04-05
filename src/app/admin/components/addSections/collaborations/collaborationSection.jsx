@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
-import { CollaborationListEdit } from './CollaborationListEdit';
-import { AddCollaboration } from './AddCollaboration';
+import { CollaborationListEdit } from './collaborationListEdit';
+import { AddCollaboration } from './addCollaboration';
 import { useCollaborations } from './useCollaborations';
 import { Toaster } from 'react-hot-toast';
 import { Users } from 'lucide-react';
