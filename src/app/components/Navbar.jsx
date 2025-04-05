@@ -29,46 +29,45 @@ export default function Navbar() {
   const isNotHome = pathname !== "/";
 
   const navLinks = [
-    { name: "Experience", path: "/pages/Experience" },
     { name: "Projects", path: "/pages/Projects" },
     { name: "Research Papers", path: "/pages/Research" },
-    { name: "Conferences", path: "/pages/Conferences" },
+    { name: "Collaborations", path: "/pages/Collaborations" },
     { name: "Achievements / Awards", path: "/pages/Awards" },
     { name: "Blog Posts", path: "/pages/Blogs" },
   ];
-
+  
   return (
     <motion.nav
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
-      className={`fixed top-0 left-0 w-full z-20 transition-all duration-300 shadow-md ${
-        scrolled || isNotHome ? "text-white bg-[#0093cb]" : "text-[#0093cb] bg-white"
-      }`}
+      className="fixed top-0 left-0 w-full z-20 transition-all duration-300 shadow-md bg-[#0093cb] text-white"
+
     >
       <div className="container mx-auto px-6 py-5 flex justify-between items-center">
-      <Link href="/" className="text-lg font-bold">
-         Koushlendra Kumar Singh
-      </Link>
+      <Link href="/" className="text-[20px] md:text-[25px] font-bold">
+  Koushlendra Kumar Singh
+</Link>
+
         {!isMobile && (
-          <ul className="flex space-x-6 ml-[200px] text-sm">  {/* Reduced ml spacing & text size */}
+          <ul className="flex space-x-8 ml-[200px] text-lg">  
           {navLinks.map((item, index) => (
             <li key={index} className="relative group">
               <Link href={item.path} className="relative px-2 transition duration-200">
                 {item.name}
                 <span
-                  className="absolute left-0 bottom-[-4px] w-0 h-[2px] transition-all duration-300 ease-in-out group-hover:w-full"
-                  style={{
-                    backgroundColor: scrolled || isNotHome ? "#f5ffff" : "#0093cb",
-                  }}
-                ></span>
+  className="absolute left-0 bottom-[-6px] w-0 h-[2px] bg-white transition-all duration-300 ease-in-out group-hover:w-full"
+></span>
+
               </Link>
             </li>
           ))}
         </ul>
         )}
         {isMobile && (
-          <button className="text-2xl focus:outline-none"> {/* Reduced icon size */}
+          <button className="text-2xl focus:outline-none"
+          onClick={() => setMenuOpen(!menuOpen)}          
+          > 
           {menuOpen ? <FaTimes /> : <FaBars />}
         </button>
         )}
