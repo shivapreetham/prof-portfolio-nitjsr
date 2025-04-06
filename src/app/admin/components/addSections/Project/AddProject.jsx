@@ -120,9 +120,14 @@ const AddProject = ({ isOpen, onClose, editingProject, onProjectAdded }) => {
 
     try {
       if (editingProject) {
-        await axios.put(`/api/projects/${editingProject._id || editingProject.id}`, formData);
+        const projectId = editingProject._id;
+        await axios.put(`/api/projects/${projectId}`, {
+          ...formData,
+          _id: projectId 
+        });
         toast.success('Project updated successfully!');
-      } else {
+      }
+       else {
         await axios.post('/api/projects', {
           ...formData,
           userId: "1" // Replace with dynamic user ID if needed
@@ -140,7 +145,7 @@ const AddProject = ({ isOpen, onClose, editingProject, onProjectAdded }) => {
   };
 
   if (!isOpen) return null;
-
+editingProject
   return (
     <div className="card bg-base-300 shadow-lg max-w-2xl mt-5">
       <div className="card-body p-4">

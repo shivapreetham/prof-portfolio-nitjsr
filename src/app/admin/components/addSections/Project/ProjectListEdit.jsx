@@ -18,6 +18,7 @@ const ProjectListEdit = ({ projectList, onEdit, onDelete }) => {
                 <div className="mt-2 text-sm text-base-content/60">
                   <span className="mr-4">
                     Start: {new Date(project.startDate).toLocaleDateString()}
+                    project._id
                   </span>
                   <span>
                     End: {new Date(project.endDate).toLocaleDateString()}
