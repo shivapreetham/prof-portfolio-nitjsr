@@ -3,7 +3,7 @@ import { useUser } from "./Provider"
 import { Mail, Linkedin, MapPin, ArrowRight } from "lucide-react"
 import { motion } from "framer-motion"
 import Navbar from "./components/Navbar"
-
+import Footer from "./components/Footer"
 export default function Home() {
   const { userData } = useUser()
 
@@ -33,7 +33,7 @@ export default function Home() {
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-white/50 rounded-full blur-3xl z-0" />
 
       {/* Hero Section */}
-      <section className="min-h-screen flex items-center justify-center z-10 relative px-6">
+      <section className="min-h-screen flex items-center justify-center z-10 relative px-6 pt-20">
         <div className="max-w-7xl w-full flex flex-col-reverse lg:flex-row items-center justify-between gap-12 lg:gap-20">
           {/* Text Content */}
           <motion.div
@@ -148,6 +148,7 @@ export default function Home() {
           </section>
         )}
       </main>
+      <Footer />
     </div>
   )
 }
