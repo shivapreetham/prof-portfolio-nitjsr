@@ -2,6 +2,7 @@
 import { useUser } from "./Provider"
 import { Mail, Linkedin, MapPin, ArrowRight } from "lucide-react"
 import { motion } from "framer-motion"
+import Navbar from "./components/Navbar"
 
 export default function Home() {
   const { userData } = useUser()
@@ -20,7 +21,9 @@ export default function Home() {
   }
 
   return (
+    
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 text-[#223843] relative overflow-hidden">
+      <Navbar />
       {/* Background elements */}
       <div className="absolute top-[-100px] right-[-100px] w-[500px] h-[500px] bg-[#0093cb]/10 rounded-full blur-3xl z-0 animate-pulse" />
       <div
