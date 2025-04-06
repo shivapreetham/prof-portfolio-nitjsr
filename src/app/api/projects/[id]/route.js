@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Project } from '@/models/models';
 import connectDB from '@/utils/db';
+import mongoose from 'mongoose';
 
 const HARDCODED_USER_ID = "67ed468b5b281d81f91a0a78";
 
@@ -30,6 +31,12 @@ export async function PUT(request, { params }) {
   try {
     await connectDB();
     const data = await request.json();
+    
+    // Validate the id format
+    if (!mongoose.Types.ObjectId.isValid(params.id)) {
+      return NextResponse.json({ message: 'Invalid project id' }, { status: 400 });
+    }
+
     const updatedProject = await Project.findOneAndUpdate(
       { _id: params.id, userId: HARDCODED_USER_ID },
       {
@@ -41,6 +48,7 @@ export async function PUT(request, { params }) {
       },
       { new: true }
     );
+    
     if (!updatedProject) {
       return NextResponse.json(
         { message: 'Project not found' },
@@ -57,10 +65,11 @@ export async function PUT(request, { params }) {
   }
 }
 
+// DELETE - Delete a project by ID
 export async function DELETE(request, { params }) {
   try {
     await connectDB();
-    const { id } = await params;
+    const id = params.id;
     
     // Check if id exists
     if (!id) {
@@ -68,15 +77,15 @@ export async function DELETE(request, { params }) {
     }
     
     // Validate the id format
-    let objectId;
-    try {
-      objectId = new ObjectId(id);
-    } catch (err) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json({ message: 'Invalid project id' }, { status: 400 });
     }
     
     // Delete the project filtering by _id and hardcoded userId
-    const deletedProject = await Project.findOneAndDelete({ _id: objectId, userId: HARDCODED_USER_ID });
+    const deletedProject = await Project.findOneAndDelete({ 
+      _id: id, 
+      userId: HARDCODED_USER_ID 
+    });
     
     if (!deletedProject) {
       return NextResponse.json({ message: 'Project not found' }, { status: 404 });
