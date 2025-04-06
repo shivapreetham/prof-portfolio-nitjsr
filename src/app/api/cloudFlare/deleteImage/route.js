@@ -13,7 +13,8 @@ const s3 = new S3Client({
 // Modified helper function to extract full key (with subfolder, if any)
 function extractKeyFromUrl(url) {
   const urlObj = new URL(url);
-  return urlObj.pathname.startsWith('/') ? urlObj.pathname.slice(1) : urlObj.pathname;
+  const decodedPath = decodeURIComponent(urlObj.pathname);
+  return decodedPath.startsWith('/') ? decodedPath.slice(1) : decodedPath;
 }
 
 export async function POST(request) {
