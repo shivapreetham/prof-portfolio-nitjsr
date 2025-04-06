@@ -1,318 +1,150 @@
-'use client'
-import { useUser } from './Provider';
-import { Mail, Linkedin, MapPin, Download, Youtube } from 'lucide-react';
+"use client"
+import { useUser } from "./Provider"
+import { Mail, Linkedin, MapPin, ArrowRight } from "lucide-react"
+import { motion } from "framer-motion"
 
 export default function Home() {
-  const {userData} = useUser();
-  
+  const { userData } = useUser()
+
   if (!userData?.user) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <span className="loading loading-spinner loading-lg text-primary"></span>
-      </div>
-    );
-  }
-
-  return (
-    <div data-theme="light" className="min-h-screen bg-base-200">
-      {/* Hero Section */}
-      <div className="hero min-h-[400px] bg-zinc-950 text-primary-content">
-        <div className="hero-content flex-col lg:flex-row gap-8 py-12">
-          {userData.user.profileImage ? (
-            <div className="avatar">
-              <div className="w-48 h-48 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                <img 
-                  src={userData.user.profileImage} 
-                  alt={userData.user.name}
-                  className="mask mask-circle"
-                />
-              </div>
-            </div>
-          ) : (
-            <div className="avatar placeholder">
-              <div className="bg-neutral text-neutral-content rounded-full w-48">
-                <span className="text-4xl">{userData.user.name[0]}</span>
-              </div>
-            </div>
-          )}
-          
-          <div className="text-center lg:text-left max-w-2xl">
-            <h1 className="text-5xl font-bold mb-4">{userData.user.name}</h1>
-            <p className="text-xl opacity-90 mb-6">{userData.user.bio}</p>
-            <div className="flex flex-wrap gap-4">
-              {userData.user.location && (
-                <div className="badge badge-lg badge-outline gap-2 p-4">
-                  <MapPin className="w-4 h-4" />
-                  {userData.user.location}
-                </div>
-              )}
-              <a href={`mailto:${userData.user.email}`} 
-                 className="badge badge-lg badge-outline gap-2 p-4 hover:badge-primary transition-colors">
-                <Mail className="w-4 h-4" />
-                {userData.user.email}
-              </a>
-              {userData.user.linkedIn && (
-                <a href={userData.user.linkedIn} 
-                   className="badge badge-lg badge-outline gap-2 p-4 hover:badge-primary transition-colors">
-                  <Linkedin className="w-4 h-4" />
-                  LinkedIn
-                </a>
-              )}
-            </div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="relative">
+          <div className="w-16 h-16 border-4 border-[#0093cb] border-t-transparent rounded-full animate-spin"></div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-8 h-8 border-4 border-[#663399] border-b-transparent rounded-full animate-spin"></div>
           </div>
         </div>
       </div>
+    )
+  }
 
-      <main className="container mx-auto px-4 py-16 space-y-24">
-        {/* Projects Section */}
-        {userData.projects.length > 0 && (
-          <section>
-            <h2 className="text-3xl font-bold text-center mb-12">
-              Research Projects
-            </h2>
-            <div className="grid lg:grid-cols-2 gap-8">
-              {userData.projects.map(project => (
-                <div key={project.id} className="card bg-base-100 shadow-xl group">
-                  {project.banner && (
-                    <figure className="relative h-56">
-                      <img 
-                        src={project.banner} 
-                        alt={project.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                      {project.videoUrl && (
-                        <a href={project.videoUrl}
-                           className="absolute bottom-4 right-4 btn btn-error btn-sm gap-2">
-                          <Youtube className="w-4 h-4" />
-                          Watch Demo
-                        </a>
-                      )}
-                    </figure>
-                  )}
-                  <div className="card-body">
-                    <h3 className="card-title">{project.title}</h3>
-                    <p className="line-clamp-3">{project.description}</p>
-                    {project.collaborators && (
-                      <div className="flex gap-2 mt-2 text-sm opacity-70">
-                        <span className="font-medium">Collaborators:</span>
-                        <span>{project.collaborators}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-       
-        {/* Research Papers */}
-        {userData.researchPapers.length > 0 && (
-          <section className="bg-base-100 rounded-box p-8">
-            <h2 className="text-3xl font-bold text-center mb-12">
-              Published Research
-            </h2>
-            <div className="grid lg:grid-cols-2 gap-8">
-              {userData.researchPapers.map(paper => (
-                <div key={paper.id} className="card bg-base-200">
-                  <div className="card-body">
-                    <h3 className="card-title">{paper.title}</h3>
-                    <p className="line-clamp-3">{paper.abstract}</p>
-                    <div className="card-actions justify-between items-center mt-4 pt-4 border-t border-base-300">
-                      <span className="text-sm opacity-70">
-                        {new Date(paper.publishedAt).toLocaleDateString()}
-                      </span>
-                      {paper.pdfUrl && (
-                        <a href={paper.pdfUrl} className="btn btn-primary btn-sm gap-2">
-                          <Download className="w-4 h-4" />
-                          Download PDF
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 text-[#223843] relative overflow-hidden">
+      {/* Background elements */}
+      <div className="absolute top-[-100px] right-[-100px] w-[500px] h-[500px] bg-[#0093cb]/10 rounded-full blur-3xl z-0 animate-pulse" />
+      <div
+        className="absolute bottom-[-100px] left-[-100px] w-[500px] h-[500px] bg-[#663399]/10 rounded-full blur-3xl z-0 animate-pulse"
+        style={{ animationDelay: "1s" }}
+      />
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-white/50 rounded-full blur-3xl z-0" />
 
-        {/* Conference Appearances */}
-        {userData.conferences.length > 0 && (
-          <section className="py-12">
-            <h2 className="text-3xl font-bold text-center mb-12">
-              Conference Appearances
-            </h2>
-            <div className="flex flex-col gap-6">
-              {userData.conferences.map(conference => (
-                <div key={conference.id} 
-                     className="group relative bg-base-100 rounded-lg shadow-lg overflow-hidden">
-                  <div className="absolute top-0 left-0 w-2 h-full bg-primary"></div>
-                  <div className="p-6 pl-8">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                      <div className="flex-1">
-                        <h3 className="text-xl font-bold group-hover:text-primary transition-colors">
-                          {conference.name}
-                        </h3>
-                        {conference.paperPresented && (
-                          <div className="badge badge-primary mt-2">Paper Presented</div>
-                        )}
-                      </div>
-                      <div className="flex flex-col items-end gap-2">
-                        {conference.location && (
-                          <div className="badge badge-lg badge-outline p-4">
-                            <MapPin className="w-4 h-4 mr-2" />
-                            {conference.location}
-                          </div>
-                        )}
-                        <p className="text-sm opacity-70">
-                          {new Date(conference.date).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
+      {/* Hero Section */}
+      <section className="min-h-screen flex items-center justify-center z-10 relative px-6">
+        <div className="max-w-7xl w-full flex flex-col-reverse lg:flex-row items-center justify-between gap-12 lg:gap-20">
+          {/* Text Content */}
+          <motion.div
+            className="flex-1 text-center lg:text-left"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-6 leading-tight">
+              <span className="bg-gradient-to-r from-[#0093cb] to-[#663399] text-transparent bg-clip-text">
+                {userData.user.name}
+              </span>
+            </h1>
 
-        {/* Blog Posts */}
-        {userData.blogPosts.length > 0 && (
-          <section>
-            <h2 className="text-3xl font-bold text-center mb-12">
-              Latest Insights
-            </h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {userData.blogPosts.map(post => (
-                <div key={post.id} className="card bg-base-100 shadow-xl group">
-                  {post.imageUrl && (
-                    <figure className="h-48">
-                      <img 
-                        src={post.imageUrl} 
-                        alt={post.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                    </figure>
-                  )}
-                  <div className="card-body">
-                    <h3 className="card-title">{post.title}</h3>
-                    <p className="line-clamp-3">{post.content}</p>
-                    <div className="card-actions justify-between items-center mt-4">
-                      <span className="text-sm opacity-70">
-                        {new Date(post.createdAt).toLocaleDateString()}
-                      </span>
-                      <button className="btn btn-ghost btn-sm">Read More</button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
+            <p className="text-lg leading-relaxed text-zinc-600 mb-8 max-w-xl mx-auto lg:mx-0">
+              {userData.user.bio}
+            </p>
 
-        {/* Awards & Achievements */}
-        <div className="grid lg:grid-cols-2 gap-16">
-          {userData.awards.length > 0 && (
-            <section>
-              <h2 className="text-3xl font-bold mb-8">Awards</h2>
-              <div className="space-y-6">
-                {userData.awards.map(award => (
-                  <div key={award.id} className="card bg-base-100 shadow-lg hover:shadow-xl transition-all">
-                    <div className="card-body">
-                      <h3 className="card-title">{award.title}</h3>
-                      <p className="text-primary font-medium">{award.organization}</p>
-                      <p className="text-sm opacity-70">
-                        {new Date(award.date).toLocaleDateString()}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+            {/* Contact Links */}
+            <div className="mt-8 flex flex-wrap gap-4 justify-center lg:justify-start">
+              {userData.user.location && (
+                <motion.div
+                  whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 147, 203, 0.2)" }}
+                  className="flex items-center gap-2 bg-gradient-to-r from-[#0093cb] to-[#0093cb]/90 text-white px-5 py-3 rounded-xl shadow-md"
+                >
+                  <MapPin className="w-4 h-4" />
+                  {userData.user.location}
+                </motion.div>
+              )}
+
+              <motion.a
+                whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 147, 203, 0.2)" }}
+                href={`mailto:${userData.user.email}`}
+                className="flex items-center gap-2 border-2 border-[#0093cb] text-[#0093cb] px-5 py-3 rounded-xl shadow-sm hover:bg-[#0093cb] hover:text-white transition-all"
+              >
+                <Mail className="w-4 h-4" />
+                {userData.user.email}
+              </motion.a>
+
+              {userData.user.linkedIn && (
+                <motion.a
+                  whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 147, 203, 0.2)" }}
+                  href={userData.user.linkedIn}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 border-2 border-[#0093cb] text-[#0093cb] px-5 py-3 rounded-xl shadow-sm hover:bg-[#0093cb] hover:text-white transition-all group"
+                >
+                  <Linkedin className="w-4 h-4" />
+                  <span>LinkedIn</span>
+                  <ArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                </motion.a>
+              )}
+            </div>
+          </motion.div>
+
+          {/* Profile Image */}
+          <div className="flex-1 flex justify-center relative">
+            <div className="relative w-80 h-80 lg:w-[420px] lg:h-[420px] group transition-all duration-300">
+              <div className="w-full h-full rounded-full border-[6px] border-[#0093cb] overflow-hidden shadow-2xl transition-all duration-300">
+                <img
+                  src={userData.user.profileImage}
+                  alt={userData.user.name}
+                  className="object-cover w-full h-full"
+                />
               </div>
-            </section>
-          )}
-
-          {userData.achievements.length > 0 && (
-            <section>
-              <h2 className="text-3xl font-bold mb-8">Achievements</h2>
-              <div className="space-y-6">
-                {userData.achievements.map(achievement => (
-                  <div key={achievement.id} className="card bg-base-100 shadow-lg hover:shadow-xl transition-all">
-                    <div className="card-body">
-                      <h3 className="card-title">{achievement.title}</h3>
-                      <p>{achievement.description}</p>
-                      <p className="text-sm opacity-70">
-                        {new Date(achievement.date).toLocaleDateString()}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
+            </div>
+          </div>
         </div>
+      </section>
 
-        {/* Teaching Experiences */}
-        {userData.teachingExperiences && userData.teachingExperiences.length > 0 && (
-          <section className="bg-base-100 rounded-box p-8">
-            <h2 className="text-3xl font-bold text-center mb-12">
-              Teaching Experiences
+      {/* Teaching Experience Timeline */}
+      <main className="container mx-auto px-6 py-24 z-10 relative">
+        {userData.teachingExperiences?.length > 0 && (
+          <section className="relative z-10">
+            <h2 className="text-4xl font-bold text-center text-[#223843] mb-20">
+              Teaching Experience
             </h2>
-            <div className="grid lg:grid-cols-2 gap-8">
-              {userData.teachingExperiences.map(exp => (
-                <div key={exp.id} className="card bg-base-200">
-                  <div className="card-body">
-                    <h3 className="card-title">{exp.subject}</h3>
-                    <p className="text-base-content/70">{exp.institution}</p>
-                    <div className="mt-4">
-                      <span className="text-sm opacity-70">
-                        {new Date(exp.startDate).toLocaleDateString()}
-                      </span>
-                      {exp.endDate && (
-                        <span className="text-sm opacity-70 ml-4">
-                          {new Date(exp.endDate).toLocaleDateString()}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
 
-        {/* Collaborations */}
-        {userData.collaborations && userData.collaborations.length > 0 && (
-          <section className="py-12">
-            <h2 className="text-3xl font-bold text-center mb-12">
-              Collaborations
-            </h2>
-            <div className="grid lg:grid-cols-2 gap-8">
-              {userData.collaborations.map(collab => (
-                <div key={collab.id} className="card bg-base-200">
-                  <div className="card-body">
-                    <h3 className="card-title">{collab.projectTitle}</h3>
-                    <p className="text-base-content/70">
-                      Collaborator: {collab.collaboratorName}
+            <div className="relative border-l-4 border-[#0093cb]/30 ml-6">
+              {userData.teachingExperiences.map((item, index) => (
+                <motion.div
+                  key={item._id || index}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="mb-12 ml-8 relative"
+                >
+                  <div className="bg-white/80 backdrop-blur-lg border border-[#0093cb]/10 rounded-xl p-6 shadow-md hover:shadow-xl transition-all duration-300">
+                    <h3 className="text-2xl font-bold text-[#0093cb] mb-1">{item.subject}</h3>
+                    <p className="text-black font-semibold mb-2">{item.institution}</p>
+                    <p className="text-sm text-gray-700 mb-2">
+                      {new Date(item.startDate).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                      })}{" "}
+                      –{" "}
+                      {item.endDate
+                        ? new Date(item.endDate).toLocaleDateString("en-US", {
+                            year: "numeric",
+                            month: "short",
+                          })
+                        : "Present"}
                     </p>
-                    {collab.institution && (
-                      <p className="text-base-content/70">Institution: {collab.institution}</p>
+                    {item.description && (
+                      <p className="text-gray-600 text-sm">{item.description}</p>
                     )}
-                    <div className="mt-4">
-                      <span className="text-sm opacity-70">
-                        {new Date(collab.startDate).toLocaleDateString()}
-                      </span>
-                      {collab.endDate && (
-                        <span className="text-sm opacity-70 ml-4">
-                          {new Date(collab.endDate).toLocaleDateString()}
-                        </span>
-                      )}
-                    </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </section>
         )}
       </main>
     </div>
-  );
+  )
 }
