@@ -1,43 +1,42 @@
+import { NextResponse } from 'next/server';
 import connectDB from '@/utils/db';
-import { Student } from '@/models/Student';
+import { Student } from '@/models/models';
+import { ObjectId } from 'mongodb';
 
-export default async function handler(req, res) {
-  const {
-    query: { id },
-    method,
-  } = req;
-  await connectDB();
+// PUT - Update a student by ID
+export async function PUT(request, { params }) {
+  try {
+    await connectDB();
+    const { id } = params;
+    const data = await request.json();
 
-  switch (method) {
-    case 'GET':
-      try {
-        const student = await Student.findById(id);
-        if (!student) return res.status(404).json({ error: 'Student not found' });
-        return res.status(200).json(student);
-      } catch (error) {
-        return res.status(500).json({ error: 'Failed to fetch student' });
-      }
+    const studentId = new ObjectId(id);
+    const updated = await Student.findByIdAndUpdate(studentId, data, { new: true });
+    if (!updated) {
+      return NextResponse.json({ error: 'Student not found' }, { status: 404 });
+    }
+    return NextResponse.json(updated);
+  } catch (error) {
+    console.error('Error updating student:', error);
+    return NextResponse.json({ error: 'Failed to update student' }, { status: 500 });
+  }
+}
 
-    case 'PUT':
-      try {
-        const updated = await Student.findByIdAndUpdate(id, req.body, { new: true });
-        if (!updated) return res.status(404).json({ error: 'Student not found' });
-        return res.status(200).json(updated);
-      } catch (error) {
-        return res.status(400).json({ error: 'Failed to update student' });
-      }
+// DELETE - Remove a student by ID
+export async function DELETE(request, { params }) {
+  try {
+    await connectDB();
+    const { id } = params;
 
-    case 'DELETE':
-      try {
-        const deleted = await Student.findByIdAndDelete(id);
-        if (!deleted) return res.status(404).json({ error: 'Student not found' });
-        return res.status(200).json({ message: 'Student deleted' });
-      } catch (error) {
-        return res.status(500).json({ error: 'Failed to delete student' });
-      }
+    const studentId = new ObjectId(id);
+    const deleted = await Student.findByIdAndDelete(studentId);
+    if (!deleted) {
+      return NextResponse.json({ error: 'Student not found' }, { status: 404 });
+    }
 
-    default:
-      res.setHeader('Allow', ['GET', 'PUT', 'DELETE']);
-      return res.status(405).end(`Method ${method} Not Allowed`);
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting student:', error);
+    return NextResponse.json({ error: 'Failed to delete student' }, { status: 500 });
   }
 }
