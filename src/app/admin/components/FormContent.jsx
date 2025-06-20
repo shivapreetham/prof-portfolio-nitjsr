@@ -4,7 +4,7 @@ import BasicDetails from './BasicDetails';
 import { useUser } from '../../Provider';
 import { BlogSection } from './addSections/blogs/blogSection';
 import { TeachingExperienceSection } from '@/app/admin/components/addSections/teachingExperiences/TeachingExperienceSection';
-
+import { StudentSection } from './addSections/students/studentSection';
 // import ProjectSection from '@/app/admin/components/addSections/Project/ProjectSection';
 // import ResearchPaperSection from '@/app/admin/components/addSections/ResearchPapers/researchPaperSection';
 // import { ConferenceSection } from '@/app/admin/components/addSections/conferances/conferanceSection';
@@ -43,11 +43,13 @@ const FormContent = () => {
         {/* <div className="divider"></div>
         <ConferenceSection /> */}
         <div className="divider"></div>
+        <TeachingExperienceSection />
+        <div className="divider"></div>
         <BlogSection />
+        <div className="divider"></div>
+        <StudentSection />
         {/* <div className="divider"></div>
         <AchievementsSection /> */}
-        <div className="divider"></div>
-        <TeachingExperienceSection />
         {/* <div className="divider"></div>
         <AwardSection /> */}
         {/* <div className="divider"></div>
