@@ -7,7 +7,7 @@ import { ObjectId } from 'mongodb';
 export async function PUT(request, { params }) {
   try {
     await connectDB();
-    const { id } = params;
+    const { id } = await params;
     const data = await request.json();
 
     const studentId = new ObjectId(id);
@@ -26,7 +26,7 @@ export async function PUT(request, { params }) {
 export async function DELETE(request, { params }) {
   try {
     await connectDB();
-    const { id } = params;
+    const { id } = await params;
 
     const studentId = new ObjectId(id);
     const deleted = await Student.findByIdAndDelete(studentId);
