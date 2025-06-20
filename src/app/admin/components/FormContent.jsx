@@ -1,15 +1,16 @@
 // components/FormContent.jsx
 import React from 'react';
 import BasicDetails from './BasicDetails';
-import ProjectSection from '@/app/admin/components/addSections/Project/ProjectSection';
 import { useUser } from '../../Provider';
-import ResearchPaperSection from '@/app/admin/components/addSections/ResearchPapers/researchPaperSection';
-import { ConferenceSection } from '@/app/admin/components/addSections/conferances/conferanceSection';
 import { BlogSection } from './addSections/blogs/blogSection';
-import { AchievementsSection } from './addSections/achievements/achievementSection';
 import { TeachingExperienceSection } from '@/app/admin/components/addSections/teachingExperiences/TeachingExperienceSection';
-import { AwardSection } from '@/app/admin/components/addSections/awards/awardSection';
-import { CollaborationSection } from '@/app/admin/components/addSections/collaborations/collaborationSection';
+
+// import ProjectSection from '@/app/admin/components/addSections/Project/ProjectSection';
+// import ResearchPaperSection from '@/app/admin/components/addSections/ResearchPapers/researchPaperSection';
+// import { ConferenceSection } from '@/app/admin/components/addSections/conferances/conferanceSection';
+// import { AchievementsSection } from './addSections/achievements/achievementSection';
+// import { AwardSection } from '@/app/admin/components/addSections/awards/awardSection';
+// import { CollaborationSection } from '@/app/admin/components/addSections/collaborations/collaborationSection';
 
 const FormContent = () => {
   const { userData }= useUser();
