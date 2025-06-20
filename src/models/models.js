@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-
 // User Model
 const UserSchema = new mongoose.Schema({
   name: { type: String, required: true, maxlength: 100 },
@@ -11,8 +10,6 @@ const UserSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 export const User = (mongoose.models && mongoose.models.User) || mongoose.model('User', UserSchema);
-
-import mongoose from 'mongoose';
 
 // Student Model
 const StudentSchema = new mongoose.Schema({

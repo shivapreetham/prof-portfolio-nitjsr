@@ -1,4 +1,4 @@
-import dbConnect from '@/utils/dbConnect';
+import connectDB from '@/utils/db';
 import { Student } from '@/models/Student';
 
 export default async function handler(req, res) {
@@ -6,7 +6,7 @@ export default async function handler(req, res) {
     query: { id },
     method,
   } = req;
-  await dbConnect();
+  await connectDB();
 
   switch (method) {
     case 'GET':
