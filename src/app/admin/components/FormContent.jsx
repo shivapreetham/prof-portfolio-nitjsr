@@ -1,15 +1,16 @@
 // components/FormContent.jsx
 import React from 'react';
 import BasicDetails from './BasicDetails';
-import ProjectSection from '@/app/admin/components/addSections/Project/ProjectSection';
 import { useUser } from '../../Provider';
-import ResearchPaperSection from '@/app/admin/components/addSections/ResearchPapers/researchPaperSection';
-import { ConferenceSection } from '@/app/admin/components/addSections/conferances/conferanceSection';
 import { BlogSection } from './addSections/blogs/blogSection';
-import { AchievementsSection } from './addSections/achievements/achievementSection';
 import { TeachingExperienceSection } from '@/app/admin/components/addSections/teachingExperiences/TeachingExperienceSection';
-import { AwardSection } from '@/app/admin/components/addSections/awards/awardSection';
-import { CollaborationSection } from '@/app/admin/components/addSections/collaborations/collaborationSection';
+import { StudentSection } from './addSections/students/studentSection';
+// import ProjectSection from '@/app/admin/components/addSections/Project/ProjectSection';
+// import ResearchPaperSection from '@/app/admin/components/addSections/ResearchPapers/researchPaperSection';
+// import { ConferenceSection } from '@/app/admin/components/addSections/conferances/conferanceSection';
+// import { AchievementsSection } from './addSections/achievements/achievementSection';
+// import { AwardSection } from '@/app/admin/components/addSections/awards/awardSection';
+// import { CollaborationSection } from '@/app/admin/components/addSections/collaborations/collaborationSection';
 
 const FormContent = () => {
   const { userData }= useUser();
@@ -35,23 +36,25 @@ const FormContent = () => {
           <h2 className="text-2xl font-semibold mb-4">Personal Information</h2>
           <BasicDetails userInfo={userInfo} />
         </section>
-        <div className="divider"></div>
-        <ProjectSection />
-        <div className="divider"></div>
-        <ResearchPaperSection />
-        <div className="divider"></div>
-        <ConferenceSection />
-        <div className="divider"></div>
-        <BlogSection />
-        <div className="divider"></div>
-        <AchievementsSection />
+        {/* <div className="divider"></div>
+        <ProjectSection /> */}
+        {/* <div className="divider"></div>
+        <ResearchPaperSection /> */}
+        {/* <div className="divider"></div>
+        <ConferenceSection /> */}
         <div className="divider"></div>
         <TeachingExperienceSection />
         <div className="divider"></div>
-        <AwardSection />
+        <BlogSection />
         <div className="divider"></div>
+        <StudentSection />
+        {/* <div className="divider"></div>
+        <AchievementsSection /> */}
+        {/* <div className="divider"></div>
+        <AwardSection /> */}
+        {/* <div className="divider"></div>
         <CollaborationSection />
-        <div className="divider"></div>
+        <div className="divider"></div> */}
       </div>
     </div>
   );
