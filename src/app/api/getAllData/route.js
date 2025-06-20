@@ -12,7 +12,6 @@ export async function GET() {
     await dbConnect();
     // Get the first (and only) user
     const user = await User.findOne({});
-    
     if (!user) {
       return NextResponse.json(
         { success: false, message: 'Professor data not found' },
