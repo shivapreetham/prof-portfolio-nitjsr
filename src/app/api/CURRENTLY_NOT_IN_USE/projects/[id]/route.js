@@ -94,37 +94,19 @@ export async function DELETE(request, { params }) {
     // Base URL for API calls (use NEXT_PUBLIC_VERCEL_URL or fallback to localhost)
     const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL || 'http://localhost:3000';
 
-    // Delete associated banner (image) if it exists
-    if (deletedProject.banner) {
+    for (const url of [deletedProject.banner, deletedProject.videoUrl]) {
+      if (!url) continue;
       try {
-        const resBanner = await fetch(`${baseUrl}/api/cloudFlare/deleteImage`, {
+        const res = await fetch(`${baseUrl}/api/cloudFlare/deleteImage`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ fileUrl: deletedProject.banner })
+          body: JSON.stringify({ imageUrl: url })
         });
-        const dataBanner = await resBanner.json();
-        if (!dataBanner.success) {
-          console.warn('Banner deletion failed:', dataBanner.error);
-        }
+        const data = await res.json();
+        console.log(`Delete ${url}:`, data);
+        if (!data.success) console.warn('Deletion failed:', data.error);
       } catch (err) {
-        console.error('Error deleting banner:', err);
-      }
-    }
-
-    // Delete associated video if it exists
-    if (deletedProject.videoUrl) {
-      try {
-        const resVideo = await fetch(`${baseUrl}/api/cloudFlare/deleteImage`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ fileUrl: deletedProject.videoUrl })
-        });
-        const dataVideo = await resVideo.json();
-        if (!dataVideo.success) {
-          console.warn('Video deletion failed:', dataVideo.error);
-        }
-      } catch (err) {
-        console.error('Error deleting video:', err);
+        console.error(`Error deleting ${url}:`, err);
       }
     }
     
