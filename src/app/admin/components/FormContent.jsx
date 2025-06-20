@@ -35,23 +35,23 @@ const FormContent = () => {
           <h2 className="text-2xl font-semibold mb-4">Personal Information</h2>
           <BasicDetails userInfo={userInfo} />
         </section>
-        <div className="divider"></div>
-        <ProjectSection />
-        <div className="divider"></div>
-        <ResearchPaperSection />
-        <div className="divider"></div>
-        <ConferenceSection />
+        {/* <div className="divider"></div>
+        <ProjectSection /> */}
+        {/* <div className="divider"></div>
+        <ResearchPaperSection /> */}
+        {/* <div className="divider"></div>
+        <ConferenceSection /> */}
         <div className="divider"></div>
         <BlogSection />
-        <div className="divider"></div>
-        <AchievementsSection />
+        {/* <div className="divider"></div>
+        <AchievementsSection /> */}
         <div className="divider"></div>
         <TeachingExperienceSection />
-        <div className="divider"></div>
-        <AwardSection />
-        <div className="divider"></div>
+        {/* <div className="divider"></div>
+        <AwardSection /> */}
+        {/* <div className="divider"></div>
         <CollaborationSection />
-        <div className="divider"></div>
+        <div className="divider"></div> */}
       </div>
     </div>
   );
