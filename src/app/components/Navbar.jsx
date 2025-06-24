@@ -18,13 +18,15 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
-    { name: "Research Area", path: "/pages/Research" },
-    { name: "Teachings", path: "" },
-    { name: "Research Publications", path: "/pages/Projects" },
-    { name: "Responsibilities", path: "/pages/Collaborations" },
-    { name: "Thesis Supervised", path: "" },
-    { name: "Other Achievements", path: "/pages/Awards" },
-    { name: "Contact", path: "" },
+    { name: "Projects", path: "/pages/Projects" },
+    { name: "Research Area", path: "/pages/ResearchArea" },
+    { name: "Research Publications", path: "/pages/ResearchPublications" },
+    { name: "Students", path: "/pages/Students" },
+    { name: "Teachings", path: "/pages/Teachings" },
+    { name: "Responsibilities", path: "/pages/Responsibilities" },
+    { name: "Achievements / Awards", path: "/pages/Awards" },
+    { name: "Blog Posts", path: "/pages/Blogs" },
+    { name: "Contact", path: "/pages/Contact" }
   ];
 
   return (
