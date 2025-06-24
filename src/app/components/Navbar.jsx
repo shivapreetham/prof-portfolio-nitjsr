@@ -31,7 +31,7 @@ export default function Navbar() {
   const navLinks = [
     { name: "Projects", path: "/pages/Projects" },
     { name: "Research Papers", path: "/pages/Research" },
-    { name: "Collaborations", path: "/pages/Collaborations" },
+    { name: "Responsibilities", path: "/pages/Responsibilities" },
     { name: "Achievements / Awards", path: "/pages/Awards" },
     { name: "Blog Posts", path: "/pages/Blogs" },
   ];
