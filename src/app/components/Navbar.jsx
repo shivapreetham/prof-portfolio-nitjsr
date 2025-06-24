@@ -19,10 +19,14 @@ export default function Navbar() {
 
   const navLinks = [
     { name: "Projects", path: "/pages/Projects" },
-    { name: "Research Papers", path: "/pages/Research" },
+    { name: "Research Area", path: "/pages/ResearchArea" },
+    { name: "Research Publications", path: "/pages/ResearchPublications" },
+    { name: "Students", path: "/pages/Students" },
+    { name: "Teachings", path: "/pages/Teachings" },
     { name: "Responsibilities", path: "/pages/Responsibilities" },
     { name: "Achievements / Awards", path: "/pages/Awards" },
     { name: "Blog Posts", path: "/pages/Blogs" },
+    { name: "Contact", path: "/pages/Contact" }
   ];
 
   return (
