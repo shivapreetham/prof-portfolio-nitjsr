@@ -147,7 +147,7 @@ export default function Home() {
         </section>
       </main>
 
-      <Footer />
+      <Footer user={userData.user}/>
     </div>
   )
 }

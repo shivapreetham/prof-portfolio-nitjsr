@@ -3,11 +3,16 @@ import { FaLinkedin, FaTwitter, FaGithub, FaEnvelope } from "react-icons/fa"
 import { Mail, MapPin, Phone } from "lucide-react"
 import Link from "next/link"
 
-const Footer = () => {
+const Footer = ({ user }) => {
+  const email = user?.email || "contact@nitjsr.ac.in"
+  const linkedin = user?.linkedIn || "https://linkedin.com/in/professor"
+  const twitter = user?.twitter || "https://twitter.com/professor"
+  const github = user?.github || "https://github.com/professor"
+
   const navLinks = [
     { name: "Research", path: "/pages/ResearchArea" },
     { name: "Projects", path: "/pages/Projects" },
-    { name: "Students", path: "/pages/Students" },
+    { name: "Students", path: "/pages/Students/PhdStudents" },
     { name: "Teachings", path: "/pages/Teachings" },
     { name: "Responsibilities", path: "/pages/Responsibilities" },
     { name: "Achievements", path: "/pages/Awards" },
@@ -18,14 +23,15 @@ const Footer = () => {
   return (
     <footer className="bg-[#0891B2] text-white py-12 px-6">
       <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+
         {/* Contact Section */}
         <div className="space-y-4">
           <h2 className="text-xl font-bold text-[#022B35] mb-4">Get in Touch</h2>
           <div className="space-y-3">
             <div className="flex items-center space-x-3">
               <Mail className="w-5 h-5 text-[#022B35]" />
-              <a href="mailto:research@nitjsr.ac.in" className="hover:text-[#022B35] transition-colors">
-                research@nitjsr.ac.in
+              <a href={`mailto:${email}`} className="hover:text-[#022B35] transition-colors">
+                {email}
               </a>
             </div>
             <div className="flex items-center space-x-3">
@@ -40,7 +46,7 @@ const Footer = () => {
           <h2 className="text-xl font-bold text-[#022B35] mb-4">Connect</h2>
           <div className="flex space-x-4">
             <a
-              href="https://linkedin.com/in/professor"
+              href={linkedin}
               target="_blank"
               rel="noopener noreferrer"
               className="w-10 h-10 bg-[#064A6E] rounded-full flex items-center justify-center hover:bg-[#022B35] transition-colors"
@@ -48,7 +54,7 @@ const Footer = () => {
               <FaLinkedin className="w-5 h-5" />
             </a>
             <a
-              href="https://twitter.com/professor"
+              href={twitter}
               target="_blank"
               rel="noopener noreferrer"
               className="w-10 h-10 bg-[#064A6E] rounded-full flex items-center justify-center hover:bg-[#022B35] transition-colors"
@@ -56,7 +62,7 @@ const Footer = () => {
               <FaTwitter className="w-5 h-5" />
             </a>
             <a
-              href="https://github.com/professor"
+              href={github}
               target="_blank"
               rel="noopener noreferrer"
               className="w-10 h-10 bg-[#064A6E] rounded-full flex items-center justify-center hover:bg-[#022B35] transition-colors"
@@ -64,7 +70,7 @@ const Footer = () => {
               <FaGithub className="w-5 h-5" />
             </a>
             <a
-              href="mailto:contact@nitjsr.ac.in"
+              href={`mailto:${email}`}
               className="w-10 h-10 bg-[#064A6E] rounded-full flex items-center justify-center hover:bg-[#022B35] transition-colors"
             >
               <FaEnvelope className="w-5 h-5" />
@@ -104,7 +110,7 @@ const Footer = () => {
 
       <div className="mt-12 text-center border-t border-[#064A6E] pt-8">
         <p className="text-sm">
-          &copy; {new Date().getFullYear()} NIT Jamshedpur Faculty Portfolio. All Rights Reserved.
+          &copy; {new Date().getFullYear()} KK singh Portfolio. All Rights Reserved.
         </p>
       </div>
     </footer>

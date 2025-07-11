@@ -36,13 +36,13 @@ export default function Navbar() {
       path: "/pages/Projects",
       dropdownItems: [
         { name: "Current Projects", path: "/pages/Projects" },
-        { name: "Completed Projects", path: "/pages/CompletedProjects" },
-        { name: "Collaborations", path: "/pages/Collaborations" },
+        { name: "Completed Projects", path: "/" },
+        { name: "Collaborations", path: "/" },
       ],
     },
     {
       name: "Students",
-      path: "/pages/Students",
+      path: "/",
       dropdownItems: [
         { name: "PhD Students", path: "/pages/Students/PhdStudents" },
         { name: "Masters Students", path: "/pages/Students/MastersStudents" },
@@ -59,8 +59,8 @@ export default function Navbar() {
       path: "/pages/Responsibilities",
       dropdownItems: [
         { name: "Administrative", path: "/pages/Responsibilities" },
-        { name: "Committee Work", path: "/pages/CommitteeWork" },
-        { name: "Editorial Board", path: "/pages/EditorialBoard" },
+        { name: "Committee Work", path: "/" },
+        { name: "Editorial Board", path: "/" },
       ],
     },
     {
@@ -68,8 +68,8 @@ export default function Navbar() {
       path: "/pages/Awards",
       dropdownItems: [
         { name: "Funded Projects", path: "/pages/Awards" },
-        { name: "Conferences Attended", path: "/pages/Awards/Recognitions" },
-        { name: "Awards & Honors", path: "/pages/Awards/Honors" },
+        { name: "Conferences Attended", path: "/" },
+        { name: "Awards & Honors", path: "/" },
       ],
     },
     {
@@ -77,8 +77,8 @@ export default function Navbar() {
       path: "/pages/Blogs",
       dropdownItems: [
         { name: "Recent Posts", path: "/pages/Blogs" },
-        { name: "Technical Articles", path: "/pages/TechnicalArticles" },
-        { name: "Opinion Pieces", path: "/pages/OpinionPieces" },
+        { name: "Technical Articles", path: "/" },
+        { name: "Opinion Pieces", path: "/" },
       ],
     },
     {
@@ -86,8 +86,8 @@ export default function Navbar() {
       path: "/pages/Contact",
       dropdownItems: [
         { name: "Contact", path: "/pages/Contact" },
-        { name: "Location", path: "/pages/Location" },
-        { name: "Schedule Meeting", path: "/pages/ScheduleMeeting" },
+        { name: "Location", path: "/" },
+        { name: "Schedule Meeting", path: "/" },
       ],
     },
   ]
