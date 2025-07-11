@@ -1,128 +1,136 @@
-"use client";
-
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { useUser } from "../../Provider"; // adjust path if needed
+"use client"
+import { useState, useEffect } from "react"
+import { motion } from "framer-motion"
+import { ChevronRight, Briefcase } from "lucide-react"
+import Link from "next/link"
 
 const textAnimation = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
-};
+}
 
 const ResponsibilitiesPage = () => {
-  const [ isLoading, setIsLoading  ] = useState() ;
-
-  const [responsibility, setResponsibility] = useState(null);
+  const [isLoading, setIsLoading] = useState(true)
+  const [responsibility, setResponsibility] = useState([])
 
   useEffect(() => {
     const getData = async () => {
-      setIsLoading(true);
-      const resData = await fetch(
-        `https://nitjsr.ac.in/backend/api/people/responsibility?id=CS103`
-      );
-      const result = await resData.json();
-      setResponsibility(result);
-      setIsLoading(false);
-    };
-    getData();
-  }, []);
-
-  if (isLoading) return <p className="p-8">Loading...</p>;
+      try {
+        setIsLoading(true)
+        const resData = await fetch(`https://nitjsr.ac.in/backend/api/people/responsibility?id=CS103`)
+        const result = await resData.json()
+        setResponsibility(result || [])
+        setIsLoading(false)
+      } catch (error) {
+        console.error("Error fetching responsibilities:", error)
+        setIsLoading(false)
+      }
+    }
+    getData()
+  }, [])
 
   return (
-    // <div className="bg-[#f5ffff] text-[#0093cb] min-h-screen">
-    //   {/* Header */}
-    //   <div className="h-[50vh] bg-[#0093cb] flex flex-col justify-center items-start text-[#f5ffff] px-6 lg:px-20">
-    //     <motion.h1
-    //       className="text-3xl lg:text-5xl font-bold mb-2"
-    //       initial="hidden"
-    //       animate="visible"
-    //       variants={textAnimation}
-    //     >
-    //       Collaborations
-    //     </motion.h1>
-    //     <motion.p
-    //       className="text-base lg:text-xl text-[#b3e6f9]"
-    //       initial="hidden"
-    //       animate="visible"
-    //       variants={textAnimation}
-    //       transition={{ delay: 0.2 }}
-    //     >
-    //       Projects and research contributions done in collaboration with peers.
-    //     </motion.p>
-    //   </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      {/* Main Content */}
+      <main className="container mx-auto px-6 py-10 max-w-6xl">
+        {/* Breadcrumb */}
+        <nav className="flex items-center space-x-2 text-sm text-gray-600 mb-6">
+          <Link href="/" className="hover:text-[#0284C7] transition-colors">
+            Home
+          </Link>
+          <ChevronRight className="w-4 h-4" />
+          <span className="text-[#0284C7] font-medium">Responsibilities</span>
+        </nav>
 
-    //   {/* Content */}
-    //   <div className="px-4 sm:px-6 lg:px-32 py-12">
-    //     {collaborations.length > 0 ? (
-    //       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-    //         {collaborations.map((collab, index) => (
-    //           <div
-    //             key={collab._id || index}
-    //             className="relative bg-white shadow-md rounded-lg p-6 border border-[#e0f4fb] flex"
-    //           >
-    //             {/* Blue accent bar */}
-    //             <div className="absolute left-0 top-0 h-full w-2 bg-[#0093cb] rounded-l-lg" />
+        {/* Page Title */}
+        <motion.div initial="hidden" animate="visible" variants={textAnimation} className="mb-8">
+          <h1 className="text-4xl font-bold text-[#064A6E] mb-2">Responsibilities</h1>
+          <div className="h-[3px] w-24 bg-[#0284C7] rounded-full mb-4"></div>
+          <p className="text-gray-600">Administrative and academic responsibilities</p>
+        </motion.div>
 
-    //             {/* Card content */}
-    //             <div className="pl-4 flex flex-col w-full">
-    //               <h3 className="text-xl font-semibold text-[#0093cb] mb-3">
-    //                 {collab.projectTitle}
-    //               </h3>
+        {isLoading ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="w-12 h-12 border-4 border-[#0891B2] border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : (
+          <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+            {responsibility && responsibility.length > 0 ? (
+              <div className="p-8">
+                {responsibility.map((res, index) => (
+                  <motion.div
+                    key={index}
+                    initial="hidden"
+                    animate="visible"
+                    variants={textAnimation}
+                    transition={{ delay: index * 0.1 }}
+                    className="mb-6 last:mb-0"
+                  >
+                    <div className="flex items-start space-x-4 p-6 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                      <div className="flex-shrink-0">
+                        <div className="w-10 h-10 bg-[#0891B2] rounded-full flex items-center justify-center">
+                          <Briefcase className="w-5 h-5 text-white" />
+                        </div>
+                      </div>
+                      <div className="flex-1">
+                        <div
+                          className="max-w-none responsibility-content"
+                          dangerouslySetInnerHTML={{ __html: res.ds }}
+                        />
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <div className="text-gray-400 text-6xl mb-4">📋</div>
+                <h3 className="text-xl font-semibold text-gray-600 mb-2">No Responsibilities Found</h3>
+                <p className="text-gray-500">Responsibility information will appear here once available.</p>
+              </div>
+            )}
+          </div>
+        )}
+      </main>
+<style jsx>{`
+  :global(.responsibility-content h1),
+  :global(.responsibility-content h2),
+  :global(.responsibility-content h3) {
+    color: #111827;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
 
-    //               <div className="mb-2 text-sm text-gray-700 space-y-1">
-    //                 <p>
-    //                   <span className="font-medium text-gray-900">👤:</span>{" "}
-    //                   {collab.collaboratorName}
-    //                 </p>
-    //                 {collab.institution && (
-    //                   <p>
-    //                     <span className="font-medium text-gray-900">🏛️:</span>{" "}
-    //                     {collab.institution}
-    //                   </p>
-    //                 )}
-    //               </div>
+  :global(.responsibility-content p) {
+    color: #1f2937;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
 
-    //               <div className="flex items-center flex-wrap gap-4 mt-4 text-sm text-gray-500">
-    //                 <span>
-    //                   <span className="font-medium text-gray-600">Start:</span>{" "}
-    //                   {new Date(collab.startDate).toLocaleDateString()}
-    //                 </span>
-    //                 {collab.endDate && (
-    //                   <span>
-    //                     <span className="font-medium text-gray-600">End:</span>{" "}
-    //                     {new Date(collab.endDate).toLocaleDateString()}
-    //                   </span>
-    //                 )}
-    //               </div>
-    //             </div>
-    //           </div>
-    //         ))}
-    //       </div>
-    //     ) : (
-    //       <p className="text-center text-gray-500 mt-12">
-    //         No collaborations found.
-    //       </p>
-    //     )}
-    //   </div>
-    // </div>
+  :global(.responsibility-content ul),
+  :global(.responsibility-content ol) {
+    color: #1f2937;
+    padding-left: 1.5rem;
+  }
 
-    <>
-      <p className="px-4 text-bold font-semibold ">
-         {responsibility &&
-           responsibility.map((res) => {
-          return (
-            <div
-              dangerouslySetInnerHTML={{ __html: res.ds }}
-              key={res.ds}
-            ></div>
-          );
-        })}
-      </p>
-    </>
+  :global(.responsibility-content li) {
+    margin-bottom: 0.5rem;
+  }
+
+  :global(.responsibility-content strong) {
+    color: #111827;
+    font-weight: 600;
+  }
+
+  :global(.responsibility-content a) {
+    color: #1f2937;
+    text-decoration: none;
+  }
+`}</style>
 
 
-  );
-};
+    </div>
+  )
+}
 
-export default ResponsibilitiesPage;
+export default ResponsibilitiesPage

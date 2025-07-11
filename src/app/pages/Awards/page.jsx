@@ -1,168 +1,96 @@
-'use client';
+"use client"
 
-import { useState, useEffect } from 'react';
-import { useUser } from '@/app/Provider';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from "react"
+import { motion } from "framer-motion"
+import Link from "next/link"
+import { ChevronRight } from "lucide-react"
 
 const textAnimation = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 },
-};
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+}
 
 export default function AwardsPage() {
-  const [ activities, setActivities ] = useState(null);
-  const [activeTab, setActiveTab] = useState('Awards');
+  const [activities, setActivities] = useState(null)
+  const [loading, setLoading] = useState(true)
 
-    useEffect(() => {
+  useEffect(() => {
     const getData = async () => {
-      const activitiesData = await fetch(
-        `https://www.nitjsr.ac.in/backend/faculty/get_other_activities/CS103`
-      );
-      const res = await activitiesData.json()  
-      setActivities(res.result);
-    };
+      try {
+        const activitiesData = await fetch(`https://www.nitjsr.ac.in/backend/faculty/get_other_activities/CS103`)
+        const res = await activitiesData.json()
+        setActivities(res.result)
+        setLoading(false)
+      } catch (error) {
+        console.error("Error fetching data:", error)
+        setLoading(false)
+      }
+    }
+    getData()
+  }, [])
 
-    getData();
-  }, []);
-
-
-  if (!activities) return <p className="text-center mt-10 text-gray-600">Loading user data...</p>;
-
-  const tabs = ['Awards', 'Achievements'];
-
-  // const renderCards = (items, type) => {
-  //   return (
-  //     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
-  //       {items.map((item, index) => (
-  //         <motion.div
-  //           key={index}
-  //           className="card bg-white border border-gray-100 shadow-md hover:shadow-xl transition-all"
-  //           whileHover={{ scale: 1.02 }}
-  //           initial={{ opacity: 0, y: 20 }}
-  //           animate={{ opacity: 1, y: 0 }}
-  //           transition={{ duration: 0.3, delay: index * 0.05 }}
-  //         >
-  //           <div className="card-body p-6 space-y-2">
-  //             <h3 className="card-title text-xl font-semibold text-[#0093cb]">
-  //               {item.title}
-  //             </h3>
-
-  //             {type === 'awards' ? (
-  //               <>
-  //                 <p className="text-gray-700 font-medium">
-  //                   {item.organization || 'Unknown Organization'}
-  //                 </p>
-  //                 <p className="text-sm text-gray-500">
-  //                   {new Date(item.date).toLocaleDateString()}
-  //                 </p>
-  //               </>
-  //             ) : (
-  //               <>
-  //                 <p className="text-gray-700">{item.description || 'No description provided.'}</p>
-  //                 <p className="text-sm text-gray-500">
-  //                   {new Date(item.date).toLocaleDateString()}
-  //                 </p>
-  //               </>
-  //             )}
-  //           </div>
-  //         </motion.div>
-  //       ))}
-  //     </div>
-  //   );
-  // };
-  
   return (
-    <div className="bg-[#f5ffff] text-[#1B2C48] min-h-screen">
-      {activities &&
-        activities.map((activity) => {
-          console.log("activity", activities);
-          
-          return (
+    <div className="min-h-screen bg-white text-black">
+      <main className="container mx-auto px-6 py-10 max-w-6xl">
+        {/* Breadcrumb */}
+        <nav className="flex items-center space-x-2 text-sm text-gray-600 mb-6">
+          <Link href="/" className="hover:text-[#0284C7] transition-colors">Home</Link>
+          <ChevronRight className="w-4 h-4" />
+          <span className="text-[#0284C7] font-medium">Awards & Activities</span>
+        </nav>
+
+        {/* Title */}
+        <motion.div initial="hidden" animate="visible" variants={textAnimation} className="mb-8">
+          <h1 className="text-4xl font-bold text-black mb-2">Awards & Academic Activities</h1>
+          <div className="h-[3px] w-24 bg-[#0284C7] rounded-full"></div>
+        </motion.div>
+
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="w-12 h-12 border-4 border-[#0891B2] border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : (
+          <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-8 text-sm leading-relaxed">
             <div
-              dangerouslySetInnerHTML={{ __html: activity.activities }}
-              key={activity.id}
-              className="profile-section"
-            ></div>
-          );
-          
-        })}
+              className="rich-content"
+              dangerouslySetInnerHTML={{ __html: activities[0]?.activities || "<p>No content available.</p>" }}
+            />
+          </div>
+        )}
+      </main>
 
-        {activities.length === 0 ? ("Nothing Found") : null}
-      </div>
+      <style jsx>{`
+        :global(.rich-content) {
+          color: #1f2937;
+        }
+        :global(.rich-content h1),
+        :global(.rich-content h2),
+        :global(.rich-content h3) {
+          color: #111827;
+          font-weight: 600;
+          margin-top: 1.5rem;
+          margin-bottom: 0.75rem;
+        }
+        :global(.rich-content ul),
+        :global(.rich-content ol) {
+          margin-left: 1.25rem;
+          padding-left: 1rem;
+        }
+        :global(.rich-content li) {
+          margin-bottom: 0.5rem;
+        }
+        :global(.rich-content p) {
+          margin-bottom: 1rem;
+        }
+        :global(.rich-content strong) {
+          color: #000;
+          font-weight: bold;
+        }
+        :global(.rich-content a) {
+          color: #0284C7;
+          text-decoration: underline;
+        }
+      `}</style>
+    </div>
   )
-
-  // return (
-  //   <div className="bg-[#f5ffff] text-[#1B2C48] min-h-screen">
-  //     {/* Hero */}
-  //     <div className="h-[50vh] bg-[#0093cb] flex flex-col justify-center items-start text-white px-6 lg:px-20 text-left">
-  //       <motion.h1
-  //         className="text-3xl lg:text-5xl font-bold mb-2"
-  //         initial="hidden"
-  //         animate="visible"
-  //         variants={textAnimation}
-  //         transition={{ duration: 0.5, ease: 'easeOut' }}
-  //       >
-  //         Awards & Achievements
-  //       </motion.h1>
-  //       <motion.p
-  //         className="text-base lg:text-xl text-[#b3e6f9]"
-  //         initial="hidden"
-  //         animate="visible"
-  //         variants={textAnimation}
-  //         transition={{ delay: 0.2, duration: 0.5, ease: 'easeOut' }}
-  //       >
-  //         Celebrating milestones and honors throughout the journey.
-  //       </motion.p>
-  //     </div>
-
-  //     {/* Tabs & Content */}
-  //     <div className="px-4 sm:px-6 lg:px-32 py-8 lg:py-16">
-  //       {/* Tabs */}
-  //       <motion.div
-  //         className="flex justify-start overflow-x-auto py-4 border-b border-[#0093cb]"
-  //         initial="hidden"
-  //         animate="visible"
-  //         variants={{
-  //           hidden: { opacity: 0 },
-  //           visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
-  //         }}
-  //       >
-  //         <div className="flex space-x-4">
-  //           {tabs.map((tab) => (
-  //             <motion.button
-  //               key={tab}
-  //               className={`flex-shrink-0 text-sm sm:text-base lg:text-lg font-semibold px-3 py-2 ${
-  //                 activeTab === tab
-  //                   ? 'text-[#0093cb] border-b-2 border-[#0093cb]'
-  //                   : 'text-gray-500 hover:text-[#0093cb] transition-colors'
-  //               }`}
-  //               onClick={() => setActiveTab(tab)}
-  //             >
-  //               {tab}
-  //             </motion.button>
-  //           ))}
-  //         </div>
-  //       </motion.div>
-
-  //       {/* Animated Content */}
-  //       <motion.div
-  //         className="mt-8"
-  //         initial="hidden"
-  //         animate="visible"
-  //         variants={textAnimation}
-  //         transition={{ delay: 0.4, duration: 0.5, ease: 'easeOut' }}
-  //       >
-  //         <h2 className="text-xl sm:text-2xl font-bold text-[#0093cb] mb-6">
-  //           {activeTab}
-  //         </h2>
-
-  //         {activeTab === 'Awards'
-  //           ? renderCards(userData.awards, 'awards')
-  //           : renderCards(userData.achievements, 'achievements')}
-  //       </motion.div>
-  //     </div>
-  //   </div>
-  // );
-
-
 }
