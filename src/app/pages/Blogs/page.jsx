@@ -1,136 +1,187 @@
-"use client";
-
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { Search, X } from "lucide-react";
-import { useUser } from "../../Provider";
+"use client"
+import { useState, useEffect } from "react"
+import { motion } from "framer-motion"
+import { Search, X, Calendar, Eye, ChevronRight } from "lucide-react"
+import { useUser } from "../../Provider"
+import Link from "next/link"
 
 const cardAnimation = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0 },
-};
+}
 
 const BlogPage = () => {
-  const { userData, isLoading } = useUser();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredPosts, setFilteredPosts] = useState([]);
-  const [expandedPost, setExpandedPost] = useState(null);
+  const { userData, isLoading } = useUser()
+  const [searchTerm, setSearchTerm] = useState("")
+  const [filteredPosts, setFilteredPosts] = useState([])
+  const [expandedPost, setExpandedPost] = useState(null)
 
   useEffect(() => {
     if (userData?.blogPosts) {
-      const lowerSearch = searchTerm.toLowerCase();
-      const filtered = userData.blogPosts.filter((post) =>
-        post.title.toLowerCase().includes(lowerSearch) ||
-        post.content.toLowerCase().includes(lowerSearch)
-      );
-      setFilteredPosts(filtered);
+      const lowerSearch = searchTerm.toLowerCase()
+      const filtered = userData.blogPosts.filter(
+        (post) => post.title.toLowerCase().includes(lowerSearch) || post.content.toLowerCase().includes(lowerSearch),
+      )
+      setFilteredPosts(filtered)
     }
-  }, [userData, searchTerm]);
+  }, [userData, searchTerm])
 
-  if (isLoading || !userData) return <p className="p-8">Loading...</p>;
-
-  return (
-    <div className="bg-[#f5ffff] text-[#0093cb] min-h-screen">
-      {/* Header */}
-      <div className="h-[50vh] bg-[#0093cb] flex flex-col justify-center items-start text-[#f5ffff] px-6 lg:px-20 text-left">
-        <h1 className="text-4xl lg:text-5xl font-bold mb-2">Blog</h1>
-        <p className="text-lg lg:text-xl text-[#b3e6f9]">
-          Insights, research, and updates from the professor.
-        </p>
-      </div>
-
-      {/* Search */}
-      <div className="px-6 lg:px-20 mt-8">
-        <div className="relative flex items-center">
-          <Search className="absolute left-3 text-[#0093cb] w-5 h-5" />
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search blog posts by title or content..."
-            className="w-full pl-10 p-3 rounded-lg border-2 border-[#0093cb] focus:outline-none focus:ring-2 focus:ring-[#0093cb] transition-shadow"
-          />
+  if (isLoading || !userData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="relative">
+          <div className="w-16 h-16 border-4 border-[#0093cb] border-t-transparent rounded-full animate-spin"></div>
         </div>
       </div>
+    )
+  }
 
-      {/* Blog Grid */}
-      <div className="px-6 lg:px-20 py-12">
-        {filteredPosts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredPosts.map((post, index) => (
-              <motion.div
-                key={post._id || index}
-                className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow overflow-hidden group"
-                initial="hidden"
-                animate="visible"
-                variants={cardAnimation}
-                transition={{ delay: index * 0.1 }}
-              >
-                {post.imageUrl && (
-                  <img
-                    src={post.imageUrl}
-                    alt={post.title}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                )}
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold text-[#0093cb]">{post.title}</h3>
-                  <p className="text-gray-700 mt-2 line-clamp-3">{post.content}</p>
-                  <div className="flex justify-between items-center mt-4">
-                    <span className="text-sm text-gray-500">
-                      {new Date(post.createdAt).toLocaleDateString()}
-                    </span>
-                    <button
-                      className="text-sm text-[#0093cb] hover:underline"
-                      onClick={() => setExpandedPost(post)}
-                    >
-                      Read More
-                    </button>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 text-[#223843]">
+      
+
+      {/* Main Content */}
+      <main className="container mx-auto px-6 py-10 max-w-6xl">
+        {/* Breadcrumb */}
+        <nav className="flex items-center space-x-2 text-sm text-gray-600 mb-6">
+          <Link href="/" className="hover:text-[#0284C7] transition-colors">
+            Home
+          </Link>
+          <ChevronRight className="w-4 h-4" />
+          <span className="text-[#0284C7] font-medium">Blog Posts</span>
+        </nav>
+
+        {/* Page Title */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-8"
+        >
+          <h1 className="text-4xl font-bold text-[#064A6E] mb-2">Blog Posts</h1>
+          <div className="h-[3px] w-24 bg-[#0284C7] rounded-full"></div>
+          <p className="text-gray-600 mt-4">Insights, research, and updates from the professor.</p>
+        </motion.div>
+
+        {/* Search */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mb-8"
+        >
+          <div className="relative max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#0284C7] w-5 h-5" />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search blog posts..."
+              className="w-full pl-10 pr-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-[#0284C7] transition-colors bg-white"
+            />
+          </div>
+        </motion.div>
+
+        {/* Blog Grid */}
+        <div className="mb-8">
+          {filteredPosts && filteredPosts.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredPosts.map((post, index) => (
+                <motion.div
+                  key={post._id || index}
+                  className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100"
+                  initial="hidden"
+                  animate="visible"
+                  variants={cardAnimation}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  {post.imageUrl && (
+                    <div className="relative overflow-hidden">
+                      <img
+                        src={post.imageUrl || "/placeholder.svg"}
+                        alt={post.title}
+                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                    </div>
+                  )}
+                  <div className="p-6">
+                    <h3 className="text-xl font-semibold text-[#064A6E] mb-3 group-hover:text-[#0284C7] transition-colors">
+                      {post.title}
+                    </h3>
+                    <p className="text-gray-600 mb-4 line-clamp-3">{post.content}</p>
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center space-x-2 text-sm text-gray-500">
+                        <Calendar className="w-4 h-4" />
+                        <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                      </div>
+                      <button
+                        className="flex items-center space-x-1 text-sm text-[#0284C7] hover:text-[#064A6E] transition-colors font-medium"
+                        onClick={() => setExpandedPost(post)}
+                      >
+                        <Eye className="w-4 h-4" />
+                        <span>Read More</span>
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center text-gray-500 mt-12">
-            No blog posts found for "{searchTerm}"
-          </div>
-        )}
-      </div>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <div className="text-gray-400 text-6xl mb-4">📝</div>
+              <h3 className="text-xl font-semibold text-gray-600 mb-2">
+                {searchTerm ? `No posts found for "${searchTerm}"` : "No Blog Posts Found"}
+              </h3>
+              <p className="text-gray-500">
+                {searchTerm ? "Try adjusting your search terms." : "Blog posts will appear here once published."}
+              </p>
+            </div>
+          )}
+        </div>
+      </main>
 
       {/* Modal for Expanded Post */}
       {expandedPost && (
         <div
-          className="fixed inset-0 bg-[rgba(0,0,0,0.4)] flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
           onClick={() => setExpandedPost(null)}
         >
-          <div
-            className="bg-white max-w-2xl w-full rounded-lg p-6 relative overflow-y-auto max-h-[80vh] shadow-2xl"
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="bg-white max-w-4xl w-full rounded-xl p-6 relative overflow-y-auto max-h-[80vh] shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <button
-              className="absolute top-4 right-4 text-gray-500 hover:text-black"
+              className="absolute top-4 right-4 text-gray-500 hover:text-black p-2 rounded-full hover:bg-gray-100 transition-colors"
               onClick={() => setExpandedPost(null)}
             >
               <X className="w-6 h-6" />
             </button>
-            <h2 className="text-2xl font-bold text-[#0093cb] mb-2">{expandedPost.title}</h2>
-            <p className="text-sm text-gray-500 mb-4">
-              {new Date(expandedPost.createdAt).toLocaleDateString()}
-            </p>
-            {expandedPost.imageUrl && (
-              <img
-                src={expandedPost.imageUrl}
-                alt={expandedPost.title}
-                className="w-full h-64 object-cover rounded mb-6"
-              />
-            )}
-            <p className="text-gray-800 whitespace-pre-wrap">{expandedPost.content}</p>
-          </div>
+            <div className="pr-12">
+              <h2 className="text-3xl font-bold text-[#064A6E] mb-4">{expandedPost.title}</h2>
+              <div className="flex items-center space-x-2 text-sm text-gray-500 mb-6">
+                <Calendar className="w-4 h-4" />
+                <span>{new Date(expandedPost.createdAt).toLocaleDateString()}</span>
+              </div>
+              {expandedPost.imageUrl && (
+                <img
+                  src={expandedPost.imageUrl || "/placeholder.svg"}
+                  alt={expandedPost.title}
+                  className="w-full h-64 object-cover rounded-lg mb-6"
+                />
+              )}
+              <div className="prose max-w-none">
+                <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">{expandedPost.content}</p>
+              </div>
+            </div>
+          </motion.div>
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default BlogPage;
+export default BlogPage
