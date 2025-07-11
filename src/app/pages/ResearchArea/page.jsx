@@ -36,7 +36,7 @@ const ResearchArea = () => {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 text-[#223843]">
+    <div className="min-h-screen bg-white text-[#223843]">
       
 
       {/* Main Content */}
@@ -128,6 +128,7 @@ const ResearchArea = () => {
           </div>
         )}
       </main>
+
     </div>
   )
 }

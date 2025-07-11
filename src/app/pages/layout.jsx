@@ -4,9 +4,8 @@ import Navbar from "../components/Navbar";
 import Header from "../components/Header";
 import { useUser } from "../Provider";     
 import Footer from "../components/Footer";
-
 export default function PagesLayout({ children }) {
-  const { userData } = useUser(); 
+  const { userData } = useUser();
 
   if (!userData?.user) {
     return (
@@ -17,11 +16,16 @@ export default function PagesLayout({ children }) {
   }
 
   return (
-    <div>
+    <div className="min-h-screen flex flex-col">
       <Header user={userData.user} />
       <Navbar />
-      <div>{children}</div>
-      <Footer/>
+
+      {/* Main content */}
+      <main className="flex-grow">
+        <div className="min-h-full">{children}</div>
+      </main>
+
+      <Footer />
     </div>
   );
 }

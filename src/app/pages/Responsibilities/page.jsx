@@ -74,7 +74,7 @@ const ResponsibilitiesPage = () => {
                       </div>
                       <div className="flex-1">
                         <div
-                          className="prose prose-gray max-w-none responsibility-content"
+                          className="max-w-none responsibility-content"
                           dangerouslySetInnerHTML={{ __html: res.ds }}
                         />
                       </div>
@@ -92,33 +92,43 @@ const ResponsibilitiesPage = () => {
           </div>
         )}
       </main>
+<style jsx>{`
+  :global(.responsibility-content h1),
+  :global(.responsibility-content h2),
+  :global(.responsibility-content h3) {
+    color: #111827;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
 
-      <style jsx>{`
-        .responsibility-content h1,
-        .responsibility-content h2,
-        .responsibility-content h3 {
-          color: #064a6e;
-          font-weight: 600;
-          margin-bottom: 0.5rem;
-        }
-        .responsibility-content p {
-          color: #374151;
-          line-height: 1.6;
-          margin-bottom: 1rem;
-        }
-        .responsibility-content ul,
-        .responsibility-content ol {
-          color: #374151;
-          padding-left: 1.5rem;
-        }
-        .responsibility-content li {
-          margin-bottom: 0.5rem;
-        }
-        .responsibility-content strong {
-          color: #0284c7;
-          font-weight: 600;
-        }
-      `}</style>
+  :global(.responsibility-content p) {
+    color: #1f2937;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  :global(.responsibility-content ul),
+  :global(.responsibility-content ol) {
+    color: #1f2937;
+    padding-left: 1.5rem;
+  }
+
+  :global(.responsibility-content li) {
+    margin-bottom: 0.5rem;
+  }
+
+  :global(.responsibility-content strong) {
+    color: #111827;
+    font-weight: 600;
+  }
+
+  :global(.responsibility-content a) {
+    color: #1f2937;
+    text-decoration: none;
+  }
+`}</style>
+
+
     </div>
   )
 }

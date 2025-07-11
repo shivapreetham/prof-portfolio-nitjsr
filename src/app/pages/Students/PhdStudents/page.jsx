@@ -1,12 +1,14 @@
 "use client"
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { ChevronRight, GraduationCap, Calendar, User, BookOpen } from "lucide-react"
+import { ChevronRight, ChevronLeft } from "lucide-react"
 import Link from "next/link"
 
 const PhdStudents = () => {
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(0)
+  const itemsPerPage = 5
 
   useEffect(() => {
     const getData = async () => {
@@ -22,6 +24,17 @@ const PhdStudents = () => {
     }
     getData()
   }, [])
+
+  const theses =
+    data?.length > 0 ? data : [{ research_topic: "No Thesis Supervised", name_of_student: "N/A", completion_year: 0 }]
+
+  const offset = currentPage * itemsPerPage
+  const currentData = theses.slice(offset, offset + itemsPerPage)
+  const pageCount = Math.ceil(theses.length / itemsPerPage)
+
+  const handlePageChange = (selectedPage) => {
+    setCurrentPage(selectedPage)
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
@@ -58,61 +71,72 @@ const PhdStudents = () => {
           </div>
         ) : (
           <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-            {data.length > 0 ? (
-              <div className="divide-y divide-gray-100">
-                {data.map((student, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="p-6 hover:bg-gray-50 transition-colors"
+            <div className="p-6">
+              <h3 className="text-xl font-semibold mb-6 text-[#064A6E]">PhD Theses Supervised</h3>
+
+              {/* Table */}
+              <div className="overflow-x-auto">
+                <table className="min-w-full border border-gray-200">
+                  <thead className="bg-[#0891B2] text-white">
+                    <tr>
+                      <th className="border border-gray-300 px-4 py-3 text-left font-semibold">Research Topic</th>
+                      <th className="border border-gray-300 px-4 py-3 text-left font-semibold">Student</th>
+                      <th className="border border-gray-300 px-4 py-3 text-left font-semibold">Year of Completion</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentData.map((thesis, index) => (
+                      <motion.tr
+                        key={index}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: index * 0.1 }}
+                        className="hover:bg-gray-50 transition-colors"
+                      >
+                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{thesis.research_topic}</td>
+                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{thesis.name_of_student}</td>
+                        <td className="border border-gray-300 px-4 py-3 text-gray-700">
+                          {thesis.completion_year || "Ongoing"}
+                        </td>
+                      </motion.tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Pagination */}
+              {pageCount > 1 && (
+                <div className="flex justify-center items-center gap-2 mt-6">
+                  <button
+                    onClick={() => handlePageChange(Math.max(0, currentPage - 1))}
+                    disabled={currentPage === 0}
+                    className="px-3 py-1 border border-gray-300 rounded hover:bg-gray-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
                   >
-                    <div className="flex items-start space-x-4">
-                      <div className="flex-shrink-0">
-                        <div className="w-12 h-12 bg-[#0891B2] rounded-full flex items-center justify-center">
-                          <GraduationCap className="w-6 h-6 text-white" />
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-3 mb-2">
-                          <h3 className="text-lg font-semibold text-[#064A6E]">{student.student_name}</h3>
-                          <span className="px-3 py-1 bg-[#0284C7] text-white text-sm rounded-full font-medium">
-                            PhD
-                          </span>
-                        </div>
-                        {student.thesis_title && (
-                          <div className="flex items-start space-x-2 mb-3">
-                            <BookOpen className="w-4 h-4 text-[#0284C7] mt-1 flex-shrink-0" />
-                            <p className="text-gray-700 font-medium">{student.thesis_title}</p>
-                          </div>
-                        )}
-                        <div className="flex items-center space-x-6 text-sm text-gray-600">
-                          {student.completion_year && (
-                            <div className="flex items-center space-x-1">
-                              <Calendar className="w-4 h-4" />
-                              <span>Completed: {student.completion_year}</span>
-                            </div>
-                          )}
-                          {student.status && (
-                            <div className="flex items-center space-x-1">
-                              <User className="w-4 h-4" />
-                              <span>Status: {student.status}</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <div className="text-gray-400 text-6xl mb-4">🎓</div>
-                <h3 className="text-xl font-semibold text-gray-600 mb-2">No PhD Students Found</h3>
-                <p className="text-gray-500">PhD student information will appear here once available.</p>
-              </div>
-            )}
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+
+                  {Array.from({ length: pageCount }, (_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => handlePageChange(i)}
+                      className={`px-3 py-1 border border-gray-300 rounded cursor-pointer transition-colors ${
+                        currentPage === i ? "bg-[#0891B2] text-white" : "hover:bg-gray-200"
+                      }`}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+
+                  <button
+                    onClick={() => handlePageChange(Math.min(pageCount - 1, currentPage + 1))}
+                    disabled={currentPage === pageCount - 1}
+                    className="px-3 py-1 border border-gray-300 rounded hover:bg-gray-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </main>
