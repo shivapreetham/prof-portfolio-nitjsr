@@ -67,7 +67,7 @@ export default function Navbar() {
       name: "Achievements",
       path: "/pages/Awards",
       dropdownItems: [
-        { name: "Funded Projects", path: "/pages/Awards/AwardsList" },
+        { name: "Funded Projects", path: "/pages/Awards" },
         { name: "Conferences Attended", path: "/pages/Awards/Recognitions" },
         { name: "Awards & Honors", path: "/pages/Awards/Honors" },
       ],
