@@ -166,7 +166,7 @@ export default function Navbar() {
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="bg-[#F4B400] overflow-hidden px-6 pb-4"
+              className="bg-[#0891B2] overflow-hidden px-6 pb-4"
             >
               <div className="space-y-3">
                 {navLinks.map((item, index) => (
@@ -195,13 +195,11 @@ export default function Navbar() {
                         exit={{ opacity: 0, height: 0 }}
                         className="pl-4 space-y-2 text-sm"
                       >
-                        <p className="text-[13px] mt-2 text-[#064A6E]">
-                          {item.name === "Research"
-                            ? "My primary research interests are in Wireless Communications"
-                            : `Explore ${item.name} section for detailed information`}
+                        <p className="text-[13px] mt-2 text-white">
+                          Explore {item.name} section for detailed information
                         </p>
                         <Link href={item.dropdownItems[0]?.path || item.path}>
-                          <button className="mt-2 px-3 py-1 bg-[#1e293b] text-white rounded-md text-xs hover:bg-[#334155] transition-colors">
+                          <button className="mt-2 px-3 py-1 bg-[#064A6E] text-white rounded-md text-xs hover:bg-[#334155] transition-colors">
                             {item.name === "Research" ? "List of Publications" : `View ${item.name}`}
                           </button>
                         </Link>
@@ -209,7 +207,7 @@ export default function Navbar() {
                           <Link
                             key={subIndex}
                             href={subItem.path}
-                            className="block text-[#064A6E] hover:underline hover:text-[#0284C7] transition-colors"
+                            className="block text-[#022B35] hover:text-white transition-colors"
                             onClick={() => setMenuOpen(false)}
                           >
                             {subItem.name}
