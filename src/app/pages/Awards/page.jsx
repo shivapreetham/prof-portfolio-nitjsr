@@ -53,7 +53,7 @@ export default function AwardsPage() {
           <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-8 text-sm leading-relaxed">
             <div
               className="rich-content"
-              dangerouslySetInnerHTML={{ __html: activities[0]?.activities || "<p>No content available.</p>" }}
+              dangerouslySetInnerHTML={{ __html: activities?.[0]?.activities || "<p>No content available.</p>" }}
             />
           </div>
         )}
