@@ -1,15 +1,16 @@
 import mongoose from 'mongoose';
-// User Model
-const UserSchema = new mongoose.Schema({
+
+// Profile Model - Single profile for the professor
+const ProfileSchema = new mongoose.Schema({
   name: { type: String, required: true, maxlength: 100 },
-  email: { type: String, required: true, unique: true, maxlength: 100 },
+  email: { type: String, required: true, maxlength: 100 },
   profileImage: { type: String },
   bio: { type: String },
   location: { type: String, maxlength: 100 },
   linkedIn: { type: String, maxlength: 255 },
 }, { timestamps: true });
 
-export const User = (mongoose.models && mongoose.models.User) || mongoose.model('User', UserSchema);
+export const Profile = (mongoose.models && mongoose.models.Profile) || mongoose.model('Profile', ProfileSchema);
 
 // Student Model
 const StudentSchema = new mongoose.Schema({
@@ -28,17 +29,22 @@ export const Student = (mongoose.models && mongoose.models.Student) || mongoose.
 
 // Blog Post Model
 const BlogPostSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   title: { type: String, required: true, maxlength: 200 },
   content: { type: String, required: true },
-  imageUrl: { type: String },
+  imageUrl: { type: String }, // Keep for backward compatibility
+  mediaFiles: [{
+    type: { type: String, enum: ['image', 'video'], required: true },
+    url: { type: String, required: true },
+    filename: { type: String },
+    size: { type: Number },
+    mimeType: { type: String }
+  }]
 }, { timestamps: true });
 
 export const BlogPost = (mongoose.models && mongoose.models.BlogPost) || mongoose.model('BlogPost', BlogPostSchema);
 
 // Teaching Experience Model
 const TeachingExperienceSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   subject: { type: String, required: true, maxlength: 200 },
   institution: { type: String, required: true, maxlength: 200 },
   startDate: { type: Date, required: true },
