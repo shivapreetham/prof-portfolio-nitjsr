@@ -1,18 +1,21 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Camera } from 'lucide-react';
+import { Camera, X, Upload, Image, Video } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { uploadImage } from '@/utils/uploadImage';
+import { uploadMedia } from '@/utils/uploadMedia';
 
 export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
   const fileInputRef = useRef(null);
+  const mediaInputRef = useRef(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     content: '',
-    imageUrl: ''
+    imageUrl: '',
+    mediaFiles: []
   });
 
   useEffect(() => {
@@ -20,13 +23,15 @@ export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
       setFormData({
         title: editingPost.title || '',
         content: editingPost.content || '',
-        imageUrl: editingPost.imageUrl || ''
+        imageUrl: editingPost.imageUrl || '',
+        mediaFiles: editingPost.mediaFiles || []
       });
     } else {
       setFormData({
         title: '',
         content: '',
-        imageUrl: ''
+        imageUrl: '',
+        mediaFiles: []
       });
     }
   }, [editingPost]);
@@ -59,6 +64,61 @@ export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
+  };
+
+  const handleMediaUpload = async (event) => {
+    const files = Array.from(event.target.files || []);
+    if (files.length === 0) return;
+
+    setIsUploading(true);
+    try {
+      const uploadPromises = files.map(file => 
+        uploadMedia(file, {
+          bucketName: 'media',
+          folderPath: 'blog-posts'
+        })
+      );
+      
+      const results = await Promise.all(uploadPromises);
+      const successfulUploads = results.filter(result => result.success);
+      const failedUploads = results.filter(result => !result.success);
+
+      if (successfulUploads.length > 0) {
+        const newMediaFiles = successfulUploads.map(result => ({
+          type: result.type,
+          url: result.url,
+          filename: result.filename,
+          size: result.size,
+          mimeType: result.mimeType
+        }));
+        
+        setFormData((prev) => ({
+          ...prev,
+          mediaFiles: [...prev.mediaFiles, ...newMediaFiles]
+        }));
+        
+        toast.success(`${successfulUploads.length} file(s) uploaded successfully!`);
+      }
+
+      if (failedUploads.length > 0) {
+        failedUploads.forEach(result => {
+          toast.error(result.error || 'Failed to upload file');
+        });
+      }
+    } catch (error) {
+      console.error('Error uploading media:', error);
+      toast.error('Failed to upload media files');
+    } finally {
+      setIsUploading(false);
+      if (mediaInputRef.current) mediaInputRef.current.value = '';
+    }
+  };
+
+  const handleRemoveMedia = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      mediaFiles: prev.mediaFiles.filter((_, i) => i !== index)
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -106,6 +166,9 @@ export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
           </h3>
 
           <div className="form-control w-full">
+            <label className="label py-1">
+              <span className="label-text text-sm">Featured Image</span>
+            </label>
             <input
               type="file"
               ref={fileInputRef}
@@ -141,6 +204,75 @@ export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
                 </div>
               )}
             </div>
+          </div>
+
+          <div className="form-control w-full">
+            <label className="label py-1">
+              <span className="label-text text-sm">Additional Media (Images & Videos)</span>
+            </label>
+            <input
+              type="file"
+              ref={mediaInputRef}
+              onChange={handleMediaUpload}
+              className="hidden"
+              accept="image/jpeg,image/png,image/webp,video/mp4,video/webm,video/ogg"
+              multiple
+              disabled={isUploading}
+            />
+            <button
+              type="button"
+              className="btn btn-sm btn-outline w-full"
+              onClick={() => mediaInputRef.current?.click()}
+              disabled={isUploading}
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              {isUploading ? 'Uploading...' : 'Add Images & Videos'}
+            </button>
+            
+            {formData.mediaFiles.length > 0 && (
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                {formData.mediaFiles.map((file, index) => (
+                  <div key={index} className="relative group border rounded-lg overflow-hidden">
+                    {file.type === 'image' ? (
+                      <div className="relative">
+                        <img
+                          src={file.url}
+                          alt={file.filename}
+                          className="w-full h-20 object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <Image className="w-4 h-4 text-white" />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="relative">
+                        <video
+                          src={file.url}
+                          className="w-full h-20 object-cover"
+                          muted
+                        />
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <Video className="w-4 h-4 text-white" />
+                        </div>
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveMedia(index)}
+                      className="absolute top-1 right-1 bg-error text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                    <div className="p-1">
+                      <p className="text-xs truncate">{file.filename}</p>
+                      <p className="text-xs text-base-content/60">
+                        {(file.size / 1024 / 1024).toFixed(1)}MB
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="form-control w-full">

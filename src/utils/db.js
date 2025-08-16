@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI="mongodb+srv://2005shadowme:S5quug2t2WfmiabD@shatterbox.qksgz.mongodb.net/KKsir?retryWrites=true&w=majority"
+const MONGODB_URI = process.env.MONGODB_URI;
 if (!MONGODB_URI) {
   throw new Error('MONGODB_URI is missing in .env file');
 }

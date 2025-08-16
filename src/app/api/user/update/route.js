@@ -1,4 +1,4 @@
-import { User } from '@/models/models';
+import { Profile } from '@/models/models';
 import { NextResponse } from 'next/server';
 import connectDB from '@/utils/db';
 
@@ -24,31 +24,36 @@ export async function PATCH(request) {
       );
     }
 
-    // Use the hardcoded user ID
-    const userId = "67ed468b5b281d81f91a0a78";
-
-    // Update the user and run model validators
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { [field]: value },
-      { new: true, runValidators: true }
-    );
-
-    if (!updatedUser) {
-      return NextResponse.json(
-        { message: 'User not found.' },
-        { status: 404 }
-      );
+    // Find or create the single profile (since there's only one user)
+    let profile = await Profile.findOne({});
+    
+    if (!profile) {
+      // Create profile if it doesn't exist with the initial field value
+      const initialData = {
+        name: field === 'name' ? value : 'Professor Name',
+        email: field === 'email' ? value : 'professor@university.edu',
+        bio: field === 'bio' ? value : '',
+        location: field === 'location' ? value : '',
+        linkedIn: field === 'linkedIn' ? value : '',
+        profileImage: field === 'profileImage' ? value : ''
+      };
+      
+      profile = new Profile(initialData);
+      await profile.save({ runValidators: true });
+    } else {
+      // Update the existing profile field
+      profile[field] = value;
+      await profile.save({ runValidators: true });
     }
 
     return NextResponse.json({
-      message: 'User updated successfully.',
-      user: updatedUser
+      message: 'Profile updated successfully.',
+      user: profile
     });
   } catch (error) {
-    console.error('Error updating user:', error);
+    console.error('Error updating profile:', error);
     return NextResponse.json(
-      { message: 'Failed to update user.' },
+      { message: 'Failed to update profile.' },
       { status: 500 }
     );
   }

@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/utils/db';
 import {
-  User,
+  Profile,
   BlogPost,
   TeachingExperience,
   Student 
@@ -11,24 +11,31 @@ import {
 export async function GET() {
   try {
     await dbConnect();
-    const user = await User.findOne({});
-    if (!user) {
-      return NextResponse.json(
-        { success: false, message: 'Professor data not found' },
-        { status: 404 }
-      );
+    
+    // Get or create the single profile
+    let profile = await Profile.findOne({});
+    if (!profile) {
+      profile = new Profile({
+        name: 'Professor Name',
+        email: 'professor@university.edu',
+        bio: '',
+        location: '',
+        linkedIn: '',
+        profileImage: ''
+      });
+      await profile.save();
     }
-    const userId = user._id;
 
+    // Get all data without userId filtering since there's only one user
     const [ blogPosts = [], teachingExperiences = [], students = [] ] =
       await Promise.all([
-        BlogPost.find({ userId }).sort({ createdAt: -1 }).catch(() => []),
-        TeachingExperience.find({ userId }).sort({ startDate: -1 }).catch(() => []),
-        Student.find({ teacherId: userId }).sort({ createdAt: -1 }).catch(() => []),
+        BlogPost.find({}).sort({ createdAt: -1 }).catch(() => []),
+        TeachingExperience.find({}).sort({ startDate: -1 }).catch(() => []),
+        Student.find({}).sort({ createdAt: -1 }).catch(() => []),
       ]);
 
     const portfolioData = {
-      user,
+      user: profile,
       blogPosts,
       teachingExperiences,
       students     

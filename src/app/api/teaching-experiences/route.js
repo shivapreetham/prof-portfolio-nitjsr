@@ -2,13 +2,11 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/utils/db';
 import { TeachingExperience } from '@/models/models';
 
-const HARDCODED_USER_ID = "67ed468b5b281d81f91a0a78";
-
-// GET - Fetch all teaching experiences for the user
+// GET - Fetch all teaching experiences
 export async function GET() {
   try {
     await connectDB();
-    const experiences = await TeachingExperience.find({ userId: HARDCODED_USER_ID }).sort({ startDate: -1 });
+    const experiences = await TeachingExperience.find({}).sort({ startDate: -1 });
     return NextResponse.json(experiences);
   } catch (error) {
     console.error('Error fetching teaching experiences:', error);
@@ -28,7 +26,6 @@ export async function POST(request) {
 
     await connectDB();
     const newExperience = new TeachingExperience({
-      userId: HARDCODED_USER_ID,
       subject,
       institution,
       startDate: new Date(startDate),

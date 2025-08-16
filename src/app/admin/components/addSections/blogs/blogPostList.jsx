@@ -1,4 +1,4 @@
-import { Clock, FileEdit, Image, PenSquare, Trash2 } from "lucide-react";
+import { Clock, FileEdit, Image, PenSquare, Trash2, Video, FileImage } from "lucide-react";
 import React from "react";
 
 export const BlogPostList = ({ postsList, onEdit, onDelete }) => {
@@ -28,7 +28,13 @@ export const BlogPostList = ({ postsList, onEdit, onDelete }) => {
                   {post.imageUrl && (
                     <div className="flex items-center">
                       <Image className="w-4 h-4 mr-1" />
-                      <span>Has featured image</span>
+                      <span>Featured image</span>
+                    </div>
+                  )}
+                  {post.mediaFiles && post.mediaFiles.length > 0 && (
+                    <div className="flex items-center">
+                      <FileImage className="w-4 h-4 mr-1" />
+                      <span>{post.mediaFiles.length} media file{post.mediaFiles.length !== 1 ? 's' : ''}</span>
                     </div>
                   )}
                 </div>
