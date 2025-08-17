@@ -30,8 +30,8 @@ export async function DELETE(request, { params }) {
 
     if (deleted.videoUrl) {
       try {
-        const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL || 'http://localhost:3000';
-        const res = await fetch(`${baseUrl}/api/cloudFlare/deleteImage`, {
+        const deletionEndpoint = new URL('/api/cloudFlare/deleteImage', request.url).toString();
+        const res = await fetch(deletionEndpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ imageUrl: deleted.videoUrl }),
