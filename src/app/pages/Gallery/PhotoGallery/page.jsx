@@ -50,7 +50,7 @@ const PhotoGalleryPage = () => {
             >
               <img
                 src={photo.imageUrl}
-                alt={photo.title || `Photo ${index + 1}`}
+                alt={photo.caption || `Photo ${index + 1}`}
                 className="w-full h-48 object-cover"
                 loading="lazy"
               />
@@ -77,7 +77,7 @@ const PhotoGalleryPage = () => {
           </button>
           <img
             src={photos[currentIndex].imageUrl}
-            alt={photos[currentIndex].title || ''}
+            alt={photos[currentIndex].caption || ''}
             className="max-h-[80vh] object-contain rounded"
           />
           <button
@@ -92,9 +92,11 @@ const PhotoGalleryPage = () => {
           >
             <X size={28} />
           </button>
-          <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white p-4 text-center">
-            {photos[currentIndex].caption}
-          </div>
+          {photos[currentIndex].caption && (
+            <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white p-4 text-center">
+              {photos[currentIndex].caption}
+            </div>
+          )}
           <div className="absolute bottom-0 left-0 right-0 pb-20 flex justify-center overflow-x-auto gap-2">
             {photos.map((p, idx) => (
               <img
