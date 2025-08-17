@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useUser } from "../../../Provider";
 
@@ -21,23 +22,47 @@ const PhotoGalleryPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {photos.map((photo, index) => (
-          <div
-            key={photo._id || index}
-            className="cursor-pointer rounded-lg overflow-hidden shadow-md border border-gray-100"
-            onClick={() => openModal(index)}
-          >
-            <img
-              src={photo.imageUrl}
-              alt={photo.title || `Photo ${index + 1}`}
-              className="w-full h-full object-cover"
-              loading="lazy"
-            />
-          </div>
-        ))}
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 text-[#223843]">
+      <main className="container mx-auto px-6 py-10 max-w-6xl">
+        {/* Breadcrumb */}
+        <nav className="flex items-center space-x-2 text-sm text-gray-600 mb-6">
+          <Link href="/" className="hover:text-[#0284C7] transition-colors">
+            Home
+          </Link>
+          <ChevronRight className="w-4 h-4" />
+          <span className="text-[#0284C7] font-medium">Photo Gallery</span>
+        </nav>
+
+        {/* Page Title */}
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-[#064A6E] mb-2">Photo Gallery</h1>
+          <div className="h-[3px] w-24 bg-[#0284C7] rounded-full"></div>
+          <p className="text-gray-600 mt-4">A glimpse into various moments and events.</p>
+        </div>
+
+        {/* Photo Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {photos.map((photo, index) => (
+            <div
+              key={photo._id || index}
+              className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer border border-gray-100"
+              onClick={() => openModal(index)}
+            >
+              <img
+                src={photo.imageUrl}
+                alt={photo.title || `Photo ${index + 1}`}
+                className="w-full h-48 object-cover"
+                loading="lazy"
+              />
+              {photo.caption && (
+                <div className="p-4">
+                  <p className="text-sm text-gray-600 line-clamp-2">{photo.caption}</p>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </main>
 
       {currentIndex !== null && (
         <div
@@ -79,9 +104,7 @@ const PhotoGalleryPage = () => {
                   e.stopPropagation();
                   setCurrentIndex(idx);
                 }}
-                className={`h-16 w-16 object-cover rounded cursor-pointer ${
-                  idx === currentIndex ? 'ring-2 ring-white' : ''
-                }`}
+                className={`h-16 w-16 object-cover rounded cursor-pointer ${idx === currentIndex ? 'ring-2 ring-white' : ''}`}
               />
             ))}
           </div>

@@ -27,6 +27,24 @@ export async function DELETE(request, { params }) {
     if (!deleted) {
       return NextResponse.json({ error: 'Photo not found' }, { status: 404 });
     }
+
+    if (deleted.imageUrl) {
+      try {
+        const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL || 'http://localhost:3000';
+        const res = await fetch(`${baseUrl}/api/cloudFlare/deleteImage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ imageUrl: deleted.imageUrl }),
+        });
+        const data = await res.json();
+        if (!data.success) {
+          console.warn('Cloudflare image deletion failed:', data.error);
+        }
+      } catch (err) {
+        console.error('Error calling Cloudflare deletion API:', err);
+      }
+    }
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting photo:', error);
