@@ -17,12 +17,12 @@ export async function POST(request) {
   try {
     await connectDB();
     const data = await request.json();
-    const photo = new Photo(data);
-    await photo.save();
-    return NextResponse.json(photo, { status: 201 });
+    const photosData = Array.isArray(data) ? data : [data];
+    const photos = await Photo.insertMany(photosData);
+    return NextResponse.json(photos, { status: 201 });
   } catch (error) {
     console.error('Error creating photo:', error);
-    return NextResponse.json({ error: 'Failed to create photo' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to create photo(s)' }, { status: 500 });
   }
 }
 

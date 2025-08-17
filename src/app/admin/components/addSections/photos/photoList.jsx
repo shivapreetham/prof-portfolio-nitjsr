@@ -11,7 +11,6 @@ export const PhotoList = ({ photosList, onEdit, onDelete }) => {
         <thead>
           <tr>
             <th>Thumbnail</th>
-            <th>Title</th>
             <th>Caption</th>
             <th>Order</th>
             <th>Created</th>
@@ -22,9 +21,8 @@ export const PhotoList = ({ photosList, onEdit, onDelete }) => {
           {photosList.map((photo) => (
             <tr key={photo._id}>
               <td>
-                <img src={photo.imageUrl} alt={photo.title || 'Photo'} className="w-16 h-16 object-cover rounded" />
+                <img src={photo.imageUrl} alt={photo.caption || 'Photo'} className="w-16 h-16 object-cover rounded" />
               </td>
-              <td>{photo.title || '-'}</td>
               <td className="max-w-xs truncate">{photo.caption || '-'}</td>
               <td>{photo.order ?? '-'}</td>
               <td>{new Date(photo.createdAt).toLocaleDateString()}</td>

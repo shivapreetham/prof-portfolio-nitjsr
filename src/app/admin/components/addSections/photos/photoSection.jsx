@@ -28,7 +28,7 @@ export const PhotoSection = () => {
           Photo Gallery
         </h2>
         <button className="btn btn-primary" onClick={openAddModal}>
-          Add Photo
+          Add Photos
         </button>
       </div>
 

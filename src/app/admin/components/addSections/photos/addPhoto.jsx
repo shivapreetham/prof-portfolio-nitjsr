@@ -9,75 +9,86 @@ export const AddPhoto = ({ isOpen, onClose, editingPhoto, onPhotoAdded }) => {
   const fileInputRef = useRef(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({
-    title: '',
-    caption: '',
-    order: '',
-    imageUrl: ''
-  });
+  const [photos, setPhotos] = useState([]);
 
   useEffect(() => {
     if (editingPhoto) {
-      setFormData({
-        title: editingPhoto.title || '',
-        caption: editingPhoto.caption || '',
-        order: editingPhoto.order || '',
-        imageUrl: editingPhoto.imageUrl || ''
-      });
+      setPhotos([
+        {
+          caption: editingPhoto.caption || '',
+          order: editingPhoto.order || '',
+          imageUrl: editingPhoto.imageUrl || '',
+        },
+      ]);
     } else {
-      setFormData({ title: '', caption: '', order: '', imageUrl: '' });
+      setPhotos([]);
     }
   }, [editingPhoto]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleImageUpload = async (event) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+  const handleImageUpload = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
 
     setIsUploading(true);
-    try {
-      const result = await uploadImage(file, {
-        bucketName: 'profile-images',
-        folderPath: 'gallery/photos'
-      });
-      if (result.success) {
-        setFormData((prev) => ({ ...prev, imageUrl: result.url }));
-        toast.success('Image uploaded successfully!');
-      } else {
-        throw new Error(result.error);
+    const uploaded = [];
+
+    for (const file of files) {
+      try {
+        const result = await uploadImage(file, {
+          bucketName: 'profile-images',
+          folderPath: 'gallery/photos',
+        });
+        if (result.success) {
+          uploaded.push({ caption: '', order: '', imageUrl: result.url });
+        } else {
+          throw new Error(result.error);
+        }
+      } catch (error) {
+        console.error('Error uploading image:', error);
+        toast.error(error.message || 'Failed to upload image');
       }
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      toast.error(error.message || 'Failed to upload image');
-    } finally {
-      setIsUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = '';
     }
+
+    setPhotos((prev) => [...prev, ...uploaded]);
+    setIsUploading(false);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const handlePhotoChange = (index, field, value) => {
+    setPhotos((prev) =>
+      prev.map((photo, i) => (i === index ? { ...photo, [field]: value } : photo))
+    );
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.imageUrl) {
+    if (editingPhoto && !photos[0]?.imageUrl) {
       toast.error('Image is required');
       return;
     }
+    if (!editingPhoto && photos.length === 0) {
+      toast.error('Please upload at least one image');
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      const endpoint = editingPhoto ? `/api/photos/${editingPhoto._id || editingPhoto.id}` : '/api/photos';
-      const method = editingPhoto ? 'PUT' : 'POST';
-      const res = await fetch(endpoint, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-      if (!res.ok) {
-        throw new Error(editingPhoto ? 'Failed to update photo' : 'Failed to create photo');
+      if (editingPhoto) {
+        const endpoint = `/api/photos/${editingPhoto._id || editingPhoto.id}`;
+        const res = await fetch(endpoint, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(photos[0]),
+        });
+        if (!res.ok) throw new Error('Failed to update photo');
+      } else {
+        const res = await fetch('/api/photos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(photos),
+        });
+        if (!res.ok) throw new Error('Failed to create photos');
       }
-      await res.json();
       onPhotoAdded();
       onClose();
     } catch (error) {
@@ -94,11 +105,13 @@ export const AddPhoto = ({ isOpen, onClose, editingPhoto, onPhotoAdded }) => {
     <div className="card bg-base-300 shadow-lg max-w-2xl mt-5">
       <div className="card-body p-4">
         <form onSubmit={handleSubmit} className="space-y-3">
-          <h3 className="card-title text-base mb-2">{editingPhoto ? 'Edit Photo' : 'Add Photo'}</h3>
+          <h3 className="card-title text-base mb-2">
+            {editingPhoto ? 'Edit Photo' : 'Add Photos'}
+          </h3>
 
           <div className="form-control w-full">
             <label className="label py-1">
-              <span className="label-text text-sm">Image</span>
+              <span className="label-text text-sm">Images</span>
             </label>
             <input
               type="file"
@@ -106,19 +119,29 @@ export const AddPhoto = ({ isOpen, onClose, editingPhoto, onPhotoAdded }) => {
               onChange={handleImageUpload}
               className="hidden"
               accept="image/jpeg,image/png,image/webp"
+              multiple={!editingPhoto}
               disabled={isUploading}
             />
             <div
               className="relative border-2 border-dashed border-accent/30 rounded-lg p-2 cursor-pointer hover:border-accent/50 transition-colors"
-              style={{ height: '160px' }}
+              style={{ minHeight: '160px' }}
               onClick={() => fileInputRef.current?.click()}
             >
               {isUploading ? (
                 <div className="absolute inset-0 flex items-center justify-center">
                   <span className="loading loading-spinner loading-sm"></span>
                 </div>
-              ) : formData.imageUrl ? (
-                <img src={formData.imageUrl} alt="Photo" className="w-full h-full object-cover rounded-lg" />
+              ) : photos.length > 0 ? (
+                <div className="grid grid-cols-3 gap-2">
+                  {photos.map((p, idx) => (
+                    <img
+                      key={idx}
+                      src={p.imageUrl}
+                      alt="Photo preview"
+                      className="w-full h-32 object-cover rounded-lg"
+                    />
+                  ))}
+                </div>
               ) : (
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                   <Camera className="w-6 h-6 opacity-40" />
@@ -128,49 +151,47 @@ export const AddPhoto = ({ isOpen, onClose, editingPhoto, onPhotoAdded }) => {
             </div>
           </div>
 
-          <div className="form-control">
-            <label className="label py-1">
-              <span className="label-text text-sm">Title</span>
-            </label>
-            <input
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              className="input input-bordered"
-            />
-          </div>
+          {photos.map((photo, index) => (
+            <div key={index} className="space-y-3 border p-3 rounded-lg">
+              <div className="form-control">
+                <label className="label py-1">
+                  <span className="label-text text-sm">Caption</span>
+                </label>
+                <textarea
+                  value={photo.caption}
+                  onChange={(e) =>
+                    handlePhotoChange(index, 'caption', e.target.value)
+                  }
+                  className="textarea textarea-bordered"
+                  rows={3}
+                ></textarea>
+              </div>
 
-          <div className="form-control">
-            <label className="label py-1">
-              <span className="label-text text-sm">Caption</span>
-            </label>
-            <textarea
-              name="caption"
-              value={formData.caption}
-              onChange={handleChange}
-              className="textarea textarea-bordered"
-              rows={3}
-            ></textarea>
-          </div>
-
-          <div className="form-control">
-            <label className="label py-1">
-              <span className="label-text text-sm">Order</span>
-            </label>
-            <input
-              type="number"
-              name="order"
-              value={formData.order}
-              onChange={handleChange}
-              className="input input-bordered"
-            />
-          </div>
+              <div className="form-control">
+                <label className="label py-1">
+                  <span className="label-text text-sm">Order</span>
+                </label>
+                <input
+                  type="number"
+                  value={photo.order}
+                  onChange={(e) =>
+                    handlePhotoChange(index, 'order', e.target.value)
+                  }
+                  className="input input-bordered"
+                />
+              </div>
+            </div>
+          ))}
 
           <div className="flex justify-end">
             <button type="button" className="btn btn-ghost mr-2" onClick={onClose}>
               Cancel
             </button>
-            <button type="submit" className="btn btn-primary" disabled={isSubmitting || isUploading}>
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={isSubmitting || isUploading}
+            >
               {isSubmitting ? 'Saving...' : 'Save'}
             </button>
           </div>
