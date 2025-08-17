@@ -15,7 +15,9 @@ const Provider = ({ children }) => {
     blogPosts: [],
     teachingExperiences: [],
     awards: [],
-    collaborations: []
+    collaborations: [],
+    photos: [],
+    videos: []
   });
 
   const getUserData = async () => {

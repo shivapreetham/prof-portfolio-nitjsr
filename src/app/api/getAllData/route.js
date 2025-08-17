@@ -5,7 +5,9 @@ import {
   Profile,
   BlogPost,
   TeachingExperience,
-  Student 
+  Student,
+  Photo,
+  Video
 } from '@/models/models';
 
 export async function GET() {
@@ -27,18 +29,22 @@ export async function GET() {
     }
 
     // Get all data without userId filtering since there's only one user
-    const [ blogPosts = [], teachingExperiences = [], students = [] ] =
+    const [ blogPosts = [], teachingExperiences = [], students = [], photos = [], videos = [] ] =
       await Promise.all([
         BlogPost.find({}).sort({ createdAt: -1 }).catch(() => []),
         TeachingExperience.find({}).sort({ startDate: -1 }).catch(() => []),
         Student.find({}).sort({ createdAt: -1 }).catch(() => []),
+        Photo.find({}).sort({ order: 1, createdAt: -1 }).catch(() => []),
+        Video.find({}).sort({ order: 1, createdAt: -1 }).catch(() => []),
       ]);
 
     const portfolioData = {
       user: profile,
       blogPosts,
       teachingExperiences,
-      students     
+      students,
+      photos,
+      videos
     };
 
     console.log(portfolioData);

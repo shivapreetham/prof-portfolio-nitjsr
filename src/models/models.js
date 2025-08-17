@@ -53,6 +53,27 @@ const TeachingExperienceSchema = new mongoose.Schema({
 
 export const TeachingExperience = (mongoose.models && mongoose.models.TeachingExperience) || mongoose.model('TeachingExperience', TeachingExperienceSchema);
 
+// Photo Gallery Model
+const PhotoSchema = new mongoose.Schema({
+  title: { type: String, maxlength: 200 },
+  caption: { type: String },
+  order: { type: Number },
+  imageUrl: { type: String, required: true }
+}, { timestamps: true });
+
+export const Photo = (mongoose.models && mongoose.models.Photo) || mongoose.model('Photo', PhotoSchema);
+
+// Video Gallery Model
+const VideoSchema = new mongoose.Schema({
+  title: { type: String, maxlength: 200 },
+  description: { type: String },
+  order: { type: Number },
+  videoUrl: { type: String },
+  youtubeUrl: { type: String }
+}, { timestamps: true });
+
+export const Video = (mongoose.models && mongoose.models.Video) || mongoose.model('Video', VideoSchema);
+
 // Project Model
 // const ProjectSchema = new mongoose.Schema({
 //   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
