@@ -12,9 +12,45 @@ export const AddVideo = ({ isOpen, onClose, editingVideo, onVideoAdded }) => {
     title: '',
     description: '',
     order: '',
-    videoUrl: '',
-    youtubeUrl: ''
+    videoUrl: '',   // R2-uploaded file URL
+    youtubeUrl: ''  // we will normalize this to an EMBED url
   });
+
+  // ---- helper: normalize any YT url (watch / youtu.be / share) → embed url
+  const toYouTubeEmbedUrl = (raw) => {
+    if (!raw) return '';
+    try {
+      const url = new URL(raw.trim());
+      const host = url.hostname.replace(/^www\./, '');
+      let id = '';
+
+      if (host === 'youtu.be') {
+        // https://youtu.be/<id>(?t=..)
+        id = url.pathname.slice(1);
+      } else if (host === 'youtube.com' || host === 'm.youtube.com') {
+        if (url.pathname.startsWith('/watch')) {
+          id = url.searchParams.get('v') || '';
+        } else if (url.pathname.startsWith('/embed/')) {
+          id = url.pathname.split('/').pop();
+        } else if (url.pathname.startsWith('/shorts/')) {
+          id = url.pathname.split('/').pop(); // shorts to embed works too
+        }
+      }
+
+      // Basic sanity check
+      if (!/^[\w-]{6,}$/.test(id)) return '';
+
+      // Preserve a start time if present (?t=30 or ?start=30)
+      const start =
+        url.searchParams.get('t') || url.searchParams.get('start') || '';
+      const startParam =
+        start && /^\d+s?$/.test(start) ? `?start=${parseInt(start, 10)}` : '';
+
+      return `https://www.youtube.com/embed/${id}${startParam}`;
+    } catch {
+      return '';
+    }
+  };
 
   useEffect(() => {
     if (editingVideo) {
@@ -23,15 +59,29 @@ export const AddVideo = ({ isOpen, onClose, editingVideo, onVideoAdded }) => {
         description: editingVideo.description || '',
         order: editingVideo.order || '',
         videoUrl: editingVideo.videoUrl || '',
-        youtubeUrl: editingVideo.youtubeUrl || ''
+        // normalize any stored yt link to embed for safety
+        youtubeUrl: toYouTubeEmbedUrl(editingVideo.youtubeUrl || '') || (editingVideo.youtubeUrl || '')
       });
     } else {
       setFormData({ title: '', description: '', order: '', videoUrl: '', youtubeUrl: '' });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editingVideo]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    // when typing YouTube URL, normalize to EMBED and clear uploaded file URL
+    if (name === 'youtubeUrl') {
+      const embed = toYouTubeEmbedUrl(value);
+      setFormData((prev) => ({
+        ...prev,
+        youtubeUrl: embed || value, // keep raw while user is typing if invalid
+        videoUrl: embed ? '' : prev.videoUrl
+      }));
+      return;
+    }
+
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -45,7 +95,11 @@ export const AddVideo = ({ isOpen, onClose, editingVideo, onVideoAdded }) => {
         folderPath: 'gallery/videos'
       });
       if (result.success) {
-        setFormData((prev) => ({ ...prev, videoUrl: result.url, youtubeUrl: '' }));
+        setFormData((prev) => ({
+          ...prev,
+          videoUrl: result.url,
+          youtubeUrl: '' // clear YouTube if uploading a file
+        }));
         toast.success('Video uploaded successfully!');
       } else {
         throw new Error(result.error);
@@ -61,10 +115,26 @@ export const AddVideo = ({ isOpen, onClose, editingVideo, onVideoAdded }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.videoUrl && !formData.youtubeUrl) {
-      toast.error('Provide a video file or YouTube URL');
+
+    // prefer R2 file OR a valid embed url
+    const hasR2 = !!formData.videoUrl;
+    const ytEmbed = toYouTubeEmbedUrl(formData.youtubeUrl);
+    const hasYT = !!ytEmbed;
+
+    if (!hasR2 && !hasYT) {
+      toast.error('Provide a video file or a valid YouTube URL');
       return;
     }
+
+    const payload = {
+      title: formData.title?.trim(),
+      description: formData.description?.trim(),
+      order: formData.order ? Number(formData.order) : undefined,
+      // store one of these; keep both fields if your API expects both
+      videoUrl: hasR2 ? formData.videoUrl : '',
+      youtubeUrl: hasYT ? ytEmbed : '' // always store EMBED url
+    };
+
     setIsSubmitting(true);
     try {
       const endpoint = editingVideo ? `/api/videos/${editingVideo._id || editingVideo.id}` : '/api/videos';
@@ -72,14 +142,14 @@ export const AddVideo = ({ isOpen, onClose, editingVideo, onVideoAdded }) => {
       const res = await fetch(endpoint, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(payload)
       });
       if (!res.ok) {
         throw new Error(editingVideo ? 'Failed to update video' : 'Failed to create video');
       }
       await res.json();
-      onVideoAdded();
-      onClose();
+      onVideoAdded?.();
+      onClose?.();
     } catch (error) {
       console.error('Error saving video:', error);
       toast.error(error.message || 'Failed to save video');
@@ -96,9 +166,10 @@ export const AddVideo = ({ isOpen, onClose, editingVideo, onVideoAdded }) => {
         <form onSubmit={handleSubmit} className="space-y-3">
           <h3 className="card-title text-base mb-2">{editingVideo ? 'Edit Video' : 'Add Video'}</h3>
 
+          {/* Upload to R2 */}
           <div className="form-control w-full">
             <label className="label py-1">
-              <span className="label-text text-sm">Upload Video</span>
+              <span className="label-text text-sm">Upload Video (R2)</span>
             </label>
             <input
               type="file"
@@ -114,16 +185,32 @@ export const AddVideo = ({ isOpen, onClose, editingVideo, onVideoAdded }) => {
             )}
           </div>
 
+          {/* Or YouTube URL (short or normal) */}
           <div className="form-control">
             <label className="label py-1">
-              <span className="label-text text-sm">or YouTube URL</span>
+              <span className="label-text text-sm">or YouTube URL (watch / youtu.be)</span>
             </label>
             <input
               name="youtubeUrl"
               value={formData.youtubeUrl}
               onChange={handleChange}
+              placeholder="Paste YouTube URL"
               className="input input-bordered"
             />
+            {/* Preview embed if valid */}
+            {toYouTubeEmbedUrl(formData.youtubeUrl) && !formData.videoUrl && (
+              <div className="mt-2 rounded overflow-hidden">
+                <div className="aspect-video">
+                  <iframe
+                    className="w-full h-full"
+                    src={toYouTubeEmbedUrl(formData.youtubeUrl)}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    title="YouTube preview"
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="form-control">
@@ -179,4 +266,3 @@ export const AddVideo = ({ isOpen, onClose, editingVideo, onVideoAdded }) => {
 };
 
 export default AddVideo;
-
