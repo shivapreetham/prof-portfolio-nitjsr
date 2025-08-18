@@ -82,6 +82,14 @@ export default function Navbar() {
       ],
     },
     {
+      name: "Gallery",
+      path: "/pages/Gallery/PhotoGallery",
+      dropdownItems: [
+        { name: "Photo Gallery", path: "/pages/Gallery/PhotoGallery" },
+        { name: "Video Gallery", path: "/pages/Gallery/VideoGallery" },
+      ],
+    },
+    {
       name: "Contact",
       path: "/pages/Contact",
       dropdownItems: [
