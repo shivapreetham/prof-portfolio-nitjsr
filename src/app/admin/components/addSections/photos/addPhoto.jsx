@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Camera, Edit } from 'lucide-react';
+import { Camera, Edit, Trash } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { uploadImage } from '@/utils/uploadImage';
 
@@ -138,7 +138,11 @@ export const AddPhoto = ({ isOpen, onClose, editingPhoto, onPhotoAdded }) => {
               {photos.length > 0 ? (
                 <div className="grid grid-cols-3 gap-2">
                   {photos.map((p, idx) => (
-                    <div key={idx} className="relative">
+                    <div
+                      key={idx}
+                      className="relative"
+                      onClick={(e) => e.stopPropagation()}   // <- prevent dropzone click
+                    >
                       <img
                         src={p.preview || p.imageUrl}
                         alt="Photo preview"
@@ -148,36 +152,51 @@ export const AddPhoto = ({ isOpen, onClose, editingPhoto, onPhotoAdded }) => {
                         type="button"
                         className="btn btn-ghost btn-xs absolute top-1 right-1"
                         onClick={(e) => {
-                          e.stopPropagation();
+                          e.stopPropagation();               // <- prevent dropzone click
                           setEditingIndex(idx);
                         }}
                       >
-                        <Edit className="w-4 h-4" />
+                        <Edit className="w-5 h-5 rounded-md  text-gray-950 bg-white" />
                       </button>
+                      <button
+                        type="button"
+                        className="btn btn-ghost btn-xs absolute top-1 left-1"
+                        onClick={(e) => {
+                          e.stopPropagation();               // <- prevent dropzone click
+                          setPhotos((prev) => prev.filter((_, i) => i !== idx));
+                        }}
+                      >
+                        <Trash className="w-5 h-5 rounded-md  text-red-500 bg-white" />
+                      </button>
+
                       {editingIndex === idx && (
-                        <div className="absolute inset-0 bg-base-300/90 backdrop-blur-sm p-2 rounded-lg flex flex-col">
+                        <div
+                          className="absolute inset-0 bg-base-300/90 backdrop-blur-sm p-2 rounded-lg flex flex-col"
+                          onClick={(e) => e.stopPropagation()}   // <- prevent dropzone click
+                        >
                           <label className="text-xs mb-1">Caption</label>
                           <textarea
                             value={p.caption}
-                            onChange={(e) =>
-                              handlePhotoChange(idx, 'caption', e.target.value)
-                            }
+                            onChange={(e) => handlePhotoChange(idx, 'caption', e.target.value)}
                             className="textarea textarea-bordered textarea-xs mb-2"
                             rows={2}
+                            onClick={(e) => e.stopPropagation()}   // extra safety
                           />
                           <label className="text-xs mb-1">Date</label>
                           <input
                             type="date"
                             value={p.date}
-                            onChange={(e) =>
-                              handlePhotoChange(idx, 'date', e.target.value)
-                            }
+                            onChange={(e) => handlePhotoChange(idx, 'date', e.target.value)}
                             className="input input-bordered input-xs mb-2"
+                            onClick={(e) => e.stopPropagation()}   // extra safety
                           />
                           <button
                             type="button"
                             className="btn btn-xs self-end"
-                            onClick={() => setEditingIndex(null)}
+                            onClick={(e) => {
+                              e.stopPropagation();                // <- prevent dropzone click
+                              setEditingIndex(null);
+                            }}
                           >
                             Done
                           </button>
