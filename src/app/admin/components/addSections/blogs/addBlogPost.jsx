@@ -14,9 +14,11 @@ export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
   const [formData, setFormData] = useState({
     title: '',
     content: '',
-    imageUrl: '',
-    mediaFiles: []
+    imageUrl: '', // existing image URL when editing
+    mediaFiles: [] // can contain existing URLs or new File objects
   });
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState('');
 
   useEffect(() => {
     if (editingPost) {
@@ -26,6 +28,8 @@ export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
         imageUrl: editingPost.imageUrl || '',
         mediaFiles: editingPost.mediaFiles || []
       });
+      setImagePreview(editingPost.imageUrl || '');
+      setImageFile(null);
     } else {
       setFormData({
         title: '',
@@ -33,6 +37,8 @@ export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
         imageUrl: '',
         mediaFiles: []
       });
+      setImagePreview('');
+      setImageFile(null);
     }
   }, [editingPost]);
 
@@ -41,84 +47,39 @@ export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleImageUpload = async (event) => {
+  const handleImageSelect = (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
-
-    setIsUploading(true);
-    try {
-      const result = await uploadImage(file, {
-        bucketName: 'profile-images',
-        folderPath: 'blog-posts'
-      });
-      if (result.success) {
-        setFormData((prev) => ({ ...prev, imageUrl: result.url }));
-        toast.success('Image uploaded successfully!');
-      } else {
-        throw new Error(result.error);
-      }
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      toast.error(error.message || 'Failed to upload image');
-    } finally {
-      setIsUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = '';
-    }
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
   };
 
-  const handleMediaUpload = async (event) => {
+  const handleMediaSelect = (event) => {
     const files = Array.from(event.target.files || []);
     if (files.length === 0) return;
-
-    setIsUploading(true);
-    try {
-      const uploadPromises = files.map(file => 
-        uploadMedia(file, {
-          bucketName: 'media',
-          folderPath: 'blog-posts'
-        })
-      );
-      
-      const results = await Promise.all(uploadPromises);
-      const successfulUploads = results.filter(result => result.success);
-      const failedUploads = results.filter(result => !result.success);
-
-      if (successfulUploads.length > 0) {
-        const newMediaFiles = successfulUploads.map(result => ({
-          type: result.type,
-          url: result.url,
-          filename: result.filename,
-          size: result.size,
-          mimeType: result.mimeType
-        }));
-        
-        setFormData((prev) => ({
-          ...prev,
-          mediaFiles: [...prev.mediaFiles, ...newMediaFiles]
-        }));
-        
-        toast.success(`${successfulUploads.length} file(s) uploaded successfully!`);
-      }
-
-      if (failedUploads.length > 0) {
-        failedUploads.forEach(result => {
-          toast.error(result.error || 'Failed to upload file');
-        });
-      }
-    } catch (error) {
-      console.error('Error uploading media:', error);
-      toast.error('Failed to upload media files');
-    } finally {
-      setIsUploading(false);
-      if (mediaInputRef.current) mediaInputRef.current.value = '';
-    }
+    const newFiles = files.map(file => ({
+      file,
+      preview: URL.createObjectURL(file),
+      type: file.type.startsWith('image') ? 'image' : 'video',
+      filename: file.name,
+      size: file.size,
+      mimeType: file.type
+    }));
+    setFormData(prev => ({
+      ...prev,
+      mediaFiles: [...prev.mediaFiles, ...newFiles]
+    }));
   };
 
   const handleRemoveMedia = (index) => {
-    setFormData((prev) => ({
-      ...prev,
-      mediaFiles: prev.mediaFiles.filter((_, i) => i !== index)
-    }));
+    setFormData(prev => {
+      const removed = prev.mediaFiles[index];
+      if (removed?.preview) URL.revokeObjectURL(removed.preview);
+      return {
+        ...prev,
+        mediaFiles: prev.mediaFiles.filter((_, i) => i !== index)
+      };
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -130,6 +91,55 @@ export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
 
     setIsSubmitting(true);
     try {
+      let uploadedImageUrl = formData.imageUrl;
+      if (imageFile) {
+        setIsUploading(true);
+        const imgRes = await uploadImage(imageFile, {
+          bucketName: 'profile-images',
+          folderPath: 'blog-posts'
+        });
+        if (!imgRes.success) {
+          throw new Error(imgRes.error);
+        }
+        uploadedImageUrl = imgRes.url;
+      }
+
+      const existingMedia = formData.mediaFiles.filter(m => !m.file);
+      const newMedia = formData.mediaFiles.filter(m => m.file);
+      let uploadedMedia = [];
+      if (newMedia.length > 0) {
+        setIsUploading(true);
+        const uploadPromises = newMedia.map(m =>
+          uploadMedia(m.file, {
+            bucketName: 'media',
+            folderPath: 'blog-posts'
+          })
+        );
+        const results = await Promise.all(uploadPromises);
+        const successful = results.filter(r => r.success);
+        const failed = results.filter(r => !r.success);
+        if (successful.length > 0) {
+          uploadedMedia = successful.map(r => ({
+            type: r.type,
+            url: r.url,
+            filename: r.filename,
+            size: r.size,
+            mimeType: r.mimeType
+          }));
+        }
+        if (failed.length > 0) {
+          failed.forEach(r => toast.error(r.error || 'Failed to upload file'));
+        }
+        newMedia.forEach(m => URL.revokeObjectURL(m.preview));
+      }
+
+      const payload = {
+        title: formData.title,
+        content: formData.content,
+        imageUrl: uploadedImageUrl,
+        mediaFiles: [...existingMedia, ...uploadedMedia]
+      };
+
       const endpoint = editingPost ? `/api/posts/${editingPost._id || editingPost.id}` : '/api/posts';
       const method = editingPost ? 'PUT' : 'POST';
       const response = await fetch(endpoint, {
@@ -137,7 +147,7 @@ export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId: "1", // Replace with dynamic user ID if needed
-          ...formData
+          ...payload
         })
       });
       if (!response.ok) {
@@ -151,7 +161,13 @@ export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
       console.error('Error saving post:', error);
       toast.error(error.message || 'Failed to save post');
     } finally {
+      setIsUploading(false);
       setIsSubmitting(false);
+      if (imagePreview) URL.revokeObjectURL(imagePreview);
+      setImageFile(null);
+      setImagePreview('');
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      if (mediaInputRef.current) mediaInputRef.current.value = '';
     }
   };
 
@@ -172,7 +188,7 @@ export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
             <input
               type="file"
               ref={fileInputRef}
-              onChange={handleImageUpload}
+              onChange={handleImageSelect}
               className="hidden"
               accept="image/jpeg,image/png,image/webp"
               disabled={isUploading}
@@ -186,9 +202,9 @@ export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
                 <div className="absolute inset-0 flex items-center justify-center">
                   <span className="loading loading-spinner loading-sm"></span>
                 </div>
-              ) : formData.imageUrl ? (
+              ) : imagePreview || formData.imageUrl ? (
                 <img
-                  src={formData.imageUrl}
+                  src={imagePreview || formData.imageUrl}
                   alt="Blog post featured image"
                   className="w-full h-full object-cover rounded-lg"
                   onError={(e) => {
@@ -213,7 +229,7 @@ export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
             <input
               type="file"
               ref={mediaInputRef}
-              onChange={handleMediaUpload}
+              onChange={handleMediaSelect}
               className="hidden"
               accept="image/jpeg,image/png,image/webp,video/mp4,video/webm,video/ogg"
               multiple
@@ -236,7 +252,7 @@ export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
                     {file.type === 'image' ? (
                       <div className="relative">
                         <img
-                          src={file.url}
+                          src={file.preview || file.url}
                           alt={file.filename}
                           className="w-full h-20 object-cover"
                         />
@@ -247,7 +263,7 @@ export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
                     ) : (
                       <div className="relative">
                         <video
-                          src={file.url}
+                          src={file.preview || file.url}
                           className="w-full h-20 object-cover"
                           muted
                         />

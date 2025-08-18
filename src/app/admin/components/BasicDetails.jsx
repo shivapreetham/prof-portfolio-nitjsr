@@ -51,18 +51,18 @@ const BasicDetail = ({ userInfo }) => {
       });
 
       const data = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(data.message || 'Failed to update user information');
       }
-      
+
       toast.success('Changes saved successfully!');
 
+      // Use the updated user returned from the API
       setUserData((prev) => ({
         ...prev,
-        user: details
+        user: data.user
       }));
-
 
       return data.user;
     } catch (error) {
@@ -91,6 +91,11 @@ const BasicDetail = ({ userInfo }) => {
   const handleImageUpload = async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
+    if (details.profileImage) {
+      toast.error('Please delete the current photo before uploading a new one');
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
 
     setIsUploading(true);
 
@@ -101,10 +106,8 @@ const BasicDetail = ({ userInfo }) => {
       });
 
       if (result.success) {
-        // Update state with new image URL
-        setDetails(prev => ({ ...prev, profileImage: result.url }));
-        
-        // Update the profile image in the database through API
+        const updated = { ...details, profileImage: result.url };
+        setDetails(updated);
         await updateUserField('profileImage', result.url);
       } else {
         throw new Error(result.error);
@@ -117,6 +120,31 @@ const BasicDetail = ({ userInfo }) => {
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
+    }
+  };
+
+  const handleDeleteImage = async () => {
+    if (!details.profileImage) return;
+    setIsUploading(true);
+    try {
+      const res = await fetch('/api/cloudFlare/deleteImage', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageUrl: details.profileImage })
+      });
+      const data = await res.json();
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to delete image');
+      }
+      await updateUserField('profileImage', '');
+      setDetails(prev => ({ ...prev, profileImage: '' }));
+      toast.success('Profile photo deleted');
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      toast.error(error.message || 'Failed to delete image');
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
 
@@ -134,19 +162,19 @@ const BasicDetail = ({ userInfo }) => {
                 onChange={handleImageUpload}
                 className="hidden"
                 accept="image/jpeg,image/png,image/webp"
-                disabled={isUploading}
+                disabled={isUploading || Boolean(details.profileImage)}
               />
-              <div 
+              <div
                 className="w-16 rounded-full ring ring-primary/30 ring-offset-base-100 ring-offset-2 cursor-pointer"
-                onClick={() => fileInputRef.current?.click()}
+                onClick={() => !details.profileImage && fileInputRef.current?.click()}
               >
                 {isUploading ? (
                   <div className="bg-base-200 w-full h-full flex items-center justify-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                   </div>
                 ) : details.profileImage ? (
-                  <img 
-                    src={details.profileImage} 
+                  <img
+                    src={details.profileImage}
                     alt="Profile"
                   />
                 ) : (
@@ -155,6 +183,16 @@ const BasicDetail = ({ userInfo }) => {
                   </div>
                 )}
               </div>
+              {details.profileImage && (
+                <button
+                  type="button"
+                  onClick={handleDeleteImage}
+                  className="btn btn-xs btn-error mt-2 w-full"
+                  disabled={isUploading}
+                >
+                  Delete Photo
+                </button>
+              )}
             </div>
             
             <div>
