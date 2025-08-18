@@ -12,8 +12,7 @@ export const VideoList = ({ videosList, onEdit, onDelete, deletingId }) => {
           <tr>
             <th>Preview</th>
             <th>Title</th>
-            <th>Order</th>
-            <th>Created</th>
+            <th>Date</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -32,8 +31,7 @@ export const VideoList = ({ videosList, onEdit, onDelete, deletingId }) => {
                 )}
               </td>
               <td>{video.title || '-'}</td>
-              <td>{video.order ?? '-'}</td>
-              <td>{new Date(video.createdAt).toLocaleDateString()}</td>
+              <td>{video.date ? new Date(video.date).toLocaleDateString() : '-'}</td>
               <td className="flex gap-2">
                 <button className="btn btn-xs" onClick={() => onEdit(video)}>Edit</button>
                 <button

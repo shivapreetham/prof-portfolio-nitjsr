@@ -7,7 +7,9 @@ import { useUser } from "../../../Provider";
 
 const PhotoGalleryPage = () => {
   const { userData } = useUser();
-  const photos = userData?.photos || [];
+  const photos = [...(userData?.photos || [])].sort(
+    (a, b) => new Date(b.date || 0) - new Date(a.date || 0)
+  );
   const [currentIndex, setCurrentIndex] = useState(null);
 
   const openModal = (index) => setCurrentIndex(index);
@@ -54,11 +56,6 @@ const PhotoGalleryPage = () => {
                 className="w-full h-48 object-cover"
                 loading="lazy"
               />
-              {photo.caption && (
-                <div className="p-4">
-                  <p className="text-sm text-gray-600 line-clamp-2">{photo.caption}</p>
-                </div>
-              )}
             </div>
           ))}
         </div>

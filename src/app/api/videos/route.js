@@ -5,7 +5,7 @@ import { Video } from '@/models/models';
 export async function GET() {
   try {
     await connectDB();
-    const videos = await Video.find({}).sort({ order: 1, createdAt: -1 });
+    const videos = await Video.find({}).sort({ date: -1, createdAt: -1 });
     return NextResponse.json(videos);
   } catch (error) {
     console.error('Error fetching videos:', error);

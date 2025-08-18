@@ -7,7 +7,9 @@ import { useUser } from "../../../Provider";
 
 const VideoGalleryPage = () => {
   const { userData } = useUser();
-  const videos = userData?.videos || [];
+  const videos = [...(userData?.videos || [])].sort(
+    (a, b) => new Date(b.date || 0) - new Date(a.date || 0)
+  );
   const [visible, setVisible] = useState(6);
 
   const loadMore = () => setVisible((v) => v + 6);
@@ -53,11 +55,6 @@ const VideoGalleryPage = () => {
                 <h3 className="text-lg font-semibold text-[#064A6E] mb-2">
                   {video.title}
                 </h3>
-                {video.description && (
-                  <p className="text-sm text-gray-600 line-clamp-2">
-                    {video.description}
-                  </p>
-                )}
               </div>
             </div>
           ))}

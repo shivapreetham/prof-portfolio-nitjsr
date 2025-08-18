@@ -34,8 +34,8 @@ export async function GET() {
         BlogPost.find({}).sort({ createdAt: -1 }).catch(() => []),
         TeachingExperience.find({}).sort({ startDate: -1 }).catch(() => []),
         Student.find({}).sort({ createdAt: -1 }).catch(() => []),
-        Photo.find({}).sort({ order: 1, createdAt: -1 }).catch(() => []),
-        Video.find({}).sort({ order: 1, createdAt: -1 }).catch(() => []),
+        Photo.find({}).sort({ date: -1, createdAt: -1 }).catch(() => []),
+        Video.find({}).sort({ date: -1, createdAt: -1 }).catch(() => []),
       ]);
 
     const portfolioData = {

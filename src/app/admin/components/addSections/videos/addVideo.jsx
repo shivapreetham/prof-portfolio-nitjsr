@@ -9,8 +9,7 @@ export const AddVideo = ({ isOpen, onClose, editingVideo, onVideoAdded }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
-    description: '',
-    order: '',
+    date: new Date().toISOString().split('T')[0],
     videoUrl: '',
     youtubeUrl: '',
     file: null,
@@ -57,8 +56,9 @@ export const AddVideo = ({ isOpen, onClose, editingVideo, onVideoAdded }) => {
     if (editingVideo) {
       setFormData({
         title: editingVideo.title || '',
-        description: editingVideo.description || '',
-        order: editingVideo.order || '',
+        date: editingVideo.date
+          ? new Date(editingVideo.date).toISOString().split('T')[0]
+          : new Date().toISOString().split('T')[0],
         videoUrl: editingVideo.videoUrl || '',
         youtubeUrl:
           toYouTubeEmbedUrl(editingVideo.youtubeUrl || '') ||
@@ -69,8 +69,7 @@ export const AddVideo = ({ isOpen, onClose, editingVideo, onVideoAdded }) => {
     } else {
       setFormData({
         title: '',
-        description: '',
-        order: '',
+        date: new Date().toISOString().split('T')[0],
         videoUrl: '',
         youtubeUrl: '',
         file: null,
@@ -137,8 +136,7 @@ export const AddVideo = ({ isOpen, onClose, editingVideo, onVideoAdded }) => {
 
       const payload = {
         title: formData.title?.trim(),
-        description: formData.description?.trim(),
-        order: formData.order ? Number(formData.order) : undefined,
+        date: formData.date,
         videoUrl: hasR2 ? videoUrl : '',
         youtubeUrl: hasYT ? ytEmbed : '',
       };
@@ -236,28 +234,14 @@ export const AddVideo = ({ isOpen, onClose, editingVideo, onVideoAdded }) => {
               className="input input-bordered"
             />
           </div>
-
           <div className="form-control">
             <label className="label py-1">
-              <span className="label-text text-sm">Description</span>
-            </label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              className="textarea textarea-bordered"
-              rows={3}
-            ></textarea>
-          </div>
-
-          <div className="form-control">
-            <label className="label py-1">
-              <span className="label-text text-sm">Order</span>
+              <span className="label-text text-sm">Date</span>
             </label>
             <input
-              type="number"
-              name="order"
-              value={formData.order}
+              type="date"
+              name="date"
+              value={formData.date}
               onChange={handleChange}
               className="input input-bordered"
             />

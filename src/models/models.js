@@ -65,8 +65,7 @@ export const Photo = (mongoose.models && mongoose.models.Photo) || mongoose.mode
 // Video Gallery Model
 const VideoSchema = new mongoose.Schema({
   title: { type: String, maxlength: 200 },
-  description: { type: String },
-  order: { type: Number },
+  date: { type: Date, default: Date.now },
   videoUrl: { type: String },
   youtubeUrl: { type: String }
 }, { timestamps: true });
