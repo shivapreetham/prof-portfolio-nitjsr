@@ -56,7 +56,7 @@ export const TeachingExperience = (mongoose.models && mongoose.models.TeachingEx
 // Photo Gallery Model
 const PhotoSchema = new mongoose.Schema({
   caption: { type: String },
-  order: { type: Number },
+  date: { type: Date, default: Date.now },
   imageUrl: { type: String, required: true }
 }, { timestamps: true });
 

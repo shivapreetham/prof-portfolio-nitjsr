@@ -9,6 +9,7 @@ export const useVideos = () => {
   const [error, setError] = useState(null);
   const [editingVideo, setEditingVideo] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
 
   const getVideosList = async () => {
     try {
@@ -38,6 +39,7 @@ export const useVideos = () => {
 
   const handleDeleteVideo = async (videoId) => {
     try {
+      setDeletingId(videoId);
       const res = await fetch(`/api/videos/${videoId}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete video');
       toast.success('Video deleted successfully!');
@@ -45,6 +47,8 @@ export const useVideos = () => {
     } catch (err) {
       console.error('Error deleting video:', err);
       toast.error('Failed to delete video');
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -73,6 +77,7 @@ export const useVideos = () => {
     isAddModalOpen,
     handleEditVideo,
     handleDeleteVideo,
+    deletingId,
     handleVideoAdded,
     getVideosList,
     openAddModal,

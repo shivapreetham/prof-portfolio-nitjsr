@@ -1,23 +1,27 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Camera } from 'lucide-react';
+import { Camera, Edit } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { uploadImage } from '@/utils/uploadImage';
 
 export const AddPhoto = ({ isOpen, onClose, editingPhoto, onPhotoAdded }) => {
   const fileInputRef = useRef(null);
-  const [isUploading, setIsUploading] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [photos, setPhotos] = useState([]);
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (editingPhoto) {
       setPhotos([
         {
           caption: editingPhoto.caption || '',
-          order: editingPhoto.order || '',
+          date: editingPhoto.date
+            ? new Date(editingPhoto.date).toISOString().split('T')[0]
+            : new Date().toISOString().split('T')[0],
           imageUrl: editingPhoto.imageUrl || '',
+          file: null,
+          preview: editingPhoto.imageUrl || '',
         },
       ]);
     } else {
@@ -25,32 +29,18 @@ export const AddPhoto = ({ isOpen, onClose, editingPhoto, onPhotoAdded }) => {
     }
   }, [editingPhoto]);
 
-  const handleImageUpload = async (e) => {
+  const handleFileSelect = (e) => {
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
 
-    setIsUploading(true);
-    const uploaded = [];
+    const mapped = files.map((file) => ({
+      file,
+      preview: URL.createObjectURL(file),
+      caption: '',
+      date: new Date().toISOString().split('T')[0],
+    }));
 
-    for (const file of files) {
-      try {
-        const result = await uploadImage(file, {
-          bucketName: 'profile-images',
-          folderPath: 'gallery/photos',
-        });
-        if (result.success) {
-          uploaded.push({ caption: '', order: '', imageUrl: result.url });
-        } else {
-          throw new Error(result.error);
-        }
-      } catch (error) {
-        console.error('Error uploading image:', error);
-        toast.error(error.message || 'Failed to upload image');
-      }
-    }
-
-    setPhotos((prev) => [...prev, ...uploaded]);
-    setIsUploading(false);
+    setPhotos((prev) => [...prev, ...mapped]);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
@@ -62,7 +52,8 @@ export const AddPhoto = ({ isOpen, onClose, editingPhoto, onPhotoAdded }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (editingPhoto && !photos[0]?.imageUrl) {
+
+    if (editingPhoto && !photos[0]?.imageUrl && !photos[0]?.file) {
       toast.error('Image is required');
       return;
     }
@@ -73,19 +64,37 @@ export const AddPhoto = ({ isOpen, onClose, editingPhoto, onPhotoAdded }) => {
 
     setIsSubmitting(true);
     try {
+      const payload = [];
+      for (const photo of photos) {
+        let imageUrl = photo.imageUrl;
+        if (photo.file) {
+          const result = await uploadImage(photo.file, {
+            bucketName: 'profile-images',
+            folderPath: 'gallery/photos',
+          });
+          if (!result.success) throw new Error(result.error);
+          imageUrl = result.url;
+        }
+        payload.push({
+          caption: photo.caption,
+          date: photo.date,
+          imageUrl,
+        });
+      }
+
       if (editingPhoto) {
         const endpoint = `/api/photos/${editingPhoto._id || editingPhoto.id}`;
         const res = await fetch(endpoint, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(photos[0]),
+          body: JSON.stringify(payload[0]),
         });
         if (!res.ok) throw new Error('Failed to update photo');
       } else {
         const res = await fetch('/api/photos', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(photos),
+          body: JSON.stringify(payload),
         });
         if (!res.ok) throw new Error('Failed to create photos');
       }
@@ -116,30 +125,65 @@ export const AddPhoto = ({ isOpen, onClose, editingPhoto, onPhotoAdded }) => {
             <input
               type="file"
               ref={fileInputRef}
-              onChange={handleImageUpload}
+              onChange={handleFileSelect}
               className="hidden"
               accept="image/jpeg,image/png,image/webp"
               multiple={!editingPhoto}
-              disabled={isUploading}
             />
             <div
               className="relative border-2 border-dashed border-accent/30 rounded-lg p-2 cursor-pointer hover:border-accent/50 transition-colors"
               style={{ minHeight: '160px' }}
               onClick={() => fileInputRef.current?.click()}
             >
-              {isUploading ? (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="loading loading-spinner loading-sm"></span>
-                </div>
-              ) : photos.length > 0 ? (
+              {photos.length > 0 ? (
                 <div className="grid grid-cols-3 gap-2">
                   {photos.map((p, idx) => (
-                    <img
-                      key={idx}
-                      src={p.imageUrl}
-                      alt="Photo preview"
-                      className="w-full h-32 object-cover rounded-lg"
-                    />
+                    <div key={idx} className="relative">
+                      <img
+                        src={p.preview || p.imageUrl}
+                        alt="Photo preview"
+                        className="w-full h-32 object-cover rounded-lg"
+                      />
+                      <button
+                        type="button"
+                        className="btn btn-ghost btn-xs absolute top-1 right-1"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingIndex(idx);
+                        }}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      {editingIndex === idx && (
+                        <div className="absolute inset-0 bg-base-300/90 backdrop-blur-sm p-2 rounded-lg flex flex-col">
+                          <label className="text-xs mb-1">Caption</label>
+                          <textarea
+                            value={p.caption}
+                            onChange={(e) =>
+                              handlePhotoChange(idx, 'caption', e.target.value)
+                            }
+                            className="textarea textarea-bordered textarea-xs mb-2"
+                            rows={2}
+                          />
+                          <label className="text-xs mb-1">Date</label>
+                          <input
+                            type="date"
+                            value={p.date}
+                            onChange={(e) =>
+                              handlePhotoChange(idx, 'date', e.target.value)
+                            }
+                            className="input input-bordered input-xs mb-2"
+                          />
+                          <button
+                            type="button"
+                            className="btn btn-xs self-end"
+                            onClick={() => setEditingIndex(null)}
+                          >
+                            Done
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   ))}
                 </div>
               ) : (
@@ -151,38 +195,6 @@ export const AddPhoto = ({ isOpen, onClose, editingPhoto, onPhotoAdded }) => {
             </div>
           </div>
 
-          {photos.map((photo, index) => (
-            <div key={index} className="space-y-3 border p-3 rounded-lg">
-              <div className="form-control">
-                <label className="label py-1">
-                  <span className="label-text text-sm">Caption</span>
-                </label>
-                <textarea
-                  value={photo.caption}
-                  onChange={(e) =>
-                    handlePhotoChange(index, 'caption', e.target.value)
-                  }
-                  className="textarea textarea-bordered"
-                  rows={3}
-                ></textarea>
-              </div>
-
-              <div className="form-control">
-                <label className="label py-1">
-                  <span className="label-text text-sm">Order</span>
-                </label>
-                <input
-                  type="number"
-                  value={photo.order}
-                  onChange={(e) =>
-                    handlePhotoChange(index, 'order', e.target.value)
-                  }
-                  className="input input-bordered"
-                />
-              </div>
-            </div>
-          ))}
-
           <div className="flex justify-end">
             <button type="button" className="btn btn-ghost mr-2" onClick={onClose}>
               Cancel
@@ -190,9 +202,13 @@ export const AddPhoto = ({ isOpen, onClose, editingPhoto, onPhotoAdded }) => {
             <button
               type="submit"
               className="btn btn-primary"
-              disabled={isSubmitting || isUploading}
+              disabled={isSubmitting}
             >
-              {isSubmitting ? 'Saving...' : 'Save'}
+              {isSubmitting ? (
+                <span className="loading loading-spinner loading-sm"></span>
+              ) : (
+                'Save'
+              )}
             </button>
           </div>
         </form>

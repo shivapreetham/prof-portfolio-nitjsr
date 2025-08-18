@@ -6,14 +6,15 @@ import { uploadMedia } from '@/utils/uploadMedia';
 
 export const AddVideo = ({ isOpen, onClose, editingVideo, onVideoAdded }) => {
   const fileInputRef = useRef(null);
-  const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     order: '',
-    videoUrl: '',   // R2-uploaded file URL
-    youtubeUrl: ''  // we will normalize this to an EMBED url
+    videoUrl: '',
+    youtubeUrl: '',
+    file: null,
+    preview: '',
   });
 
   // ---- helper: normalize any YT url (watch / youtu.be / share) → embed url
@@ -59,11 +60,22 @@ export const AddVideo = ({ isOpen, onClose, editingVideo, onVideoAdded }) => {
         description: editingVideo.description || '',
         order: editingVideo.order || '',
         videoUrl: editingVideo.videoUrl || '',
-        // normalize any stored yt link to embed for safety
-        youtubeUrl: toYouTubeEmbedUrl(editingVideo.youtubeUrl || '') || (editingVideo.youtubeUrl || '')
+        youtubeUrl:
+          toYouTubeEmbedUrl(editingVideo.youtubeUrl || '') ||
+          (editingVideo.youtubeUrl || ''),
+        file: null,
+        preview: editingVideo.videoUrl || '',
       });
     } else {
-      setFormData({ title: '', description: '', order: '', videoUrl: '', youtubeUrl: '' });
+      setFormData({
+        title: '',
+        description: '',
+        order: '',
+        videoUrl: '',
+        youtubeUrl: '',
+        file: null,
+        preview: '',
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editingVideo]);
@@ -76,48 +88,33 @@ export const AddVideo = ({ isOpen, onClose, editingVideo, onVideoAdded }) => {
       const embed = toYouTubeEmbedUrl(value);
       setFormData((prev) => ({
         ...prev,
-        youtubeUrl: embed || value, // keep raw while user is typing if invalid
-        videoUrl: embed ? '' : prev.videoUrl
+        youtubeUrl: embed || value,
+        videoUrl: embed ? '' : prev.videoUrl,
+        file: embed ? null : prev.file,
+        preview: embed ? '' : prev.preview,
       }));
       return;
     }
 
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
-  const handleVideoUpload = async (event) => {
+  const handleVideoSelect = (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    setIsUploading(true);
-    try {
-      const result = await uploadMedia(file, {
-        bucketName: 'media',
-        folderPath: 'gallery/videos'
-      });
-      if (result.success) {
-        setFormData((prev) => ({
-          ...prev,
-          videoUrl: result.url,
-          youtubeUrl: '' // clear YouTube if uploading a file
-        }));
-        toast.success('Video uploaded successfully!');
-      } else {
-        throw new Error(result.error);
-      }
-    } catch (error) {
-      console.error('Error uploading video:', error);
-      toast.error(error.message || 'Failed to upload video');
-    } finally {
-      setIsUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = '';
-    }
+    setFormData((prev) => ({
+      ...prev,
+      file,
+      preview: URL.createObjectURL(file),
+      videoUrl: '',
+      youtubeUrl: '',
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     // prefer R2 file OR a valid embed url
-    const hasR2 = !!formData.videoUrl;
+    const hasR2 = !!formData.videoUrl || !!formData.file;
     const ytEmbed = toYouTubeEmbedUrl(formData.youtubeUrl);
     const hasYT = !!ytEmbed;
 
@@ -126,26 +123,39 @@ export const AddVideo = ({ isOpen, onClose, editingVideo, onVideoAdded }) => {
       return;
     }
 
-    const payload = {
-      title: formData.title?.trim(),
-      description: formData.description?.trim(),
-      order: formData.order ? Number(formData.order) : undefined,
-      // store one of these; keep both fields if your API expects both
-      videoUrl: hasR2 ? formData.videoUrl : '',
-      youtubeUrl: hasYT ? ytEmbed : '' // always store EMBED url
-    };
-
     setIsSubmitting(true);
     try {
-      const endpoint = editingVideo ? `/api/videos/${editingVideo._id || editingVideo.id}` : '/api/videos';
+      let videoUrl = formData.videoUrl;
+      if (formData.file) {
+        const result = await uploadMedia(formData.file, {
+          bucketName: 'media',
+          folderPath: 'gallery/videos',
+        });
+        if (!result.success) throw new Error(result.error);
+        videoUrl = result.url;
+      }
+
+      const payload = {
+        title: formData.title?.trim(),
+        description: formData.description?.trim(),
+        order: formData.order ? Number(formData.order) : undefined,
+        videoUrl: hasR2 ? videoUrl : '',
+        youtubeUrl: hasYT ? ytEmbed : '',
+      };
+
+      const endpoint = editingVideo
+        ? `/api/videos/${editingVideo._id || editingVideo.id}`
+        : '/api/videos';
       const method = editingVideo ? 'PUT' : 'POST';
       const res = await fetch(endpoint, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
       if (!res.ok) {
-        throw new Error(editingVideo ? 'Failed to update video' : 'Failed to create video');
+        throw new Error(
+          editingVideo ? 'Failed to update video' : 'Failed to create video'
+        );
       }
       await res.json();
       onVideoAdded?.();
@@ -174,14 +184,16 @@ export const AddVideo = ({ isOpen, onClose, editingVideo, onVideoAdded }) => {
             <input
               type="file"
               ref={fileInputRef}
-              onChange={handleVideoUpload}
+              onChange={handleVideoSelect}
               className="file-input file-input-bordered w-full"
               accept="video/*"
-              disabled={isUploading}
             />
-            {isUploading && <span className="loading loading-spinner loading-sm mt-2"></span>}
-            {formData.videoUrl && (
-              <video src={formData.videoUrl} controls className="mt-2 rounded" />
+            {(formData.preview || formData.videoUrl) && (
+              <video
+                src={formData.preview || formData.videoUrl}
+                controls
+                className="mt-2 rounded"
+              />
             )}
           </div>
 
@@ -255,8 +267,12 @@ export const AddVideo = ({ isOpen, onClose, editingVideo, onVideoAdded }) => {
             <button type="button" className="btn btn-ghost mr-2" onClick={onClose}>
               Cancel
             </button>
-            <button type="submit" className="btn btn-primary" disabled={isSubmitting || isUploading}>
-              {isSubmitting ? 'Saving...' : 'Save'}
+            <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+              {isSubmitting ? (
+                <span className="loading loading-spinner loading-sm"></span>
+              ) : (
+                'Save'
+              )}
             </button>
           </div>
         </form>
