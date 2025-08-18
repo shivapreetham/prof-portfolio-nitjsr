@@ -9,6 +9,7 @@ export const usePhotos = () => {
   const [error, setError] = useState(null);
   const [editingPhoto, setEditingPhoto] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
 
   const getPhotosList = async () => {
     try {
@@ -38,6 +39,7 @@ export const usePhotos = () => {
 
   const handleDeletePhoto = async (photoId) => {
     try {
+      setDeletingId(photoId);
       const res = await fetch(`/api/photos/${photoId}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete photo');
       toast.success('Photo deleted successfully!');
@@ -45,6 +47,8 @@ export const usePhotos = () => {
     } catch (err) {
       console.error('Error deleting photo:', err);
       toast.error('Failed to delete photo');
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -73,6 +77,7 @@ export const usePhotos = () => {
     isAddModalOpen,
     handleEditPhoto,
     handleDeletePhoto,
+    deletingId,
     handlePhotoAdded,
     getPhotosList,
     openAddModal,

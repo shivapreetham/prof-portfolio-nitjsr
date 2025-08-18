@@ -5,7 +5,7 @@ import { Photo } from '@/models/models';
 export async function GET() {
   try {
     await connectDB();
-    const photos = await Photo.find({}).sort({ order: 1, createdAt: -1 });
+    const photos = await Photo.find({}).sort({ date: -1, createdAt: -1 });
     return NextResponse.json(photos);
   } catch (error) {
     console.error('Error fetching photos:', error);

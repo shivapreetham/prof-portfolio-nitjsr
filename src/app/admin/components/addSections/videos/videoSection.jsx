@@ -14,6 +14,7 @@ export const VideoSection = () => {
     isAddModalOpen,
     handleEditVideo,
     handleDeleteVideo,
+    deletingId,
     handleVideoAdded,
     getVideosList,
     openAddModal,
@@ -45,7 +46,12 @@ export const VideoSection = () => {
           </button>
         </div>
       ) : (
-        <VideoList videosList={videosList} onEdit={handleEditVideo} onDelete={handleDeleteVideo} />
+        <VideoList
+          videosList={videosList}
+          onEdit={handleEditVideo}
+          onDelete={handleDeleteVideo}
+          deletingId={deletingId}
+        />
       )}
 
       {isAddModalOpen && (

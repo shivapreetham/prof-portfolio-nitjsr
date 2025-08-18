@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const VideoList = ({ videosList, onEdit, onDelete }) => {
+export const VideoList = ({ videosList, onEdit, onDelete, deletingId }) => {
   if (!videosList || videosList.length === 0) {
     return <p className="text-center py-8 text-base-content/60">No videos found</p>;
   }
@@ -36,7 +36,17 @@ export const VideoList = ({ videosList, onEdit, onDelete }) => {
               <td>{new Date(video.createdAt).toLocaleDateString()}</td>
               <td className="flex gap-2">
                 <button className="btn btn-xs" onClick={() => onEdit(video)}>Edit</button>
-                <button className="btn btn-xs btn-error" onClick={() => onDelete(video._id)}>Delete</button>
+                <button
+                  className="btn btn-xs btn-error"
+                  onClick={() => onDelete(video._id)}
+                  disabled={deletingId === video._id}
+                >
+                  {deletingId === video._id ? (
+                    <span className="loading loading-spinner loading-xs"></span>
+                  ) : (
+                    'Delete'
+                  )}
+                </button>
               </td>
             </tr>
           ))}

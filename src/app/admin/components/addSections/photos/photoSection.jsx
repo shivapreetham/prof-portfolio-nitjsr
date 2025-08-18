@@ -14,6 +14,7 @@ export const PhotoSection = () => {
     isAddModalOpen,
     handleEditPhoto,
     handleDeletePhoto,
+    deletingId,
     handlePhotoAdded,
     getPhotosList,
     openAddModal,
@@ -45,7 +46,12 @@ export const PhotoSection = () => {
           </button>
         </div>
       ) : (
-        <PhotoList photosList={photosList} onEdit={handleEditPhoto} onDelete={handleDeletePhoto} />
+        <PhotoList
+          photosList={photosList}
+          onEdit={handleEditPhoto}
+          onDelete={handleDeletePhoto}
+          deletingId={deletingId}
+        />
       )}
 
       {isAddModalOpen && (
