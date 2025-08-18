@@ -152,10 +152,11 @@ const BasicDetail = ({ userInfo }) => {
     <div className="card w-full max-w-3xl mx-auto bg-base-300 shadow-xl">
       <div className="card-body">
         <h2 className="card-title text-base mb-4 text-base-content/80">Personal Information</h2>
-        
-        <form className="space-y-6">
+
+        <form className='space-y-2'>
+
           <div className="flex items-center gap-6">
-            <div className="avatar">
+            <div className="avatar flex flex-col items-center justify-center">
               <input
                 type="file"
                 ref={fileInputRef}
@@ -165,7 +166,7 @@ const BasicDetail = ({ userInfo }) => {
                 disabled={isUploading || Boolean(details.profileImage)}
               />
               <div
-                className="w-16 rounded-full ring ring-primary/30 ring-offset-base-100 ring-offset-2 cursor-pointer"
+                className="w-16 h-16 mb-2 rounded-full ring ring-primary/30 ring-offset-base-100 ring-offset-2 cursor-pointer"
                 onClick={() => !details.profileImage && fileInputRef.current?.click()}
               >
                 {isUploading ? (
@@ -184,14 +185,14 @@ const BasicDetail = ({ userInfo }) => {
                 )}
               </div>
               {details.profileImage && (
-                <button
-                  type="button"
-                  onClick={handleDeleteImage}
-                  className="btn btn-xs btn-error mt-2 w-full"
-                  disabled={isUploading}
-                >
-                  Delete Photo
-                </button>
+                  <button
+                    type="button"
+                    onClick={handleDeleteImage}
+                    className="text-xs text-white py-1 px-2  mt-2 rounded-md bg-red-500"
+                    disabled={isUploading}
+                  >
+                    Delete Photo
+                  </button>
               )}
             </div>
             
