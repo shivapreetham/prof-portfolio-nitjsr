@@ -63,49 +63,61 @@ const PhotoGalleryPage = () => {
 
       {currentIndex !== null && (
         <div
-          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black/80 flex flex-col z-50 p-4"
           onClick={closeModal}
         >
           <button
-            onClick={showPrev}
-            className="absolute left-4 text-white p-2"
-          >
-            <ChevronLeft size={32} />
-          </button>
-          <img
-            src={photos[currentIndex].imageUrl}
-            alt={photos[currentIndex].caption || ''}
-            className="max-h-[80vh] object-contain rounded"
-          />
-          <button
-            onClick={showNext}
-            className="absolute right-4 text-white p-2"
-          >
-            <ChevronRight size={32} />
-          </button>
-          <button
             onClick={closeModal}
-            className="absolute top-4 right-4 text-white p-2"
+            className="absolute top-4 right-4 text-white p-2 z-10"
           >
             <X size={28} />
           </button>
-          {photos[currentIndex].caption && (
-            <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white p-4 text-center">
-              {photos[currentIndex].caption}
+          
+          {/* Caption at top - fixed height container */}
+          <div className="h-16 flex items-center justify-center mb-4">
+            {photos[currentIndex].caption && (
+              <div className="bg-black/60 text-white px-6 py-3 text-center rounded max-w-4xl">
+                {photos[currentIndex].caption}
+              </div>
+            )}
+          </div>
+
+          {/* Main image container - constrained to viewport */}
+          <div className="relative flex-1 flex items-center justify-center w-full overflow-hidden">
+            <button
+              onClick={showPrev}
+              className="absolute left-4 text-white p-2 z-10 hover:bg-black/30 rounded-full transition-colors"
+            >
+              <ChevronLeft size={32} />
+            </button>
+            <img
+              src={photos[currentIndex].imageUrl}
+              alt={photos[currentIndex].caption || ''}
+              className="max-h-[calc(100vh-200px)] max-w-[calc(100vw-100px)] object-contain rounded"
+            />
+            <button
+              onClick={showNext}
+              className="absolute right-4 text-white p-2 z-10 hover:bg-black/30 rounded-full transition-colors"
+            >
+              <ChevronRight size={32} />
+            </button>
+          </div>
+
+          {/* Thumbnails at bottom - fixed height */}
+          <div className="h-20 flex items-center justify-center mt-4">
+            <div className="flex justify-center overflow-x-auto gap-2 max-w-full px-4">
+              {photos.map((p, idx) => (
+                <img
+                  key={idx}
+                  src={p.imageUrl}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentIndex(idx);
+                  }}
+                  className={`h-16 w-16 object-cover rounded cursor-pointer flex-shrink-0 transition-all ${idx === currentIndex ? 'ring-2 ring-white scale-105' : 'hover:scale-105'}`}
+                />
+              ))}
             </div>
-          )}
-          <div className="absolute bottom-0 left-0 right-0 pb-20 flex justify-center overflow-x-auto gap-2">
-            {photos.map((p, idx) => (
-              <img
-                key={idx}
-                src={p.imageUrl}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setCurrentIndex(idx);
-                }}
-                className={`h-16 w-16 object-cover rounded cursor-pointer ${idx === currentIndex ? 'ring-2 ring-white' : ''}`}
-              />
-            ))}
           </div>
         </div>
       )}
