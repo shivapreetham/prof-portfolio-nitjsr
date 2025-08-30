@@ -1,33 +1,44 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Camera } from 'lucide-react';
+import { Camera, X, Upload, Image, Video } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { uploadImage } from '@/utils/uploadImage';
+import { uploadMedia } from '@/utils/uploadMedia';
 
 export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
   const fileInputRef = useRef(null);
+  const mediaInputRef = useRef(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     content: '',
-    imageUrl: ''
+    imageUrl: '', // existing image URL when editing
+    mediaFiles: [] // can contain existing URLs or new File objects
   });
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState('');
 
   useEffect(() => {
     if (editingPost) {
       setFormData({
         title: editingPost.title || '',
         content: editingPost.content || '',
-        imageUrl: editingPost.imageUrl || ''
+        imageUrl: editingPost.imageUrl || '',
+        mediaFiles: editingPost.mediaFiles || []
       });
+      setImagePreview(editingPost.imageUrl || '');
+      setImageFile(null);
     } else {
       setFormData({
         title: '',
         content: '',
-        imageUrl: ''
+        imageUrl: '',
+        mediaFiles: []
       });
+      setImagePreview('');
+      setImageFile(null);
     }
   }, [editingPost]);
 
@@ -36,29 +47,39 @@ export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleImageUpload = async (event) => {
+  const handleImageSelect = (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+  };
 
-    setIsUploading(true);
-    try {
-      const result = await uploadImage(file, {
-        bucketName: 'profile-images',
-        folderPath: 'blog-posts'
-      });
-      if (result.success) {
-        setFormData((prev) => ({ ...prev, imageUrl: result.url }));
-        toast.success('Image uploaded successfully!');
-      } else {
-        throw new Error(result.error);
-      }
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      toast.error(error.message || 'Failed to upload image');
-    } finally {
-      setIsUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = '';
-    }
+  const handleMediaSelect = (event) => {
+    const files = Array.from(event.target.files || []);
+    if (files.length === 0) return;
+    const newFiles = files.map(file => ({
+      file,
+      preview: URL.createObjectURL(file),
+      type: file.type.startsWith('image') ? 'image' : 'video',
+      filename: file.name,
+      size: file.size,
+      mimeType: file.type
+    }));
+    setFormData(prev => ({
+      ...prev,
+      mediaFiles: [...prev.mediaFiles, ...newFiles]
+    }));
+  };
+
+  const handleRemoveMedia = (index) => {
+    setFormData(prev => {
+      const removed = prev.mediaFiles[index];
+      if (removed?.preview) URL.revokeObjectURL(removed.preview);
+      return {
+        ...prev,
+        mediaFiles: prev.mediaFiles.filter((_, i) => i !== index)
+      };
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -70,6 +91,55 @@ export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
 
     setIsSubmitting(true);
     try {
+      let uploadedImageUrl = formData.imageUrl;
+      if (imageFile) {
+        setIsUploading(true);
+        const imgRes = await uploadImage(imageFile, {
+          bucketName: 'profile-images',
+          folderPath: 'blog-posts'
+        });
+        if (!imgRes.success) {
+          throw new Error(imgRes.error);
+        }
+        uploadedImageUrl = imgRes.url;
+      }
+
+      const existingMedia = formData.mediaFiles.filter(m => !m.file);
+      const newMedia = formData.mediaFiles.filter(m => m.file);
+      let uploadedMedia = [];
+      if (newMedia.length > 0) {
+        setIsUploading(true);
+        const uploadPromises = newMedia.map(m =>
+          uploadMedia(m.file, {
+            bucketName: 'media',
+            folderPath: 'blog-posts'
+          })
+        );
+        const results = await Promise.all(uploadPromises);
+        const successful = results.filter(r => r.success);
+        const failed = results.filter(r => !r.success);
+        if (successful.length > 0) {
+          uploadedMedia = successful.map(r => ({
+            type: r.type,
+            url: r.url,
+            filename: r.filename,
+            size: r.size,
+            mimeType: r.mimeType
+          }));
+        }
+        if (failed.length > 0) {
+          failed.forEach(r => toast.error(r.error || 'Failed to upload file'));
+        }
+        newMedia.forEach(m => URL.revokeObjectURL(m.preview));
+      }
+
+      const payload = {
+        title: formData.title,
+        content: formData.content,
+        imageUrl: uploadedImageUrl,
+        mediaFiles: [...existingMedia, ...uploadedMedia]
+      };
+
       const endpoint = editingPost ? `/api/posts/${editingPost._id || editingPost.id}` : '/api/posts';
       const method = editingPost ? 'PUT' : 'POST';
       const response = await fetch(endpoint, {
@@ -77,7 +147,7 @@ export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId: "1", // Replace with dynamic user ID if needed
-          ...formData
+          ...payload
         })
       });
       if (!response.ok) {
@@ -91,7 +161,13 @@ export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
       console.error('Error saving post:', error);
       toast.error(error.message || 'Failed to save post');
     } finally {
+      setIsUploading(false);
       setIsSubmitting(false);
+      if (imagePreview) URL.revokeObjectURL(imagePreview);
+      setImageFile(null);
+      setImagePreview('');
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      if (mediaInputRef.current) mediaInputRef.current.value = '';
     }
   };
 
@@ -106,10 +182,13 @@ export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
           </h3>
 
           <div className="form-control w-full">
+            <label className="label py-1">
+              <span className="label-text text-sm">Featured Image</span>
+            </label>
             <input
               type="file"
               ref={fileInputRef}
-              onChange={handleImageUpload}
+              onChange={handleImageSelect}
               className="hidden"
               accept="image/jpeg,image/png,image/webp"
               disabled={isUploading}
@@ -123,9 +202,9 @@ export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
                 <div className="absolute inset-0 flex items-center justify-center">
                   <span className="loading loading-spinner loading-sm"></span>
                 </div>
-              ) : formData.imageUrl ? (
+              ) : imagePreview || formData.imageUrl ? (
                 <img
-                  src={formData.imageUrl}
+                  src={imagePreview || formData.imageUrl}
                   alt="Blog post featured image"
                   className="w-full h-full object-cover rounded-lg"
                   onError={(e) => {
@@ -141,6 +220,75 @@ export const AddBlogPost = ({ isOpen, onClose, editingPost, onPostAdded }) => {
                 </div>
               )}
             </div>
+          </div>
+
+          <div className="form-control w-full">
+            <label className="label py-1">
+              <span className="label-text text-sm">Additional Media (Images & Videos)</span>
+            </label>
+            <input
+              type="file"
+              ref={mediaInputRef}
+              onChange={handleMediaSelect}
+              className="hidden"
+              accept="image/jpeg,image/png,image/webp,video/mp4,video/webm,video/ogg"
+              multiple
+              disabled={isUploading}
+            />
+            <button
+              type="button"
+              className="btn btn-sm btn-outline w-full"
+              onClick={() => mediaInputRef.current?.click()}
+              disabled={isUploading}
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              {isUploading ? 'Uploading...' : 'Add Images & Videos'}
+            </button>
+            
+            {formData.mediaFiles.length > 0 && (
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                {formData.mediaFiles.map((file, index) => (
+                  <div key={index} className="relative group border rounded-lg overflow-hidden">
+                    {file.type === 'image' ? (
+                      <div className="relative">
+                        <img
+                          src={file.preview || file.url}
+                          alt={file.filename}
+                          className="w-full h-20 object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <Image className="w-4 h-4 text-white" />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="relative">
+                        <video
+                          src={file.preview || file.url}
+                          className="w-full h-20 object-cover"
+                          muted
+                        />
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <Video className="w-4 h-4 text-white" />
+                        </div>
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveMedia(index)}
+                      className="absolute top-1 right-1 bg-error text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                    <div className="p-1">
+                      <p className="text-xs truncate">{file.filename}</p>
+                      <p className="text-xs text-base-content/60">
+                        {(file.size / 1024 / 1024).toFixed(1)}MB
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="form-control w-full">

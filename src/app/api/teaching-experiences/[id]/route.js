@@ -3,8 +3,6 @@ import { ObjectId } from 'mongodb';
 import connectDB from '@/utils/db';
 import { TeachingExperience } from '@/models/models';
 
-const HARDCODED_USER_ID = "67ed468b5b281d81f91a0a78";
-
 // PUT - Update a teaching experience
 export async function PUT(request, { params }) {
   try {
@@ -12,7 +10,7 @@ export async function PUT(request, { params }) {
     const { id } = params;
     const data = await request.json();
     const updatedExperience = await TeachingExperience.findOneAndUpdate(
-      { _id: new ObjectId(id), userId: HARDCODED_USER_ID },
+      { _id: new ObjectId(id) },
       data,
       { new: true }
     );
@@ -32,8 +30,7 @@ export async function DELETE(request, { params }) {
     await connectDB();
     const { id } = params;
     const deletedExperience = await TeachingExperience.findOneAndDelete({
-      _id: new ObjectId(id),
-      userId: HARDCODED_USER_ID
+      _id: new ObjectId(id)
     });
     if (!deletedExperience) {
       return NextResponse.json({ message: 'Teaching experience not found' }, { status: 404 });

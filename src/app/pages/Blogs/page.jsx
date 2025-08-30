@@ -176,6 +176,40 @@ const BlogPage = () => {
               <div className="prose max-w-none">
                 <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">{expandedPost.content}</p>
               </div>
+              
+              {/* Additional Media Files */}
+              {expandedPost.mediaFiles && expandedPost.mediaFiles.length > 0 && (
+                <div className="mt-8">
+                  <h3 className="text-xl font-semibold text-[#064A6E] mb-4">Media Gallery</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {expandedPost.mediaFiles.map((file, index) => (
+                      <div key={index} className="rounded-lg overflow-hidden shadow-md">
+                        {file.type === 'image' ? (
+                          <img
+                            src={file.url}
+                            alt={file.filename || `Media ${index + 1}`}
+                            className="w-full h-auto object-cover"
+                          />
+                        ) : (
+                          <video
+                            src={file.url}
+                            controls
+                            className="w-full h-auto"
+                            preload="metadata"
+                          >
+                            Your browser does not support the video tag.
+                          </video>
+                        )}
+                        {file.filename && (
+                          <div className="p-2 bg-gray-50">
+                            <p className="text-sm text-gray-600 truncate">{file.filename}</p>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </motion.div>
         </div>
