@@ -55,7 +55,7 @@ export default function Home() {
 
               <div className="hidden md:block absolute top-6 right-6 lg:top-8 lg:right-8 bg-white/95 backdrop-blur-sm rounded-lg p-5 lg:p-6 shadow-lg max-w-sm">
                 <h3 className="text-base md:text-lg font-bold text-[#064A6E] mb-2 leading-tight">
-                  Associate Professor at NIT Jamshedpur
+                  Assistant Professor at NIT Jamshedpur
                 </h3>
                 <p className="text-sm text-gray-600 mb-1">Faculty In Charge, Computer Centre</p>
                 <p className="text-sm text-gray-600 mb-3 md:mb-4">Prof. In Charge, NIMCET 2024</p>
@@ -136,7 +136,7 @@ export default function Home() {
 
           <div className="bg-gray-100 p-3 sm:p-4 rounded-md border border-gray-300 mb-4 sm:mb-6 text-xs sm:text-sm italic text-gray-700">
             <span className="font-semibold text-[#39A7C1] not-italic block sm:inline">
-              Currently I am serving as Associate Professor at NIT Jamshedpur and Faculty In Charge of Computer Centre
+              Currently I am serving as Assistant Professor at NIT Jamshedpur and Faculty In Charge of Computer Centre
               and MVI Lab
             </span>
           </div>
