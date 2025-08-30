@@ -9,7 +9,7 @@ export default function Header({ user }) {
           {user.name}
         </h1>
         <p className="text-sm sm:text-base mt-2 font-semibold">
-          Associate Professor at NIT Jamshedpur
+          Assistant Professor at NIT Jamshedpur
         </p>
         <p className="text-xs sm:text-sm">
           Faculty In Charge, Computer Centre
