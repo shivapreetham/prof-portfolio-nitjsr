@@ -86,7 +86,9 @@ export const AddStudent = ({ isOpen, onClose, editingStudent, onStudentSaved }) 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!formData.name_of_student || !formData.research_topic || !formData.id || !formData.heading || !formData.faculty_id || !formData.student_type) {
+    const requiredFields = ['name_of_student', 'research_topic', 'id', 'heading', 'faculty_id', 'student_type'];
+    const missingFields = requiredFields.filter(field => !formData[field]);
+    if (missingFields.length > 0) {
       toast.error('Please complete all required fields.');
       return;
     }
