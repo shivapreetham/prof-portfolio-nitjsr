@@ -114,9 +114,9 @@ export default function ConferencesPage() {
                   <h2 className="text-2xl font-semibold text-[#064A6E]">{year}</h2>
                 </div>
                 <div className="grid gap-6 md:grid-cols-2">
-                  {conferencesByYear[year].map((conference) => (
+                  {conferencesByYear[year].map((conference, confIndex) => (
                     <motion.article
-                      key={conference._id ?? `${conference.name ?? "conference"}-${conference.date ?? "unknown"}`}
+                      key={conference._id ?? confIndex}
                       variants={itemVariants}
                       className="h-full bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-lg transition-shadow p-6 flex flex-col gap-4"
                     >
