@@ -14,8 +14,30 @@ export const AwardListEdit = ({ awardsList, onEdit, onDelete }) => {
             <div className="flex justify-between items-start">
               <div className="flex-1">
                 <h4 className="card-title">{award.title}</h4>
-                <p className="text-base-content/70 mt-1">{award.organization}</p>
-                <div className="mt-2 text-sm text-base-content/60">
+                {award.organization && (
+                  <p className="text-base-content/70 mt-1">{award.organization}</p>
+                )}
+                {award.description && (
+                  <p className="mt-2 text-sm text-base-content/70 whitespace-pre-wrap">
+                    {award.description}
+                  </p>
+                )}
+                {Array.isArray(award.links) && award.links.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {award.links.map((link, index) => (
+                      <a
+                        key={index}
+                        href={link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="badge badge-outline badge-sm hover:badge-primary"
+                      >
+                        Link {index + 1}
+                      </a>
+                    ))}
+                  </div>
+                )}
+                <div className="mt-2 text-sm text-base-content/60 flex items-center">
                   <Calendar className="w-4 h-4 mr-1" />
                   <span>{new Date(award.date).toLocaleDateString()}</span>
                 </div>

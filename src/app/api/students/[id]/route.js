@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/utils/db';
-import { Student } from '@/models/models';
+import { Student, STUDENT_TYPES } from '@/models/models';
 import { ObjectId } from 'mongodb';
 
 // PUT - Update a student by ID
@@ -10,8 +10,19 @@ export async function PUT(request, { params }) {
     const { id } = await params;
     const data = await request.json();
 
+    const payload = { ...data };
+    if (payload.student_type !== undefined) {
+      if (typeof payload.student_type !== 'string') {
+        return NextResponse.json({ error: 'Invalid student type' }, { status: 400 });
+      }
+      payload.student_type = payload.student_type.toLowerCase();
+      if (!STUDENT_TYPES.includes(payload.student_type)) {
+        return NextResponse.json({ error: 'Invalid student type' }, { status: 400 });
+      }
+    }
+
     const studentId = new ObjectId(id);
-    const updated = await Student.findByIdAndUpdate(studentId, data, { new: true });
+    const updated = await Student.findByIdAndUpdate(studentId, payload, { new: true, runValidators: true });
     if (!updated) {
       return NextResponse.json({ error: 'Student not found' }, { status: 404 });
     }

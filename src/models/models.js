@@ -13,20 +13,21 @@ const ProfileSchema = new mongoose.Schema({
 export const Profile = (mongoose.models && mongoose.models.Profile) || mongoose.model('Profile', ProfileSchema);
 
 // Student Model
+export const STUDENT_TYPES = ['bachelor', 'masters', 'phd'];
+
 const StudentSchema = new mongoose.Schema({
-  name: { type: String, required: true, maxlength: 100 },
-  course: { type: String, required: true },        // e.g., B.Tech, M.Tech, Ph.D.
-  branch: { type: String, required: true },        // e.g., CSE, ECE
-  projectTitle: { type: String, required: true, maxlength: 200 },
-  projectDescription: { type: String },            // optional, short summary
-  startDate: { type: Date, required: true },
-  endDate: { type: Date, required: true },
-  imageUrl: { type: String, required: true },      // uploaded image path or CDN URL
-  bio: { type: String, maxlength: 500 },           // short about student
-}, { timestamps: true });
+    id: { type: Number, required: true },
+    research_topic: { type: String, required: true },
+    name_of_student: { type: String, required: true },
+    completion_year: { type: String, required: true },
+    heading: { type: Number, required: true },
+    faculty_id: { type: String, required: true },
+    student_type: { type: String, required: true, enum: STUDENT_TYPES },
+    image_url: { type: String }
+  },
+  { timestamps: true });
 
 export const Student = (mongoose.models && mongoose.models.Student) || mongoose.model('Student', StudentSchema);
-
 // Blog Post Model
 const BlogPostSchema = new mongoose.Schema({
   title: { type: String, required: true, maxlength: 200 },
@@ -85,26 +86,51 @@ export const Video = (mongoose.models && mongoose.models.Video) || mongoose.mode
 // export const Project = (mongoose.models && mongoose.models.Project) || mongoose.model('Project', ProjectSchema);
 
 // Research Paper Model
-// const ResearchPaperSchema = new mongoose.Schema({
-//   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-//   title: { type: String, required: true, maxlength: 200 },
-//   abstract: { type: String, required: true },
-//   pdfUrl: { type: String },
-//   publishedAt: { type: Date, required: true },
-// }, { timestamps: true });
+const ResearchPaperSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 
-// export const ResearchPaper = (mongoose.models && mongoose.models.ResearchPaper) || mongoose.model('ResearchPaper', ResearchPaperSchema);
+  // Core info
+  title: { type: String, required: true, maxlength: 500 },
+  description: { type: String }, // for long summaries like in your second example
+
+  // Category enum for frontend tabs
+  category: { 
+    type: String, 
+    enum: ['International Journal Papers', 'International Conference Papers', 'Books'], 
+    required: true 
+  },
+
+  // Publication metadata
+  journalOrConference: { type: String, maxlength: 500 },
+  volume: { type: String },
+  pages: { type: String }, // page numbers: "155733 - 155746"
+  publishedAt: { type: Date, required: true },
+
+  // Links
+  pdfUrl: { type: String },
+  externalLink: { type: String }, // "View Article"
+
+  // Authors
+  authors: [{ type: String }]
+
+}, { timestamps: true });
+
+export const ResearchPaper = (mongoose.models && mongoose.models.ResearchPaper) || mongoose.model('ResearchPaper', ResearchPaperSchema);
+
 
 // Conference Model
-// const ConferenceSchema = new mongoose.Schema({
-//   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-//   name: { type: String, required: true, maxlength: 200 },
-//   location: { type: String, maxlength: 200 },
-//   date: { type: Date, required: true },
-//   paperPresented: { type: Boolean, default: false },
-// }, { timestamps: true });
+const ConferenceSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  name: { type: String, required: true, maxlength: 200 },
+  location: { type: String, maxlength: 200 },
+  date: { type: Date, required: true },
+  paperPresented: { type: Boolean, default: false },
+  description: { type: String, maxlength: 3000 }, // for invited talk text
+  links: [{ type: String }], // array of URLs or document links
+}, { timestamps: true });
 
-// export const Conference = (mongoose.models && mongoose.models.Conference) || mongoose.model('Conference', ConferenceSchema);
+
+export const Conference = (mongoose.models && mongoose.models.Conference) || mongoose.model('Conference', ConferenceSchema);
 
 // // Achievement Model
 // const AchievementSchema = new mongoose.Schema({
@@ -118,14 +144,16 @@ export const Video = (mongoose.models && mongoose.models.Video) || mongoose.mode
 
 
 // // Award Model
-// const AwardSchema = new mongoose.Schema({
-//   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-//   title: { type: String, required: true, maxlength: 200 },
-//   organization: { type: String, required: true, maxlength: 200 },
-//   date: { type: Date, required: true },
-// }, { timestamps: true });
+const AwardSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  title: { type: String, required: true, maxlength: 200 },
+  organization: { type: String, maxlength: 200 },
+  date: { type: Date, required: true },
+  description: { type: String, maxlength: 3000 }, // for invited talk text
+  links: [{ type: String }], // array of URLs or document links
+}, { timestamps: true });
 
-// export const Award = (mongoose.models && mongoose.models.Award) || mongoose.model('Award', AwardSchema);
+export const Award = (mongoose.models && mongoose.models.Award) || mongoose.model('Award', AwardSchema);
 
 // // Collaboration Model
 // const CollaborationSchema = new mongoose.Schema({

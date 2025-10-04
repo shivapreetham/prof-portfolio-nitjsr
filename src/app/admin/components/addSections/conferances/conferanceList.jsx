@@ -17,6 +17,26 @@ export const ConferenceList = ({ conferencesList, onEdit, onDelete }) => {
                   {conference.name}
                 </h4>
                 <p className="text-base-content/70 mt-2">{conference.location}</p>
+                {conference.description && (
+                  <p className="mt-3 text-sm text-base-content/70 whitespace-pre-wrap">
+                    {conference.description}
+                  </p>
+                )}
+                {Array.isArray(conference.links) && conference.links.length > 0 && (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {conference.links.map((link, index) => (
+                      <a
+                        key={index}
+                        href={link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="badge badge-outline badge-sm hover:badge-primary"
+                      >
+                        Link {index + 1}
+                      </a>
+                    ))}
+                  </div>
+                )}
                 <div className="mt-3 flex items-center gap-4 text-sm text-base-content/60">
                   <div className="flex items-center">
                     <Calendar className="w-4 h-4 mr-1" />

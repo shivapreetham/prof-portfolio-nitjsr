@@ -7,109 +7,179 @@ import { uploadImage } from '@/utils/uploadImage';
 
 export const AddStudent = ({ isOpen, onClose, editingStudent, onStudentSaved }) => {
   const fileInputRef = useRef(null);
+  const previousImageRef = useRef('');
   const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState('');
   const [formData, setFormData] = useState({
-    name: '',
-    course: '',
-    branch: '',
-    projectTitle: '',
-    projectDescription: '',
-    startDate: '',
-    endDate: '',
-    imageUrl: '',
-    bio: ''
+    id: '',
+    research_topic: '',
+    name_of_student: '',
+    completion_year: '',
+    heading: '',
+    faculty_id: '',
+    student_type: 'masters',
+    image_url: ''
   });
 
   useEffect(() => {
     if (editingStudent) {
+      const existingImage = editingStudent.image_url || editingStudent.imageUrl || '';
       setFormData({
-        name: editingStudent.name || '',
-        course: editingStudent.course || '',
-        branch: editingStudent.branch || '',
-        projectTitle: editingStudent.projectTitle || '',
-        projectDescription: editingStudent.projectDescription || '',
-        startDate: editingStudent.startDate?.split('T')[0] || '',
-        endDate: editingStudent.endDate?.split('T')[0] || '',
-        imageUrl: editingStudent.imageUrl || '',
-        bio: editingStudent.bio || ''
+        id: editingStudent.id?.toString() || '',
+        research_topic: editingStudent.research_topic || editingStudent.projectTitle || '',
+        name_of_student: editingStudent.name_of_student || editingStudent.name || '',
+        completion_year: editingStudent.completion_year || editingStudent.endDate?.split?.('T')?.[0] || '',
+        heading: editingStudent.heading?.toString() || editingStudent.id?.toString() || '',
+        faculty_id: editingStudent.faculty_id || editingStudent.branch || '',
+        student_type: (editingStudent.student_type || 'masters').toLowerCase(),
+        image_url: existingImage
       });
+      setImageFile(null);
+      setImagePreview(existingImage);
+      previousImageRef.current = existingImage;
     } else {
       setFormData({
-        name: '',
-        course: '',
-        branch: '',
-        projectTitle: '',
-        projectDescription: '',
-        startDate: '',
-        endDate: '',
-        imageUrl: '',
-        bio: ''
+        id: '',
+        research_topic: '',
+        name_of_student: '',
+        completion_year: '',
+        heading: '',
+        faculty_id: '',
+        student_type: 'masters',
+        image_url: ''
       });
+      setImageFile(null);
+      setImagePreview('');
+      previousImageRef.current = '';
     }
   }, [editingStudent]);
 
-  const handleInputChange = e => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  useEffect(() => {
+    return () => {
+      if (imagePreview && imagePreview.startsWith('blob:')) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    };
+  }, [imagePreview]);
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleImageUpload = async (e) => {
-    const file = e.target.files?.[0];
+  const handleImageSelect = (event) => {
+    const file = event.target.files?.[0];
     if (!file) return;
-    setIsUploading(true);
-    try {
-      const result = await uploadImage(file, {
-        bucketName: 'student-images',
-        folderPath: 'students'
-      });
-      if (result.success) {
-        setFormData(prev => ({ ...prev, imageUrl: result.url }));
-        toast.success('Image uploaded!');
-      } else {
-        throw new Error(result.error);
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error(err.message || 'Upload failed');
-    } finally {
-      setIsUploading(false);
-      fileInputRef.current.value = null;
+
+    setImageFile(file);
+    const previewUrl = URL.createObjectURL(file);
+    setImagePreview(previewUrl);
+    setFormData((prev) => ({ ...prev, image_url: '' }));
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
-  const handleSubmit = async e => {
-    e.preventDefault();
-    // minimal validation
-    if (!formData.name || !formData.projectTitle) {
-      toast.error('Name and project title are required.');
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const requiredFields = ['name_of_student', 'research_topic', 'id', 'heading', 'faculty_id', 'student_type'];
+    const missingFields = requiredFields.filter(field => !formData[field]);
+    if (missingFields.length > 0) {
+      toast.error('Please complete all required fields.');
       return;
     }
+
+    const numericId = Number(formData.id);
+    const numericHeading = Number(formData.heading);
+    if (Number.isNaN(numericId) || Number.isNaN(numericHeading)) {
+      toast.error('Student ID and heading must be numbers.');
+      return;
+    }
+
     setIsSubmitting(true);
+    let finalImageUrl = formData.image_url;
+
     try {
+      if (imageFile) {
+        setIsUploading(true);
+        try {
+          const result = await uploadImage(imageFile, {
+            bucketName: 'student-images',
+            folderPath: 'students'
+          });
+          if (!result.success) {
+            throw new Error(result.error || 'Failed to upload image');
+          }
+          finalImageUrl = result.url;
+        } finally {
+          setIsUploading(false);
+        }
+      }
+
       const endpoint = editingStudent
         ? `/api/students/${editingStudent._id}`
         : '/api/students';
       const method = editingStudent ? 'PUT' : 'POST';
-      const res = await fetch(endpoint, {
+
+      const payload = {
+        ...formData,
+        id: numericId,
+        heading: numericHeading,
+        student_type: formData.student_type.toLowerCase(),
+        image_url: finalImageUrl || undefined
+      };
+
+      const response = await fetch(endpoint, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(payload)
       });
-      if (!res.ok) throw new Error(editingStudent ? 'Update failed' : 'Create failed');
-      await res.json();
+
+      if (!response.ok) {
+        throw new Error(editingStudent ? 'Update failed' : 'Create failed');
+      }
+
+      await response.json();
+
+      if (editingStudent && imageFile) {
+        const previousImage = previousImageRef.current;
+        if (previousImage && previousImage !== finalImageUrl) {
+          try {
+            const deleteResponse = await fetch('/api/cloudFlare/deleteImage', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ imageUrl: previousImage })
+            });
+            if (!deleteResponse.ok) {
+              throw new Error('Failed to delete previous image');
+            }
+          } catch (deleteError) {
+            console.error('Failed to delete previous image:', deleteError);
+          }
+        }
+      }
+
+      previousImageRef.current = finalImageUrl || '';
+      setImageFile(null);
+      setImagePreview(finalImageUrl || '');
+
       onStudentSaved();
       onClose();
       toast.success(editingStudent ? 'Student updated!' : 'Student added!');
-    } catch (err) {
-      console.error(err);
-      toast.error(err.message || 'Save failed');
+    } catch (error) {
+      console.error(error);
+      toast.error(error.message || 'Save failed');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   if (!isOpen) return null;
+
   return (
     <div className="card bg-base-300 shadow-lg max-w-2xl mt-5">
       <div className="card-body p-4">
@@ -123,7 +193,7 @@ export const AddStudent = ({ isOpen, onClose, editingStudent, onStudentSaved }) 
             <input
               type="file"
               ref={fileInputRef}
-              onChange={handleImageUpload}
+              onChange={handleImageSelect}
               className="hidden"
               accept="image/jpeg,image/png"
               disabled={isUploading}
@@ -137,9 +207,9 @@ export const AddStudent = ({ isOpen, onClose, editingStudent, onStudentSaved }) 
                 <div className="absolute inset-0 flex items-center justify-center">
                   <span className="loading loading-spinner loading-sm" />
                 </div>
-              ) : formData.imageUrl ? (
+              ) : (imagePreview || formData.image_url) ? (
                 <img
-                  src={formData.imageUrl}
+                  src={imagePreview || formData.image_url}
                   alt="student"
                   className="w-full h-full object-cover rounded-lg"
                 />
@@ -152,86 +222,76 @@ export const AddStudent = ({ isOpen, onClose, editingStudent, onStudentSaved }) 
             </div>
           </div>
 
-          {/* Name, Course, Branch */}
-          <div className="form-control w-full grid grid-cols-2 gap-4">
+          {/* Student Details */}
+          <div className="form-control w-full grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
-              type="text"
-              name="name"
-              placeholder="Full Name"
-              value={formData.name}
+              type="number"
+              name="id"
+              placeholder="Student ID"
+              value={formData.id}
+              onChange={handleInputChange}
+              className="input input-sm input-bordered"
+              required
+            />
+            <input
+              type="number"
+              name="heading"
+              placeholder="Heading"
+              value={formData.heading}
               onChange={handleInputChange}
               className="input input-sm input-bordered"
               required
             />
             <input
               type="text"
-              name="course"
-              placeholder="Course (e.g., B.Tech)"
-              value={formData.course}
+              name="name_of_student"
+              placeholder="Name of Student"
+              value={formData.name_of_student}
               onChange={handleInputChange}
-              className="input input-sm input-bordered"
-              required
-            />
-            <input
-              type="text"
-              name="branch"
-              placeholder="Branch (e.g., CSE)"
-              value={formData.branch}
-              onChange={handleInputChange}
-              className="input input-sm input-bordered"
+              className="input input-sm input-bordered md:col-span-2"
               required
             />
           </div>
 
-          {/* Project Title & Description */}
-          <div className="form-control w-full">
+          <div className="form-control w-full grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               type="text"
-              name="projectTitle"
-              placeholder="Project Title"
-              value={formData.projectTitle}
+              name="research_topic"
+              placeholder="Research Topic"
+              value={formData.research_topic}
               onChange={handleInputChange}
-              className="input input-sm input-bordered"
+              className="input input-sm input-bordered md:col-span-2"
               required
             />
-            <textarea
-              name="projectDescription"
-              placeholder="Project Description"
-              value={formData.projectDescription}
-              onChange={handleInputChange}
-              className="textarea textarea-bordered w-full h-24 mt-2"
-            />
-          </div>
-
-          {/* Timeline */}
-          <div className="form-control w-full grid grid-cols-2 gap-4">
             <input
-              type="date"
-              name="startDate"
-              value={formData.startDate}
+              type="text"
+              name="completion_year"
+              placeholder="Completion Year"
+              value={formData.completion_year}
               onChange={handleInputChange}
               className="input input-sm input-bordered"
               required
             />
             <input
-              type="date"
-              name="endDate"
-              value={formData.endDate}
+              type="text"
+              name="faculty_id"
+              placeholder="Faculty ID"
+              value={formData.faculty_id}
               onChange={handleInputChange}
               className="input input-sm input-bordered"
               required
             />
-          </div>
-
-          {/* Bio */}
-          <div className="form-control w-full">
-            <textarea
-              name="bio"
-              placeholder="Short Bio"
-              value={formData.bio}
+            <select
+              name="student_type"
+              value={formData.student_type}
               onChange={handleInputChange}
-              className="textarea textarea-bordered w-full h-28"
-            />
+              className="select select-sm select-bordered"
+              required
+            >
+              <option value="masters">Masters Student</option>
+              <option value="phd">PhD Student</option>
+              <option value="bachelor">Bachelor Student</option>
+            </select>
           </div>
 
           {/* Actions */}
@@ -240,7 +300,7 @@ export const AddStudent = ({ isOpen, onClose, editingStudent, onStudentSaved }) 
               Cancel
             </button>
             <button type="submit" className="btn btn-sm btn-primary" disabled={isUploading || isSubmitting}>
-              {(isUploading || isSubmitting) && <span className="loading loading-spinner loading-xs" />} 
+              {(isUploading || isSubmitting) && <span className="loading loading-spinner loading-xs" />}
               {editingStudent ? 'Save Changes' : 'Add Student'}
             </button>
           </div>

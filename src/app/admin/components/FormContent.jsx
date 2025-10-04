@@ -8,10 +8,10 @@ import { StudentSection } from './addSections/students/studentSection';
 import { PhotoSection } from './addSections/photos/photoSection';
 import { VideoSection } from './addSections/videos/videoSection';
 // import ProjectSection from '@/app/admin/components/addSections/Project/ProjectSection';
-// import ResearchPaperSection from '@/app/admin/components/addSections/ResearchPapers/researchPaperSection';
-// import { ConferenceSection } from '@/app/admin/components/addSections/conferances/conferanceSection';
+import ResearchPaperSection from '@/app/admin/components/addSections/ResearchPapers/researchPaperSection';
+import { ConferenceSection } from '@/app/admin/components/addSections/conferances/conferanceSection';
 // import { AchievementsSection } from './addSections/achievements/achievementSection';
-// import { AwardSection } from '@/app/admin/components/addSections/awards/awardSection';
+import { AwardSection } from '@/app/admin/components/addSections/awards/awardSection';
 // import { CollaborationSection } from '@/app/admin/components/addSections/collaborations/collaborationSection';
 
 const FormContent = () => {
@@ -40,10 +40,12 @@ const FormContent = () => {
         </section>
         {/* <div className="divider"></div>
         <ProjectSection /> */}
-        {/* <div className="divider"></div>
-        <ResearchPaperSection /> */}
-        {/* <div className="divider"></div>
-        <ConferenceSection /> */}
+        <div className="divider"></div>
+        <ResearchPaperSection />
+        <div className="divider"></div>
+        <ConferenceSection />
+        <div className="divider"></div>
+        <AwardSection />
         <div className="divider"></div>
         <TeachingExperienceSection />
         <div className="divider"></div>
@@ -56,8 +58,6 @@ const FormContent = () => {
         <VideoSection />
         {/* <div className="divider"></div>
         <AchievementsSection /> */}
-        {/* <div className="divider"></div>
-        <AwardSection /> */}
         {/* <div className="divider"></div>
         <CollaborationSection />
         <div className="divider"></div> */}
