@@ -69,7 +69,7 @@ export const useStudents = () => {
       if (imageDeleteFailed) {
         toast.error('Student removed but failed to delete photo from storage');
       } else {
-        toast.success('Deleted successfully');
+        toast.success('Student deleted successfully');
       }
 
       fetchStudents();
