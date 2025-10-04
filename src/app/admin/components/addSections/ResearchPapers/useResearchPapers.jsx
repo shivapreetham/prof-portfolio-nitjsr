@@ -17,7 +17,13 @@ export const useResearchPapers = () => {
       setError(null);
       
       const response = await axios.get('/api/research-papers');
-      setPapersList(response.data);
+      const items = Array.isArray(response.data) ? response.data : [];
+      items.sort((a, b) => {
+        const aTime = a.publishedAt ? new Date(a.publishedAt).getTime() : 0;
+        const bTime = b.publishedAt ? new Date(b.publishedAt).getTime() : 0;
+        return bTime - aTime;
+      });
+      setPapersList(items);
     } catch (error) {
       console.error('Error fetching papers list:', error);
       setError('Failed to fetch research papers');

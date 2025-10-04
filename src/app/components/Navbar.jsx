@@ -29,17 +29,18 @@ export default function Navbar() {
       dropdownItems: [
         { name: "Research Interests", path: "/pages/ResearchArea" },
         { name: "Publications", path: "/pages/ResearchPublications" },
+
       ],
     },
-    {
-      name: "Projects",
-      path: "/pages/Projects",
-      dropdownItems: [
-        { name: "Current Projects", path: "/pages/Projects" },
-        { name: "Completed Projects", path: "/" },
-        { name: "Collaborations", path: "/" },
-      ],
-    },
+    // {
+    //   name: "Projects",
+    //   path: "/pages/Projects",
+    //   dropdownItems: [
+    //     { name: "Current Projects", path: "/pages/Projects" },
+    //     { name: "Completed Projects", path: "/" },
+    //     { name: "Collaborations", path: "/" },
+    //   ],
+    // },
     {
       name: "Students",
       path: "/",
@@ -49,18 +50,17 @@ export default function Navbar() {
         { name: "Bachelor Students", path: "/pages/Students/BachelorStudents" },
       ],
     },
-    {
-      name: "Teachings",
-      path: "/pages/Teachings",
-      dropdownItems: [{ name: "Courses", path: "/pages/Teachings" }],
-    },
+    // {
+    //   name: "Teachings",
+    //   path: "/pages/Teachings",
+    //   dropdownItems: [{ name: "Courses", path: "/pages/Teachings" }],
+    // },
     {
       name: "Responsibilities",
       path: "/pages/Responsibilities",
       dropdownItems: [
         { name: "Administrative", path: "/pages/Responsibilities" },
-        { name: "Committee Work", path: "/" },
-        { name: "Editorial Board", path: "/" },
+        { name: "Teachings", path: "/pages/Teachings" },
       ],
     },
     {
@@ -68,8 +68,8 @@ export default function Navbar() {
       path: "/pages/Awards",
       dropdownItems: [
         { name: "Funded Projects", path: "/pages/Awards" },
-        { name: "Conferences Attended", path: "/" },
-        { name: "Awards & Honors", path: "/" },
+        { name: "Conferences", path: "/pages/Conferences" },
+        { name: "Awards & Honors", path: "/pages/Awards" },
       ],
     },
     {
@@ -77,7 +77,6 @@ export default function Navbar() {
       path: "/pages/Blogs",
       dropdownItems: [
         { name: "Recent Posts", path: "/pages/Blogs" },
-        { name: "Technical Articles", path: "/" },
         { name: "Opinion Pieces", path: "/" },
       ],
     },

@@ -7,7 +7,9 @@ export const AddAward = ({ isOpen, onClose, editingAward, onAwardAdded }) => {
   const [formData, setFormData] = useState({
     title: '',
     organization: '',
-    date: new Date().toISOString().split('T')[0]
+    date: new Date().toISOString().split('T')[0],
+    description: '',
+    linksText: ''
   });
 
   useEffect(() => {
@@ -15,13 +17,17 @@ export const AddAward = ({ isOpen, onClose, editingAward, onAwardAdded }) => {
       setFormData({
         title: editingAward.title || '',
         organization: editingAward.organization || '',
-        date: new Date(editingAward.date).toISOString().split('T')[0]
+        date: new Date(editingAward.date).toISOString().split('T')[0],
+        description: editingAward.description || '',
+        linksText: Array.isArray(editingAward.links) ? editingAward.links.join('\n') : ''
       });
     } else {
       setFormData({
         title: '',
         organization: '',
-        date: new Date().toISOString().split('T')[0]
+        date: new Date().toISOString().split('T')[0],
+        description: '',
+        linksText: ''
       });
     }
   }, [editingAward]);
@@ -33,19 +39,31 @@ export const AddAward = ({ isOpen, onClose, editingAward, onAwardAdded }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.title || !formData.organization) {
-      toast.error('Title and organization are required');
+    if (!formData.title || !formData.date) {
+      toast.error('Title and date are required');
       return;
     }
+
+    const links = formData.linksText
+      .split('\n')
+      .map(link => link.trim())
+      .filter(Boolean);
+
+    const payload = {
+      title: formData.title,
+      organization: formData.organization,
+      date: formData.date,
+      description: formData.description,
+      links
+    };
     try {
       if (editingAward) {
-        await axios.put(`/api/awards/${editingAward._id}`, formData);
+        await axios.put(`/api/awards/${editingAward._id}`, payload);
       } else {
-        await axios.post('/api/awards', formData);
+        await axios.post('/api/awards', payload);
       }
       onAwardAdded();
       onClose();
-      toast.success('Award saved successfully!');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to save award');
     }
@@ -85,7 +103,6 @@ export const AddAward = ({ isOpen, onClose, editingAward, onAwardAdded }) => {
               placeholder="Enter organization"
               value={formData.organization}
               onChange={handleInputChange}
-              required
             />
           </div>
           <div className="form-control w-full">
@@ -99,6 +116,33 @@ export const AddAward = ({ isOpen, onClose, editingAward, onAwardAdded }) => {
               value={formData.date}
               onChange={handleInputChange}
               required
+            />
+          </div>
+          <div className="form-control w-full">
+            <label className="label py-1">
+              <span className="label-text text-sm">Description</span>
+            </label>
+            <textarea
+              name="description"
+              className="textarea textarea-sm textarea-bordered w-full"
+              placeholder="Highlight the award or add notes"
+              value={formData.description}
+              onChange={handleInputChange}
+              rows={3}
+            />
+          </div>
+          <div className="form-control w-full">
+            <label className="label py-1">
+              <span className="label-text text-sm">Supporting Links</span>
+              <span className="label-text-alt">One URL per line</span>
+            </label>
+            <textarea
+              name="linksText"
+              className="textarea textarea-sm textarea-bordered w-full"
+              placeholder="https://example.com\nhttps://example.org"
+              value={formData.linksText}
+              onChange={handleInputChange}
+              rows={3}
             />
           </div>
           <div className="card-actions justify-end mt-4">

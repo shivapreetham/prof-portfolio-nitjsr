@@ -14,24 +14,21 @@ const pubTypes = [
     component: InternationalJournal,
     key: "ijp",
     value: "International Journal Paper",
+    backendCategory: "International Journal Papers",
   },
   {
     name: "International Conference Papers",
     component: InternationalConference,
     key: "icp",
     value: "International Conference Paper",
-  },
-  {
-    name: "Book Chapters",
-    component: BookChapters,
-    key: "bkc",
-    value: "Book Chapters",
+    backendCategory: "International Conference Papers",
   },
   {
     name: "Books",
     component: Books,
     key: "bk",
     value: "Book",
+    backendCategory: "Books",
   },
 ]
 
@@ -39,27 +36,52 @@ const ResearchPublications = () => {
   const [activeSubTab, setActiveSubTab] = useState(0)
   const [hoveredTab, setHoveredTab] = useState(null)
   const [publications, setPublications] = useState([])
+  const [backendPublications, setBackendPublications] = useState([])
   const [publicationLoaded, setPublicationLoaded] = useState(false)
 
   const renderSubTabContent = (publications) => {
     const propData = publications.filter((pub) => pub?.type === pubTypes[activeSubTab].value)
+    const backendCategory = pubTypes[activeSubTab].backendCategory
+    const backendData = backendCategory
+      ? backendPublications.filter((pub) => pub.category === backendCategory)
+      : []
     const ActiveComponent = pubTypes[activeSubTab].component
-    return <ActiveComponent propData={propData} />
+    return <ActiveComponent propData={propData} backendData={backendData} />
   }
 
   useEffect(() => {
     const getData = async () => {
+      setPublicationLoaded(false)
       try {
-        const publicationsData = await fetch(`https://www.nitjsr.ac.in/backend/api/publications?id=CS103`)
-        let a = await publicationsData.json()
-        a = a.result || []
-        a.sort((a, b) => b.pub_date - a.pub_date)
-        setPublications(a)
-        setPublicationLoaded(true)
+        const [legacyRes, backendRes] = await Promise.all([
+          fetch(`https://www.nitjsr.ac.in/backend/api/publications?id=CS103`).then(async (res) => {
+            if (!res.ok) throw new Error('Legacy fetch failed')
+            const payload = await res.json()
+            const list = payload.result || []
+            list.sort((a, b) => (b.pub_date || 0) - (a.pub_date || 0))
+            return list
+          }).catch((err) => {
+            console.error('Error fetching legacy publications:', err)
+            return []
+          }),
+          fetch('/api/research-papers', { cache: 'no-store' })
+            .then(async (res) => {
+              if (!res.ok) throw new Error('Backend fetch failed')
+              const data = await res.json()
+              return Array.isArray(data) ? data : []
+            })
+            .catch((err) => {
+              console.error('Error fetching backend research papers:', err)
+              return []
+            })
+        ])
+
+        setPublications(legacyRes)
+        setBackendPublications(backendRes)
       } catch (error) {
         console.error("Error fetching publications:", error)
-        setPublicationLoaded(true)
       }
+      setPublicationLoaded(true)
     }
     getData()
   }, [])

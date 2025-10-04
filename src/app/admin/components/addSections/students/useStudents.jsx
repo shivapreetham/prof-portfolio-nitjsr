@@ -33,11 +33,45 @@ export const useStudents = () => {
     setIsModalOpen(true);
   };
 
-  const handleDelete = async id => {
+  const handleDelete = async (studentOrId) => {
+    const studentId = typeof studentOrId === 'string' ? studentOrId : studentOrId?._id;
+    const imageUrl = typeof studentOrId === 'object'
+      ? studentOrId.image_url || studentOrId.imageUrl
+      : null;
+
+    if (!studentId) {
+      toast.error('Delete failed');
+      return;
+    }
+
     try {
-      const res = await fetch(`/api/students/${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/students/${studentId}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Delete failed');
-      toast.success('Deleted successfully');
+
+      let imageDeleteFailed = false;
+      if (imageUrl) {
+        try {
+          const deleteRes = await fetch('/api/cloudFlare/deleteImage', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ imageUrl })
+          });
+          if (!deleteRes.ok) {
+            imageDeleteFailed = true;
+            console.error('Failed to delete student image from Cloudflare:', deleteRes.status);
+          }
+        } catch (deleteErr) {
+          imageDeleteFailed = true;
+          console.error('Error deleting student image from Cloudflare:', deleteErr);
+        }
+      }
+
+      if (imageDeleteFailed) {
+        toast.error('Student removed but failed to delete photo from storage');
+      } else {
+        toast.success('Deleted successfully');
+      }
+
       fetchStudents();
     } catch (err) {
       console.error(err);

@@ -9,7 +9,9 @@ export const AddConference = ({ isOpen, onClose, editingConference, onConference
     name: '',
     location: '',
     date: new Date().toISOString().split('T')[0],
-    paperPresented: false
+    paperPresented: false,
+    description: '',
+    linksText: ''
   });
 
   useEffect(() => {
@@ -18,14 +20,18 @@ export const AddConference = ({ isOpen, onClose, editingConference, onConference
         name: editingConference.name || '',
         location: editingConference.location || '',
         date: new Date(editingConference.date).toISOString().split('T')[0],
-        paperPresented: editingConference.paperPresented || false
+        paperPresented: editingConference.paperPresented || false,
+        description: editingConference.description || '',
+        linksText: Array.isArray(editingConference.links) ? editingConference.links.join('\n') : ''
       });
     } else {
       setFormData({
         name: '',
         location: '',
         date: new Date().toISOString().split('T')[0],
-        paperPresented: false
+        paperPresented: false,
+        description: '',
+        linksText: ''
       });
     }
   }, [editingConference]);
@@ -46,6 +52,20 @@ export const AddConference = ({ isOpen, onClose, editingConference, onConference
       return;
     }
 
+    const links = formData.linksText
+      .split('\n')
+      .map(link => link.trim())
+      .filter(Boolean);
+
+    const payload = {
+      name: formData.name,
+      location: formData.location,
+      date: formData.date,
+      paperPresented: formData.paperPresented,
+      description: formData.description,
+      links
+    };
+
     try {
       if (editingConference) {
         // Update existing conference via API
@@ -54,10 +74,7 @@ export const AddConference = ({ isOpen, onClose, editingConference, onConference
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            ...formData,
-            date: new Date(formData.date)
-          }),
+          body: JSON.stringify(payload),
         });
 
         if (!response.ok) {
@@ -70,11 +87,7 @@ export const AddConference = ({ isOpen, onClose, editingConference, onConference
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            ...formData,
-            userId: "1", // Replace with dynamic user id if needed
-            date: new Date(formData.date)
-          }),
+          body: JSON.stringify(payload),
         });
 
         if (!response.ok) {
@@ -158,6 +171,35 @@ export const AddConference = ({ isOpen, onClose, editingConference, onConference
                 onChange={handleInputChange}
               />
             </label>
+          </div>
+
+          <div className="form-control w-full">
+            <label className="label py-1">
+              <span className="label-text text-sm">Description</span>
+            </label>
+            <textarea
+              name="description"
+              className="textarea textarea-sm textarea-bordered w-full"
+              placeholder="Add a short description or summary"
+              value={formData.description}
+              onChange={handleInputChange}
+              rows={3}
+            />
+          </div>
+
+          <div className="form-control w-full">
+            <label className="label py-1">
+              <span className="label-text text-sm">Supporting Links</span>
+              <span className="label-text-alt">One URL per line</span>
+            </label>
+            <textarea
+              name="linksText"
+              className="textarea textarea-sm textarea-bordered w-full"
+              placeholder="https://example.com\nhttps://example.org"
+              value={formData.linksText}
+              onChange={handleInputChange}
+              rows={3}
+            />
           </div>
 
           <div className="card-actions justify-end mt-4">
