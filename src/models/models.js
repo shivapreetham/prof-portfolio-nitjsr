@@ -27,12 +27,7 @@ const StudentSchema = new mongoose.Schema({
   },
   { timestamps: true });
 
-if (mongoose.models?.Student) {
-  delete mongoose.models.Student;
-}
-
-export const Student = mongoose.model('Student', StudentSchema);
-
+export const Student = (mongoose.models && mongoose.models.Student) || mongoose.model('Student', StudentSchema);
 // Blog Post Model
 const BlogPostSchema = new mongoose.Schema({
   title: { type: String, required: true, maxlength: 200 },
