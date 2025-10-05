@@ -254,7 +254,7 @@ const Contact = () => {
                   name="name"
                   value={meetingForm.name}
                   onChange={handleMeetingFormChange}
-                  className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-[#0284C7] transition-colors bg-white placeholder:text-gray-400"
+                  className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-[#0284C7] transition-colors bg-white text-gray-900 placeholder-gray-400"
                   placeholder="Enter your name"
                   required
                 />
@@ -268,7 +268,7 @@ const Contact = () => {
                   name="email"
                   value={meetingForm.email}
                   onChange={handleMeetingFormChange}
-                  className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-[#0284C7] transition-colors bg-white placeholder:text-gray-400"
+                  className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-[#0284C7] transition-colors bg-white text-gray-900 placeholder-gray-400"
                   placeholder="your.email@example.com"
                   required
                 />
@@ -285,7 +285,7 @@ const Contact = () => {
                   name="subject"
                   value={meetingForm.subject}
                   onChange={handleMeetingFormChange}
-                  className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-[#0284C7] transition-colors bg-white placeholder:text-gray-400"
+                  className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-[#0284C7] transition-colors bg-white text-gray-900 placeholder-gray-400"
                   placeholder="Meeting subject"
                   required
                 />
@@ -300,7 +300,7 @@ const Contact = () => {
                   value={meetingForm.preferredDate}
                   onChange={handleMeetingFormChange}
                   min={new Date().toISOString().split('T')[0]}
-                  className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-[#0284C7] transition-colors bg-white"
+                  className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-[#0284C7] transition-colors bg-white text-gray-900"
                   required
                 />
               </div>
@@ -315,7 +315,7 @@ const Contact = () => {
                 value={meetingForm.message}
                 onChange={handleMeetingFormChange}
                 rows={5}
-                className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-[#0284C7] transition-colors resize-none"
+                className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-[#0284C7] transition-colors resize-none bg-white text-gray-900 placeholder-gray-400"
                 placeholder="Please provide details about the purpose of the meeting..."
                 required
               />

@@ -21,7 +21,6 @@ const StudentSchema = new mongoose.Schema({
     name_of_student: { type: String, required: true },
     completion_year: { type: String, required: true },
     heading: { type: Number, required: true },
-    faculty_id: { type: String, required: true },
     student_type: { type: String, required: true, enum: STUDENT_TYPES },
     image_url: { type: String }
   },

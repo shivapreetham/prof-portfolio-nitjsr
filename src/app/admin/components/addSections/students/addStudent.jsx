@@ -18,7 +18,6 @@ export const AddStudent = ({ isOpen, onClose, editingStudent, onStudentSaved }) 
     name_of_student: '',
     completion_year: '',
     heading: '',
-    faculty_id: '',
     student_type: 'masters',
     image_url: ''
   });
@@ -32,7 +31,6 @@ export const AddStudent = ({ isOpen, onClose, editingStudent, onStudentSaved }) 
         name_of_student: editingStudent.name_of_student || editingStudent.name || '',
         completion_year: editingStudent.completion_year || editingStudent.endDate?.split?.('T')?.[0] || '',
         heading: editingStudent.heading?.toString() || editingStudent.id?.toString() || '',
-        faculty_id: editingStudent.faculty_id || editingStudent.branch || '',
         student_type: (editingStudent.student_type || 'masters').toLowerCase(),
         image_url: existingImage
       });
@@ -46,7 +44,6 @@ export const AddStudent = ({ isOpen, onClose, editingStudent, onStudentSaved }) 
         name_of_student: '',
         completion_year: '',
         heading: '',
-        faculty_id: '',
         student_type: 'masters',
         image_url: ''
       });
@@ -86,7 +83,7 @@ export const AddStudent = ({ isOpen, onClose, editingStudent, onStudentSaved }) 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const requiredFields = ['name_of_student', 'research_topic', 'id', 'heading', 'faculty_id', 'student_type'];
+    const requiredFields = ['name_of_student', 'research_topic', 'id', 'heading', 'student_type'];
     const missingFields = requiredFields.filter(field => !formData[field]);
     if (missingFields.length > 0) {
       toast.error('Please complete all required fields.');
@@ -268,15 +265,6 @@ export const AddStudent = ({ isOpen, onClose, editingStudent, onStudentSaved }) 
               name="completion_year"
               placeholder="Completion Year"
               value={formData.completion_year}
-              onChange={handleInputChange}
-              className="input input-sm input-bordered"
-              required
-            />
-            <input
-              type="text"
-              name="faculty_id"
-              placeholder="Faculty ID"
-              value={formData.faculty_id}
               onChange={handleInputChange}
               className="input input-sm input-bordered"
               required
