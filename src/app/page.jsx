@@ -53,53 +53,63 @@ export default function Home() {
                 </div>
               )}
 
-              <div className="hidden md:block absolute top-6 right-6 lg:top-8 lg:right-8 bg-white/95 backdrop-blur-sm rounded-lg p-5 lg:p-6 shadow-lg max-w-sm">
-                <h3 className="text-base md:text-lg font-bold text-[#064A6E] mb-2 leading-tight">
-                  Assistant Professor at NIT Jamshedpur
-                </h3>
-                <p className="text-sm text-gray-600 mb-1">Faculty In Charge, Computer Centre</p>
-                <p className="text-sm text-gray-600 mb-3 md:mb-4">Prof. In Charge, NIMCET 2024</p>
+              <div className="hidden md:block absolute top-6 right-6 lg:top-8 lg:right-8 bg-white rounded-lg p-5 lg:p-6 shadow-xl border border-gray-200 max-w-sm">
+                <div className="border-b border-gray-200 pb-3 mb-3">
+                  <h3 className="text-base md:text-lg font-semibold text-[#064A6E] leading-tight">
+                    Assistant Professor
+                  </h3>
+                  <p className="text-sm text-gray-600 mt-1">NIT Jamshedpur</p>
+                </div>
 
-                <div className="space-y-2 text-sm">
-                  <p className="text-gray-700">
-                    <span className="font-semibold">Email:</span>
-                    <span className="break-all">{userData.user.email || "contact@example.com"}</span>
+                <div className="space-y-1.5 mb-4 text-sm text-gray-700">
+                  <p className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span>Faculty In Charge, Computer Centre</span>
                   </p>
-                  <p className="text-gray-700">
-                    <span className="font-semibold">Phone:</span> (+91)-XXX-XXXX-XXXX
+                  <p className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span>Prof. In Charge, NIMCET 2024</span>
                   </p>
                 </div>
 
-                <div className="flex gap-3 mt-4">
-                  {/* LinkedIn */}
+                <div className="space-y-2 text-sm border-t border-gray-200 pt-3">
+                  <p className="text-gray-700 flex flex-col">
+                    <span className="font-semibold text-gray-800 mb-0.5">Email</span>
+                    <span className="break-all text-gray-600">{userData.user.email || "contact@example.com"}</span>
+                  </p>
+                  <p className="text-gray-700 flex flex-col">
+                    <span className="font-semibold text-gray-800 mb-0.5">Phone</span>
+                    <span className="text-gray-600">(+91)-XXX-XXXX-XXXX</span>
+                  </p>
+                </div>
+
+                <div className="flex gap-3 mt-4 pt-3 border-t border-gray-200">
                   {userData.user.linkedIn && (
                     <a
                       href={userData.user.linkedIn}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-8 h-8 bg-[#0077b5] rounded flex items-center justify-center hover:bg-[#005885] transition-colors"
+                      className="w-9 h-9 bg-[#0077b5] rounded-md flex items-center justify-center hover:bg-[#005885] transition-colors shadow-sm"
                       aria-label="LinkedIn Profile"
                     >
                       <Linkedin className="w-4 h-4 text-white" />
                     </a>
                   )}
-                  {/* Email */}
                   {userData.user.email && (
                     <a
                       href={`mailto:${userData.user.email}`}
-                      className="w-8 h-8 bg-[#1da1f2] rounded flex items-center justify-center hover:bg-[#1a91da] transition-colors"
+                      className="w-9 h-9 bg-[#0891B2] rounded-md flex items-center justify-center hover:bg-[#064A6E] transition-colors shadow-sm"
                       aria-label="Send Email"
                     >
                       <Mail className="w-4 h-4 text-white" />
                     </a>
                   )}
-                  {/* Website */}
                   {userData.user.website && (
                     <a
                       href={userData.user.website}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-8 h-8 bg-[#ff0000] rounded flex items-center justify-center hover:bg-[#e60000] transition-colors"
+                      className="w-9 h-9 bg-gray-700 rounded-md flex items-center justify-center hover:bg-gray-800 transition-colors shadow-sm"
                       aria-label="Visit Website"
                     >
                       <ArrowRight className="w-4 h-4 text-white" />
@@ -134,11 +144,10 @@ export default function Home() {
           </h2>
           <div className="h-[2px] w-16 sm:w-24 md:w-32 bg-[#0284C7] mb-4 sm:mb-6" />
 
-          <div className="bg-gray-100 p-3 sm:p-4 rounded-md border border-gray-300 mb-4 sm:mb-6 text-xs sm:text-sm italic text-gray-700">
-            <span className="font-semibold text-[#39A7C1] not-italic block sm:inline">
-              Currently I am serving as Assistant Professor at NIT Jamshedpur and Faculty In Charge of Computer Centre
-              and MVI Lab
-            </span>
+          <div className="bg-white p-4 sm:p-5 rounded-lg border-l-4 border-[#0891B2] shadow-sm mb-4 sm:mb-6">
+            <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
+              <span className="font-semibold text-[#064A6E]">Current Position:</span> Assistant Professor at NIT Jamshedpur, Faculty In Charge of Computer Centre and MVI Lab
+            </p>
           </div>
 
           <div className="prose prose-sm sm:prose-base max-w-none">
