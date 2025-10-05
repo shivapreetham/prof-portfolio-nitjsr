@@ -77,7 +77,7 @@ export default function Navbar() {
       path: "/pages/Blogs",
       dropdownItems: [
         { name: "Recent Posts", path: "/pages/Blogs" },
-        { name: "Opinion Pieces", path: "/" },
+        { name: "Opinion Pieces", path: "/pages/OpinionPieces" },
       ],
     },
     {
@@ -93,8 +93,7 @@ export default function Navbar() {
       path: "/pages/Contact",
       dropdownItems: [
         { name: "Contact", path: "/pages/Contact" },
-        { name: "Location", path: "/" },
-        { name: "Schedule Meeting", path: "/" },
+        { name: "Schedule Meeting", path: "/pages/Contact#schedule-meeting" },
       ],
     },
   ]

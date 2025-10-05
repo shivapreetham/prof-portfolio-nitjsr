@@ -3,6 +3,8 @@ import React from 'react';
 import BasicDetails from './BasicDetails';
 import { useUser } from '../../Provider';
 import { BlogSection } from './addSections/blogs/blogSection';
+import { OpinionSection } from './addSections/opinions/opinionSection';
+import { MeetingRequestsSection } from './addSections/meetingRequests/meetingRequestsSection';
 import { TeachingExperienceSection } from '@/app/admin/components/addSections/teachingExperiences/TeachingExperienceSection';
 import { StudentSection } from './addSections/students/studentSection';
 import { PhotoSection } from './addSections/photos/photoSection';
@@ -50,6 +52,10 @@ const FormContent = () => {
         <TeachingExperienceSection />
         <div className="divider"></div>
         <BlogSection />
+        <div className="divider"></div>
+        <OpinionSection />
+        <div className="divider"></div>
+        <MeetingRequestsSection />
         <div className="divider"></div>
         <StudentSection />
         <div className="divider"></div>

@@ -2,11 +2,20 @@
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import Link from "next/link"
-import { ChevronRight, Mail, ExternalLink, Globe, User, Award } from "lucide-react"
+import { ChevronRight, Mail, ExternalLink, Globe, User, Award, Calendar, Send } from "lucide-react"
+import { toast, Toaster } from "react-hot-toast"
 
 const Contact = () => {
   const [person, setPerson] = useState(null)
   const [personLoaded, setPersonLoaded] = useState(false)
+  const [meetingForm, setMeetingForm] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: '',
+    preferredDate: ''
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
 
   useEffect(() => {
@@ -23,6 +32,44 @@ const Contact = () => {
     }
     getData()
   }, [])
+
+  const handleMeetingFormChange = (e) => {
+    const { name, value } = e.target
+    setMeetingForm(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleMeetingSubmit = async (e) => {
+    e.preventDefault()
+    if (!meetingForm.name || !meetingForm.email || !meetingForm.subject || !meetingForm.message || !meetingForm.preferredDate) {
+      toast.error('Please fill in all fields')
+      return
+    }
+
+    setIsSubmitting(true)
+    try {
+      const response = await fetch('/api/meeting-requests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(meetingForm)
+      })
+
+      if (!response.ok) throw new Error('Failed to submit meeting request')
+
+      toast.success('Meeting request submitted successfully! We will get back to you soon.')
+      setMeetingForm({
+        name: '',
+        email: '',
+        subject: '',
+        message: '',
+        preferredDate: ''
+      })
+    } catch (error) {
+      console.error('Error submitting meeting request:', error)
+      toast.error('Failed to submit meeting request. Please try again.')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 text-[#223843]">
@@ -180,7 +227,123 @@ const Contact = () => {
             <div className="w-12 h-12 border-4 border-[#0891B2] border-t-transparent rounded-full animate-spin"></div>
           </div>
         )}
+
+        {/* Schedule Meeting Form */}
+        <motion.div
+          id="schedule-meeting"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="mt-12 bg-white rounded-xl shadow-lg p-8 border border-gray-100"
+        >
+          <h2 className="text-2xl font-semibold text-[#064A6E] mb-6 flex items-center">
+            <Calendar className="w-6 h-6 mr-3 text-[#0284C7]" />
+            Request a Meeting
+          </h2>
+          <p className="text-gray-600 mb-6">
+            Fill out the form below to schedule a meeting. We'll get back to you as soon as possible.
+          </p>
+          <form onSubmit={handleMeetingSubmit} className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Full Name <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={meetingForm.name}
+                  onChange={handleMeetingFormChange}
+                  className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-[#0284C7] transition-colors bg-white placeholder:text-gray-400"
+                  placeholder="Enter your name"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email Address <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={meetingForm.email}
+                  onChange={handleMeetingFormChange}
+                  className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-[#0284C7] transition-colors bg-white placeholder:text-gray-400"
+                  placeholder="your.email@example.com"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Subject <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="subject"
+                  value={meetingForm.subject}
+                  onChange={handleMeetingFormChange}
+                  className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-[#0284C7] transition-colors bg-white placeholder:text-gray-400"
+                  placeholder="Meeting subject"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Preferred Date <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="date"
+                  name="preferredDate"
+                  value={meetingForm.preferredDate}
+                  onChange={handleMeetingFormChange}
+                  min={new Date().toISOString().split('T')[0]}
+                  className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-[#0284C7] transition-colors bg-white"
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Message <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                name="message"
+                value={meetingForm.message}
+                onChange={handleMeetingFormChange}
+                rows={5}
+                className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-[#0284C7] transition-colors resize-none"
+                placeholder="Please provide details about the purpose of the meeting..."
+                required
+              />
+            </div>
+
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="inline-flex items-center space-x-2 px-8 py-3 bg-gradient-to-r from-[#0284C7] to-[#0891B2] text-white rounded-lg hover:from-[#064A6E] hover:to-[#0284C7] transition-all duration-300 font-medium shadow-md hover:shadow-lg transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Submitting...</span>
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4" />
+                    <span>Submit Request</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        </motion.div>
       </main>
+      <Toaster position="bottom-right" />
     </div>
   )
 }

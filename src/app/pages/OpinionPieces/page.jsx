@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Search, X, Calendar, Eye, ChevronRight } from "lucide-react"
-import { useUser } from "../../Provider"
 import Link from "next/link"
 
 const cardAnimation = {
@@ -10,23 +9,42 @@ const cardAnimation = {
   visible: { opacity: 1, y: 0 },
 }
 
-const BlogPage = () => {
-  const { userData, isLoading } = useUser()
+const OpinionPiecesPage = () => {
+  const [opinionPieces, setOpinionPieces] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
-  const [filteredPosts, setFilteredPosts] = useState([])
-  const [expandedPost, setExpandedPost] = useState(null)
+  const [filteredOpinions, setFilteredOpinions] = useState([])
+  const [expandedOpinion, setExpandedOpinion] = useState(null)
 
   useEffect(() => {
-    if (userData?.blogPosts) {
-      const lowerSearch = searchTerm.toLowerCase()
-      const filtered = userData.blogPosts.filter(
-        (post) => post.title.toLowerCase().includes(lowerSearch) || post.content.toLowerCase().includes(lowerSearch),
-      )
-      setFilteredPosts(filtered)
+    const fetchOpinionPieces = async () => {
+      try {
+        const response = await fetch('/api/opinion-pieces')
+        if (!response.ok) throw new Error('Failed to fetch opinion pieces')
+        const data = await response.json()
+        setOpinionPieces(data)
+        setFilteredOpinions(data)
+      } catch (error) {
+        console.error('Error fetching opinion pieces:', error)
+      } finally {
+        setIsLoading(false)
+      }
     }
-  }, [userData, searchTerm])
 
-  if (isLoading || !userData) {
+    fetchOpinionPieces()
+  }, [])
+
+  useEffect(() => {
+    if (opinionPieces) {
+      const lowerSearch = searchTerm.toLowerCase()
+      const filtered = opinionPieces.filter(
+        (opinion) => opinion.title.toLowerCase().includes(lowerSearch) || opinion.content.toLowerCase().includes(lowerSearch),
+      )
+      setFilteredOpinions(filtered)
+    }
+  }, [opinionPieces, searchTerm])
+
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
         <div className="relative">
@@ -38,32 +56,26 @@ const BlogPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 text-[#223843]">
-      
-
-      {/* Main Content */}
       <main className="container mx-auto px-6 py-10 max-w-6xl">
-        {/* Breadcrumb */}
         <nav className="flex items-center space-x-2 text-sm text-gray-600 mb-6">
           <Link href="/" className="hover:text-[#0284C7] transition-colors">
             Home
           </Link>
           <ChevronRight className="w-4 h-4" />
-          <span className="text-[#0284C7] font-medium">Blog Posts</span>
+          <span className="text-[#0284C7] font-medium">Opinion Pieces</span>
         </nav>
 
-        {/* Page Title */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="mb-8"
         >
-          <h1 className="text-4xl font-bold text-[#064A6E] mb-2">Blog Posts</h1>
+          <h1 className="text-4xl font-bold text-[#064A6E] mb-2">Opinion Pieces</h1>
           <div className="h-[3px] w-24 bg-[#0284C7] rounded-full"></div>
-          <p className="text-gray-600 mt-4">Insights, research, and updates from the professor.</p>
+          <p className="text-gray-600 mt-4">Thoughts, perspectives, and commentary from the professor.</p>
         </motion.div>
 
-        {/* Search */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -76,19 +88,18 @@ const BlogPage = () => {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search blog posts..."
+              placeholder="Search opinion pieces..."
               className="w-full pl-10 pr-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-[#0284C7] transition-colors bg-white"
             />
           </div>
         </motion.div>
 
-        {/* Blog List */}
         <div className="mb-8">
-          {filteredPosts && filteredPosts.length > 0 ? (
+          {filteredOpinions && filteredOpinions.length > 0 ? (
             <div className="space-y-6">
-              {filteredPosts.map((post, index) => (
+              {filteredOpinions.map((opinion, index) => (
                 <motion.div
-                  key={post._id || index}
+                  key={opinion._id || index}
                   className="bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden group border border-gray-100"
                   initial="hidden"
                   animate="visible"
@@ -96,38 +107,38 @@ const BlogPage = () => {
                   transition={{ delay: index * 0.05 }}
                 >
                   <div className="flex flex-col md:flex-row">
-                    {post.imageUrl && (
+                    {opinion.imageUrl && (
                       <div className="md:w-1/3 relative overflow-hidden">
                         <img
-                          src={post.imageUrl || "/placeholder.svg"}
-                          alt={post.title}
+                          src={opinion.imageUrl || "/placeholder.svg"}
+                          alt={opinion.title}
                           className="w-full h-64 md:h-full object-cover group-hover:scale-110 transition-transform duration-700"
                         />
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/10"></div>
                       </div>
                     )}
-                    <div className={`${post.imageUrl ? 'md:w-2/3' : 'w-full'} p-8`}>
+                    <div className={`${opinion.imageUrl ? 'md:w-2/3' : 'w-full'} p-8`}>
                       <div className="flex items-center space-x-2 text-sm text-gray-500 mb-3">
                         <Calendar className="w-4 h-4" />
-                        <span>{new Date(post.createdAt).toLocaleDateString('en-US', {
+                        <span>{new Date(opinion.createdAt).toLocaleDateString('en-US', {
                           year: 'numeric',
                           month: 'long',
                           day: 'numeric'
                         })}</span>
-                        {post.mediaFiles && post.mediaFiles.length > 0 && (
+                        {opinion.mediaFiles && opinion.mediaFiles.length > 0 && (
                           <>
                             <span className="text-gray-300">•</span>
-                            <span>{post.mediaFiles.length} media attachment{post.mediaFiles.length !== 1 ? 's' : ''}</span>
+                            <span>{opinion.mediaFiles.length} media attachment{opinion.mediaFiles.length !== 1 ? 's' : ''}</span>
                           </>
                         )}
                       </div>
                       <h3 className="text-2xl md:text-3xl font-bold text-[#064A6E] mb-4 group-hover:text-[#0284C7] transition-colors">
-                        {post.title}
+                        {opinion.title}
                       </h3>
-                      <p className="text-gray-700 mb-6 line-clamp-3 leading-relaxed">{post.content}</p>
+                      <p className="text-gray-700 mb-6 line-clamp-3 leading-relaxed">{opinion.content}</p>
                       <button
                         className="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-[#0284C7] to-[#0891B2] text-white rounded-lg hover:from-[#064A6E] hover:to-[#0284C7] transition-all duration-300 font-medium shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
-                        onClick={() => setExpandedPost(post)}
+                        onClick={() => setExpandedOpinion(opinion)}
                       >
                         <Eye className="w-4 h-4" />
                         <span>Read Full Article</span>
@@ -139,23 +150,22 @@ const BlogPage = () => {
             </div>
           ) : (
             <div className="text-center py-12">
-              <div className="text-gray-400 text-6xl mb-4">📝</div>
+              <div className="text-gray-400 text-6xl mb-4">💭</div>
               <h3 className="text-xl font-semibold text-gray-600 mb-2">
-                {searchTerm ? `No posts found for "${searchTerm}"` : "No Blog Posts Found"}
+                {searchTerm ? `No opinion pieces found for "${searchTerm}"` : "No Opinion Pieces Found"}
               </h3>
               <p className="text-gray-500">
-                {searchTerm ? "Try adjusting your search terms." : "Blog posts will appear here once published."}
+                {searchTerm ? "Try adjusting your search terms." : "Opinion pieces will appear here once published."}
               </p>
             </div>
           )}
         </div>
       </main>
 
-      {/* Modal for Expanded Post */}
-      {expandedPost && (
+      {expandedOpinion && (
         <div
           className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-          onClick={() => setExpandedPost(null)}
+          onClick={() => setExpandedOpinion(null)}
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -166,33 +176,32 @@ const BlogPage = () => {
           >
             <button
               className="absolute top-4 right-4 text-gray-500 hover:text-black p-2 rounded-full hover:bg-gray-100 transition-colors"
-              onClick={() => setExpandedPost(null)}
+              onClick={() => setExpandedOpinion(null)}
             >
               <X className="w-6 h-6" />
             </button>
             <div className="pr-12">
-              <h2 className="text-3xl font-bold text-[#064A6E] mb-4">{expandedPost.title}</h2>
+              <h2 className="text-3xl font-bold text-[#064A6E] mb-4">{expandedOpinion.title}</h2>
               <div className="flex items-center space-x-2 text-sm text-gray-500 mb-6">
                 <Calendar className="w-4 h-4" />
-                <span>{new Date(expandedPost.createdAt).toLocaleDateString()}</span>
+                <span>{new Date(expandedOpinion.createdAt).toLocaleDateString()}</span>
               </div>
-              {expandedPost.imageUrl && (
+              {expandedOpinion.imageUrl && (
                 <img
-                  src={expandedPost.imageUrl || "/placeholder.svg"}
-                  alt={expandedPost.title}
+                  src={expandedOpinion.imageUrl || "/placeholder.svg"}
+                  alt={expandedOpinion.title}
                   className="w-full h-64 object-cover rounded-lg mb-6"
                 />
               )}
               <div className="prose max-w-none">
-                <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">{expandedPost.content}</p>
+                <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">{expandedOpinion.content}</p>
               </div>
-              
-              {/* Additional Media Files */}
-              {expandedPost.mediaFiles && expandedPost.mediaFiles.length > 0 && (
+
+              {expandedOpinion.mediaFiles && expandedOpinion.mediaFiles.length > 0 && (
                 <div className="mt-8">
                   <h3 className="text-xl font-semibold text-[#064A6E] mb-4">Media Gallery</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {expandedPost.mediaFiles.map((file, index) => (
+                    {expandedOpinion.mediaFiles.map((file, index) => (
                       <div key={index} className="rounded-lg overflow-hidden shadow-md">
                         {file.type === 'image' ? (
                           <img
@@ -228,4 +237,4 @@ const BlogPage = () => {
   )
 }
 
-export default BlogPage
+export default OpinionPiecesPage

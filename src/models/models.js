@@ -44,6 +44,34 @@ const BlogPostSchema = new mongoose.Schema({
 
 export const BlogPost = (mongoose.models && mongoose.models.BlogPost) || mongoose.model('BlogPost', BlogPostSchema);
 
+// Opinion Piece Model
+const OpinionPieceSchema = new mongoose.Schema({
+  title: { type: String, required: true, maxlength: 200 },
+  content: { type: String, required: true },
+  imageUrl: { type: String },
+  mediaFiles: [{
+    type: { type: String, enum: ['image', 'video'], required: true },
+    url: { type: String, required: true },
+    filename: { type: String },
+    size: { type: Number },
+    mimeType: { type: String }
+  }]
+}, { timestamps: true });
+
+export const OpinionPiece = (mongoose.models && mongoose.models.OpinionPiece) || mongoose.model('OpinionPiece', OpinionPieceSchema);
+
+// Meeting Request Model
+const MeetingRequestSchema = new mongoose.Schema({
+  name: { type: String, required: true, maxlength: 100 },
+  email: { type: String, required: true, maxlength: 100 },
+  subject: { type: String, required: true, maxlength: 200 },
+  message: { type: String, required: true },
+  preferredDate: { type: Date, required: true },
+  status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' }
+}, { timestamps: true });
+
+export const MeetingRequest = (mongoose.models && mongoose.models.MeetingRequest) || mongoose.model('MeetingRequest', MeetingRequestSchema);
+
 // Teaching Experience Model
 const TeachingExperienceSchema = new mongoose.Schema({
   subject: { type: String, required: true, maxlength: 200 },
