@@ -4,6 +4,8 @@ import MobilePreview from "./components/MobilePreview";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import Link from "next/link";
+import { BarChart3 } from "lucide-react";
 
 export default function AdminPage() {
  
@@ -25,16 +27,25 @@ export default function AdminPage() {
 
   return (
     <div className="p-7">
-    <div className="grid grid-cols-1 lg:grid-cols-3">
-      {/* Left side: Form content */}
-      <div className="col-span-2"> 
-        <FormContent />
+      <div className="mb-6 flex justify-end">
+        <Link
+          href="/admin/dashboard"
+          className="flex items-center gap-2 px-4 py-2 bg-[#0891B2] text-white rounded-lg hover:bg-[#064A6E] transition-colors shadow-md"
+        >
+          <BarChart3 className="w-5 h-5" />
+          Analytics Dashboard
+        </Link>
       </div>
-      {/* Right side: Mobile preview */}
-      <div>
-        <MobilePreview />
+      <div className="grid grid-cols-1 lg:grid-cols-3">
+        {/* Left side: Form content */}
+        <div className="col-span-2">
+          <FormContent />
+        </div>
+        {/* Right side: Mobile preview */}
+        <div>
+          <MobilePreview />
+        </div>
       </div>
-    </div>
     </div>
   );
 }

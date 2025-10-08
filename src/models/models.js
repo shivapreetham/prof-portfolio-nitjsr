@@ -193,3 +193,46 @@ export const Award = (mongoose.models && mongoose.models.Award) || mongoose.mode
 // }, { timestamps: true });
 
 // export const Collaboration = (mongoose.models && mongoose.models.Collaboration) || mongoose.model('Collaboration', CollaborationSchema);
+
+// Analytics Event Model
+export const EVENT_TYPES = ['page_view', 'blog_view', 'video_play', 'paper_view', 'photo_view', 'student_view', 'conference_view', 'award_view', 'opinion_view'];
+export const DEVICE_TYPES = ['mobile', 'tablet', 'desktop'];
+
+const AnalyticsEventSchema = new mongoose.Schema({
+  eventType: { type: String, required: true, enum: EVENT_TYPES },
+
+  // Resource Information
+  resourceId: { type: String },
+  resourceTitle: { type: String },
+  resourceType: { type: String },
+
+  // Page Information
+  pagePath: { type: String, required: true },
+  pageTitle: { type: String },
+
+  // Session & User Info
+  sessionId: { type: String, required: true, index: true },
+  ipHash: { type: String },
+  userAgent: { type: String },
+  referrer: { type: String },
+
+  // Geo & Device Data
+  country: { type: String },
+  device: { type: String, enum: DEVICE_TYPES },
+  browser: { type: String },
+  os: { type: String },
+
+  // Engagement Metrics
+  duration: { type: Number, default: 0 },
+  scrollDepth: { type: Number, default: 0 },
+
+  // Timestamps
+  timestamp: { type: Date, default: Date.now, index: true }
+}, { timestamps: true });
+
+// Indexes for faster queries
+AnalyticsEventSchema.index({ eventType: 1, timestamp: -1 });
+AnalyticsEventSchema.index({ pagePath: 1, timestamp: -1 });
+AnalyticsEventSchema.index({ resourceId: 1 });
+
+export const AnalyticsEvent = (mongoose.models && mongoose.models.AnalyticsEvent) || mongoose.model('AnalyticsEvent', AnalyticsEventSchema);

@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Provider from "./Provider";
+import AnalyticsProvider from "./components/AnalyticsProvider";
 import { Poppins } from "next/font/google";
 
 // import Navbar from "./components/Navbar";
@@ -32,7 +33,9 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={`${poppins.variable} font-sans antialiased`} data-theme="dark">
         <Provider>
-          <main>{children}</main>
+          <AnalyticsProvider>
+            <main>{children}</main>
+          </AnalyticsProvider>
         </Provider>
       </body>
     </html>
