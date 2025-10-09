@@ -4,7 +4,7 @@ import { motion } from "framer-motion"
 import { Search, X, Calendar, Eye, ChevronRight } from "lucide-react"
 import { useUser } from "../../Provider"
 import Link from "next/link"
-import { trackBlogView } from "@/hooks/useAnalyticsSimple"
+import { trackBlogView } from "@/hooks/useAnalytics"
 
 const cardAnimation = {
   hidden: { opacity: 0, y: 20 },

@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 
 let sessionId = null;
+let pageViewId = null;
 
 function getSessionId() {
   if (typeof window === 'undefined') return null;
@@ -10,35 +11,34 @@ function getSessionId() {
   if (!sessionId) {
     const storedSession = sessionStorage.getItem('analytics_session_id');
     const sessionTimestamp = sessionStorage.getItem('analytics_session_timestamp');
-    
-    // Session timeout after 30 minutes of inactivity
-    const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes in milliseconds
+
+    const SESSION_TIMEOUT = 30 * 60 * 1000;
     const now = Date.now();
-    
+
     if (storedSession && sessionTimestamp) {
       const lastActivity = parseInt(sessionTimestamp);
       if (now - lastActivity < SESSION_TIMEOUT) {
-        // Session is still valid, update timestamp
         sessionId = storedSession;
         sessionStorage.setItem('analytics_session_timestamp', now.toString());
       } else {
-        // Session expired, create new one
         sessionId = `session_${now}_${Math.random().toString(36).substr(2, 9)}`;
         sessionStorage.setItem('analytics_session_id', sessionId);
         sessionStorage.setItem('analytics_session_timestamp', now.toString());
       }
     } else {
-      // No existing session, create new one
       sessionId = `session_${now}_${Math.random().toString(36).substr(2, 9)}`;
       sessionStorage.setItem('analytics_session_id', sessionId);
       sessionStorage.setItem('analytics_session_timestamp', now.toString());
     }
   } else {
-    // Update timestamp for existing session
     sessionStorage.setItem('analytics_session_timestamp', Date.now().toString());
   }
-  
+
   return sessionId;
+}
+
+function generatePageViewId() {
+  return `pv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 }
 
 function getPageTitle(pathname) {
@@ -118,11 +118,11 @@ function detectDevice() {
 export default function RouteTracker() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const startTimeRef = useRef(Date.now());
+  const startTimeRef = useRef(null);
   const maxScrollRef = useRef(0);
-  const isTracking = useRef(false);
+  const currentPageViewIdRef = useRef(null);
+  const hasTrackedRef = useRef(false);
 
-  // Track scroll depth
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
@@ -139,22 +139,24 @@ export default function RouteTracker() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Track page views
   useEffect(() => {
-    if (!pathname || isTracking.current) return;
-    
-    isTracking.current = true;
+    if (!pathname) return;
+
+    hasTrackedRef.current = false;
     startTimeRef.current = Date.now();
     maxScrollRef.current = 0;
+    currentPageViewIdRef.current = generatePageViewId();
 
     const pageTitle = getPageTitle(pathname);
     const fullPath = searchParams.toString() ? `${pathname}?${searchParams.toString()}` : pathname;
 
-    // Track page view
     const trackPageView = async () => {
+      if (hasTrackedRef.current) return;
+      hasTrackedRef.current = true;
+
       try {
         const sessionData = getSessionId();
-        
+
         await fetch('/api/analytics/track', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -163,6 +165,7 @@ export default function RouteTracker() {
             pagePath: fullPath,
             pageTitle: pageTitle,
             sessionId: sessionData,
+            pageViewId: currentPageViewIdRef.current,
             referrer: document.referrer,
             device: detectDevice(),
             timestamp: new Date().toISOString()
@@ -176,25 +179,25 @@ export default function RouteTracker() {
 
     trackPageView();
 
-    // Track page exit
     return () => {
       const duration = Math.round((Date.now() - startTimeRef.current) / 1000);
-      if (duration > 0) {
-        navigator.sendBeacon('/api/analytics/track', JSON.stringify({
-          eventType: 'page_view',
+      if (duration > 1 && currentPageViewIdRef.current) {
+        const blob = new Blob([JSON.stringify({
+          eventType: 'page_exit',
           pagePath: fullPath,
           pageTitle: pageTitle,
           sessionId: getSessionId(),
-          referrer: document.referrer,
+          pageViewId: currentPageViewIdRef.current,
           duration,
           scrollDepth: maxScrollRef.current,
           device: detectDevice(),
           timestamp: new Date().toISOString()
-        }));
+        })], { type: 'application/json' });
+
+        navigator.sendBeacon('/api/analytics/track', blob);
       }
-      isTracking.current = false;
     };
   }, [pathname, searchParams]);
 
-  return null; // This component doesn't render anything
+  return null;
 }

@@ -171,33 +171,6 @@ export default function AnalyticsDashboard() {
               </ResponsiveContainer>
             </div>
 
-            {/* Period Comparison */}
-            {summary?.comparison && (
-              <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-                <h2 className="text-2xl font-semibold text-[#064A6E] mb-6">Period Comparison</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="text-center p-4 bg-blue-50 rounded-lg">
-                    <h3 className="text-lg font-semibold text-[#064A6E] mb-2">Current Period</h3>
-                    <div className="space-y-2">
-                      <p className="text-2xl font-bold text-blue-600">{summary.comparison.currentPeriod.views}</p>
-                      <p className="text-sm text-gray-600">Total Views</p>
-                      <p className="text-xl font-semibold text-blue-600">{summary.comparison.currentPeriod.visitors}</p>
-                      <p className="text-sm text-gray-600">Unique Visitors</p>
-                    </div>
-                  </div>
-                  <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <h3 className="text-lg font-semibold text-[#064A6E] mb-2">Previous Period</h3>
-                    <div className="space-y-2">
-                      <p className="text-2xl font-bold text-gray-600">{summary.comparison.previousPeriod.views}</p>
-                      <p className="text-sm text-gray-600">Total Views</p>
-                      <p className="text-xl font-semibold text-gray-600">{summary.comparison.previousPeriod.visitors}</p>
-                      <p className="text-sm text-gray-600">Unique Visitors</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
             {/* Page Analytics Table */}
             <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
               <h2 className="text-2xl font-semibold text-[#064A6E] mb-6">Page Performance</h2>

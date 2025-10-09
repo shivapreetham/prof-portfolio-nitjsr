@@ -1,6 +1,6 @@
-import { Metadata } from 'next';
+import React from 'react';
 
-export const metadata: Metadata = {
+export const metadata = {
   title: 'Research Publications - Professor Portfolio',
   description: 'Explore research publications including international journal papers, conference proceedings, books, and book chapters. Stay updated with the latest academic contributions.',
   keywords: ['research', 'publications', 'journal papers', 'conference papers', 'academic research', 'computer science'],
@@ -21,10 +21,6 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ResearchPublicationsLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return children;
+export default function ResearchPublicationsLayout({ children }) {
+  return <>{children}</>;
 }

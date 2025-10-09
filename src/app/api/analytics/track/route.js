@@ -41,7 +41,7 @@ export async function POST(request) {
     await connectDB();
     const data = await request.json();
 
-    if (!data.eventType || !EVENT_TYPES.includes(data.eventType)) {
+    if (!data.eventType) {
       return NextResponse.json({ error: 'Invalid event type' }, { status: 400 });
     }
 
@@ -52,6 +52,31 @@ export async function POST(request) {
     const userAgent = request.headers.get('user-agent') || '';
     const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
 
+    if (data.eventType === 'page_exit' && data.pageViewId) {
+      const existingEvent = await AnalyticsEvent.findOne({
+        pageViewId: data.pageViewId,
+        eventType: 'page_view'
+      });
+
+      if (existingEvent) {
+        existingEvent.duration = data.duration || 0;
+        existingEvent.scrollDepth = data.scrollDepth || 0;
+        await existingEvent.save();
+        return NextResponse.json({ success: true, updated: true }, { status: 200 });
+      }
+    }
+
+    if (data.eventType === 'page_view' && data.pageViewId) {
+      const existing = await AnalyticsEvent.findOne({
+        pageViewId: data.pageViewId,
+        eventType: 'page_view'
+      });
+
+      if (existing) {
+        return NextResponse.json({ success: true, duplicate: true }, { status: 200 });
+      }
+    }
+
     const event = new AnalyticsEvent({
       eventType: data.eventType,
       resourceId: data.resourceId,
@@ -60,6 +85,7 @@ export async function POST(request) {
       pagePath: data.pagePath,
       pageTitle: data.pageTitle,
       sessionId: data.sessionId,
+      pageViewId: data.pageViewId,
       ipHash: hashIP(ip),
       userAgent: userAgent,
       referrer: data.referrer || '',

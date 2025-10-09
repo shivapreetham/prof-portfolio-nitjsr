@@ -195,7 +195,7 @@ export const Award = (mongoose.models && mongoose.models.Award) || mongoose.mode
 // export const Collaboration = (mongoose.models && mongoose.models.Collaboration) || mongoose.model('Collaboration', CollaborationSchema);
 
 // Analytics Event Model
-export const EVENT_TYPES = ['page_view', 'blog_view', 'video_play', 'paper_view', 'photo_view', 'student_view', 'conference_view', 'award_view', 'opinion_view'];
+export const EVENT_TYPES = ['page_view', 'page_exit', 'blog_view', 'video_play', 'paper_view', 'photo_view', 'student_view', 'conference_view', 'award_view', 'opinion_view'];
 export const DEVICE_TYPES = ['mobile', 'tablet', 'desktop'];
 
 const AnalyticsEventSchema = new mongoose.Schema({
@@ -209,6 +209,7 @@ const AnalyticsEventSchema = new mongoose.Schema({
   // Page Information
   pagePath: { type: String, required: true },
   pageTitle: { type: String },
+  pageViewId: { type: String, index: true },
 
   // Session & User Info
   sessionId: { type: String, required: true, index: true },
@@ -234,5 +235,6 @@ const AnalyticsEventSchema = new mongoose.Schema({
 AnalyticsEventSchema.index({ eventType: 1, timestamp: -1 });
 AnalyticsEventSchema.index({ pagePath: 1, timestamp: -1 });
 AnalyticsEventSchema.index({ resourceId: 1 });
+AnalyticsEventSchema.index({ pageViewId: 1, eventType: 1 });
 
 export const AnalyticsEvent = (mongoose.models && mongoose.models.AnalyticsEvent) || mongoose.model('AnalyticsEvent', AnalyticsEventSchema);
