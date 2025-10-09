@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { useUser } from "../../../Provider";
+import { trackVideoPlay } from "@/hooks/useAnalytics";
 
 const VideoGalleryPage = () => {
   const { userData } = useUser();
@@ -46,9 +47,15 @@ const VideoGalleryPage = () => {
                     src={video.youtubeUrl.replace('watch?v=', 'embed/')}
                     className="w-full h-full"
                     allowFullScreen
+                    onLoad={() => trackVideoPlay(video._id, video.title)}
                   ></iframe>
                 ) : (
-                  <video src={video.videoUrl} controls className="w-full h-full" />
+                  <video 
+                    src={video.videoUrl} 
+                    controls 
+                    className="w-full h-full" 
+                    onPlay={() => trackVideoPlay(video._id, video.title)}
+                  />
                 )}
               </div>
               <div className="p-4">

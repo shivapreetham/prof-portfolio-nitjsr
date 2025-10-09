@@ -4,6 +4,7 @@ import { motion } from "framer-motion"
 import { Search, X, Calendar, Eye, ChevronRight } from "lucide-react"
 import { useUser } from "../../Provider"
 import Link from "next/link"
+import { trackBlogView } from "@/hooks/useAnalyticsSimple"
 
 const cardAnimation = {
   hidden: { opacity: 0, y: 20 },
@@ -127,7 +128,11 @@ const BlogPage = () => {
                       <p className="text-gray-700 mb-6 line-clamp-3 leading-relaxed">{post.content}</p>
                       <button
                         className="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-[#0284C7] to-[#0891B2] text-white rounded-lg hover:from-[#064A6E] hover:to-[#0284C7] transition-all duration-300 font-medium shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
-                        onClick={() => setExpandedPost(post)}
+                        onClick={() => {
+                          setExpandedPost(post)
+                          // Track blog view
+                          trackBlogView(post._id, post.title)
+                        }}
                       >
                         <Eye className="w-4 h-4" />
                         <span>Read Full Article</span>

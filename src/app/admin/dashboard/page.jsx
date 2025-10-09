@@ -79,8 +79,8 @@ export default function AnalyticsDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 md:p-6">
+      <div className="max-w-7xl mx-auto w-full">
         {/* Header */}
         <div className="mb-8">
           <Link
@@ -128,12 +128,15 @@ export default function AnalyticsDashboard() {
               <KPICard
                 title="Total Views"
                 value={summary?.totalViews || 0}
+                growth={summary?.growth?.views}
                 icon={Eye}
                 color="bg-blue-500"
               />
               <KPICard
                 title="Unique Visitors"
                 value={summary?.uniqueVisitors || 0}
+                subtitle={`Avg: ${summary?.avgDailyVisitors || 0}/day`}
+                growth={summary?.growth?.visitors}
                 icon={Users}
                 color="bg-green-500"
               />
@@ -167,6 +170,33 @@ export default function AnalyticsDashboard() {
                 </LineChart>
               </ResponsiveContainer>
             </div>
+
+            {/* Period Comparison */}
+            {summary?.comparison && (
+              <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 className="text-2xl font-semibold text-[#064A6E] mb-6">Period Comparison</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="text-center p-4 bg-blue-50 rounded-lg">
+                    <h3 className="text-lg font-semibold text-[#064A6E] mb-2">Current Period</h3>
+                    <div className="space-y-2">
+                      <p className="text-2xl font-bold text-blue-600">{summary.comparison.currentPeriod.views}</p>
+                      <p className="text-sm text-gray-600">Total Views</p>
+                      <p className="text-xl font-semibold text-blue-600">{summary.comparison.currentPeriod.visitors}</p>
+                      <p className="text-sm text-gray-600">Unique Visitors</p>
+                    </div>
+                  </div>
+                  <div className="text-center p-4 bg-gray-50 rounded-lg">
+                    <h3 className="text-lg font-semibold text-[#064A6E] mb-2">Previous Period</h3>
+                    <div className="space-y-2">
+                      <p className="text-2xl font-bold text-gray-600">{summary.comparison.previousPeriod.views}</p>
+                      <p className="text-sm text-gray-600">Total Views</p>
+                      <p className="text-xl font-semibold text-gray-600">{summary.comparison.previousPeriod.visitors}</p>
+                      <p className="text-sm text-gray-600">Unique Visitors</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Page Analytics Table */}
             <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
@@ -283,7 +313,7 @@ export default function AnalyticsDashboard() {
   );
 }
 
-function KPICard({ title, value, subtitle, icon: Icon, color }) {
+function KPICard({ title, value, subtitle, growth, icon: Icon, color }) {
   return (
     <div className="bg-white rounded-xl shadow-lg p-6">
       <div className="flex items-center justify-between">
@@ -291,6 +321,16 @@ function KPICard({ title, value, subtitle, icon: Icon, color }) {
           <p className="text-gray-600 text-sm mb-1">{title}</p>
           <p className="text-2xl font-bold text-[#064A6E]">{value}</p>
           {subtitle && <p className="text-xs text-gray-500 mt-1">{subtitle}</p>}
+          {growth !== undefined && (
+            <div className="flex items-center mt-2">
+              <span className={`text-xs font-medium ${
+                growth > 0 ? 'text-green-600' : growth < 0 ? 'text-red-600' : 'text-gray-500'
+              }`}>
+                {growth > 0 ? '↗' : growth < 0 ? '↘' : '→'} {Math.abs(growth)}%
+              </span>
+              <span className="text-xs text-gray-400 ml-1">vs prev period</span>
+            </div>
+          )}
         </div>
         <div className={`${color} p-3 rounded-lg`}>
           <Icon className="w-6 h-6 text-white" />

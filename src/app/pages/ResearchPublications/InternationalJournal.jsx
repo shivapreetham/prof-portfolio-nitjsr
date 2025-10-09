@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from 'react';
+import { trackPaperView } from "@/hooks/useAnalytics";
 
 const normalizeRemoteArticle = (article) => {
   const authorsList = article.authors
@@ -124,6 +125,7 @@ const InternationalJournal = ({ propData: publications, backendData = [] }) => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-600 inline-flex items-center gap-1 hover:underline"
+                  onClick={() => trackPaperView(article.title, article.title)}
                 >
                   View Article
                 </a>
@@ -134,6 +136,7 @@ const InternationalJournal = ({ propData: publications, backendData = [] }) => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-600 inline-flex items-center gap-1 hover:underline"
+                  onClick={() => trackPaperView(article.title, article.title)}
                 >
                   Download PDF
                 </a>

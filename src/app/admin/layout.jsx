@@ -1,8 +1,8 @@
 "use client"
 import React from 'react';
-import { SessionProvider } from "next-auth/react";
 // import SideNav from './components/SideNav';
 import { Toaster } from 'react-hot-toast';
+
 export default function AdminLayout({ children }) {
     return (
         <div>
@@ -10,10 +10,8 @@ export default function AdminLayout({ children }) {
             <div className="w-24 fixed">
                 {/* <SideNav/> */}
             </div>
-            <div className="ml-24">
-                <SessionProvider>
+            <div className="ml-0">
                 {children}
-                </SessionProvider>
             </div>
         </div>
     );

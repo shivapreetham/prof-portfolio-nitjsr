@@ -1,6 +1,0 @@
-gallery 
-blog pop up modal
-home page banners
-students from MVI lab 
-hosting under MVI lab server
-images upload

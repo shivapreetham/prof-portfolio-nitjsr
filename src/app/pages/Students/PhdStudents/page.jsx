@@ -3,6 +3,7 @@ import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { ChevronRight, ChevronLeft } from "lucide-react"
 import Link from "next/link"
+import { trackStudentView } from "@/hooks/useAnalytics"
 
 const PhdStudents = () => {
   const [data, setData] = useState([])
@@ -95,7 +96,8 @@ const PhdStudents = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: index * 0.1 }}
-                        className="hover:bg-gray-50 transition-colors"
+                        className="hover:bg-gray-50 transition-colors cursor-pointer"
+                        onClick={() => trackStudentView(thesis._id || `phd-${index}`, thesis.name_of_student, 'PhD')}
                       >
                         <td className="border border-gray-300 px-4 py-3 text-gray-700">{thesis.research_topic}</td>
                         <td className="border border-gray-300 px-4 py-3 text-gray-700">{thesis.name_of_student}</td>
