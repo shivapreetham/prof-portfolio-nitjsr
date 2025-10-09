@@ -10,13 +10,13 @@ export default function Header({ user }) {
         </h1>
         <div className="space-y-1.5">
           <p className="text-base sm:text-lg font-medium">
-            Assistant Professor at NIT Jamshedpur
+            {user.designation1 || "Your Designation Here"}
           </p>
           <p className="text-sm sm:text-base text-white/90">
-            Faculty In Charge, Computer Centre
+            {user.designation2 || "Your Designation Here"}
           </p>
           <p className="text-sm text-white/80">
-            Prof. In Charge, NIMCET 2024
+            {user.designation3 || "Your Designation Here"}
           </p>
         </div>
       </div>
