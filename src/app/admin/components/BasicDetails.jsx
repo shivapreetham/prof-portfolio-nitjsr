@@ -8,16 +8,19 @@ import { useUser } from '@/app/Provider';
 const BasicDetail = ({ userInfo }) => {
   const { userData, setUserData } = useUser();
 
-
   const [details, setDetails] = useState({
     name: '',
     email: '',
-    profileImage: '',
     bio: '',
     location: '',
-    linkedIn: ''
+    linkedIn: '',
+    phoneNumber: '',
+    designation1: '',
+    designation2: '',
+    designation3: '',
+    bannerImages: [] // Banner images array
   });
-  
+
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const timeoutRef = useRef(null);
@@ -28,10 +31,14 @@ const BasicDetail = ({ userInfo }) => {
       setDetails({
         name: userInfo.name || '',
         email: userInfo.email || '',
-        profileImage: userInfo.profileImage || '',
         bio: userInfo.bio || '',
         location: userInfo.location || '',
-        linkedIn: userInfo.linkedIn || ''
+        linkedIn: userInfo.linkedIn || '',
+        phoneNumber: userInfo.phoneNumber || '',
+        designation1: userInfo.designation1 || '',
+        designation2: userInfo.designation2 || '',
+        designation3: userInfo.designation3 || '',
+        bannerImages: userInfo.bannerImages || [] // Initialize with current banner images
       });
     }
   }, [userInfo]);
@@ -88,33 +95,34 @@ const BasicDetail = ({ userInfo }) => {
     }, 2000);
   };
 
-  const handleImageUpload = async (event) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    if (details.profileImage) {
-      toast.error('Please delete the current photo before uploading a new one');
-      if (fileInputRef.current) fileInputRef.current.value = '';
-      return;
-    }
+  const handleBannerImageUpload = async (event) => {
+    const files = event.target.files;
+    if (!files) return;
 
     setIsUploading(true);
 
     try {
-      const result = await uploadImage(file, {
-        bucketName: 'profile-images',
-        folderPath: 'avatars'
-      });
+      const uploadedImages = [];
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const result = await uploadImage(file, {
+          bucketName: 'banner-images',
+          folderPath: 'banners'
+        });
 
-      if (result.success) {
-        const updated = { ...details, profileImage: result.url };
-        setDetails(updated);
-        await updateUserField('profileImage', result.url);
-      } else {
-        throw new Error(result.error);
+        if (result.success) {
+          uploadedImages.push(result.url);
+        } else {
+          throw new Error(result.error);
+        }
       }
+
+      const updated = { ...details, bannerImages: [...details.bannerImages, ...uploadedImages] };
+      setDetails(updated);
+      await updateUserField('bannerImages', updated.bannerImages);
     } catch (error) {
-      console.error('Error uploading image:', error);
-      toast.error(error.message || 'Failed to upload image');
+      console.error('Error uploading images:', error);
+      toast.error(error.message || 'Failed to upload images');
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) {
@@ -123,28 +131,28 @@ const BasicDetail = ({ userInfo }) => {
     }
   };
 
-  const handleDeleteImage = async () => {
-    if (!details.profileImage) return;
+  const handleDeleteBannerImage = async (imageUrl) => {
     setIsUploading(true);
     try {
       const res = await fetch('/api/cloudFlare/deleteImage', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageUrl: details.profileImage })
+        body: JSON.stringify({ imageUrl })
       });
       const data = await res.json();
       if (!data.success) {
         throw new Error(data.error || 'Failed to delete image');
       }
-      await updateUserField('profileImage', '');
-      setDetails(prev => ({ ...prev, profileImage: '' }));
-      toast.success('Profile photo deleted');
+
+      const updated = { ...details, bannerImages: details.bannerImages.filter((url) => url !== imageUrl) };
+      setDetails(updated);
+      await updateUserField('bannerImages', updated.bannerImages);
+      toast.success('Banner image deleted');
     } catch (error) {
       console.error('Error deleting image:', error);
       toast.error(error.message || 'Failed to delete image');
     } finally {
       setIsUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
 
@@ -153,49 +161,41 @@ const BasicDetail = ({ userInfo }) => {
       <div className="card-body">
         <h2 className="card-title text-base mb-4 text-base-content/80">Personal Information</h2>
 
-        <form className='space-y-2'>
+        <form className="space-y-2">
 
-          <div className="flex items-center gap-6">
-            <div className="avatar flex flex-col items-center justify-center">
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleImageUpload}
-                className="hidden"
-                accept="image/jpeg,image/png,image/webp"
-                disabled={isUploading || Boolean(details.profileImage)}
-              />
-              <div
-                className="w-16 h-16 mb-2 rounded-full ring ring-primary/30 ring-offset-base-100 ring-offset-2 cursor-pointer"
-                onClick={() => !details.profileImage && fileInputRef.current?.click()}
-              >
-                {isUploading ? (
-                  <div className="bg-base-200 w-full h-full flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                  </div>
-                ) : details.profileImage ? (
+          {/* Banner Images Section */}
+          <div>
+            <label className="label">Banner Images</label>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleBannerImageUpload}
+              className="input input-bordered input-sm w-full bg-base-100 text-base-content/80"
+              multiple
+              disabled={isUploading}
+            />
+            <div className="flex gap-2 mt-2">
+              {details.bannerImages.map((image, index) => (
+                <div key={index} className="w-32 h-32 rounded-md overflow-hidden relative">
                   <img
-                    src={details.profileImage}
-                    alt="Profile"
+                    src={image}
+                    alt={`Banner Image ${index}`}
+                    className="w-full h-full object-cover"
                   />
-                ) : (
-                  <div className="bg-base-200 w-full h-full flex items-center justify-center">
-                    <Camera className="h-8 w-8 opacity-40" />
-                  </div>
-                )}
-              </div>
-              {details.profileImage && (
                   <button
                     type="button"
-                    onClick={handleDeleteImage}
-                    className="text-xs text-white py-1 px-2  mt-2 rounded-md bg-red-500"
-                    disabled={isUploading}
+                    onClick={() => handleDeleteBannerImage(image)}
+                    className="absolute top-1 right-1 text-xs bg-red-500 text-white rounded-full p-1"
                   >
-                    Delete Photo
+                    X
                   </button>
-              )}
+                </div>
+              ))}
             </div>
-            
+          </div>
+
+          {/* Text Input Fields */}
+          <div className="flex items-center gap-6">
             <div>
               <label className="label flex-1">
                 <span className="label-text text-xs text-base-content/70">Full Name</span>
@@ -224,10 +224,9 @@ const BasicDetail = ({ userInfo }) => {
               />
             </div>
 
+            {/* Bio, Location, LinkedIn */}
             <div>
-              <label className="label">
-                <span className="label-text text-xs text-base-content/70">Bio</span>
-              </label>
+              <label className="label">Bio</label>
               <textarea
                 placeholder="Tell us about yourself"
                 className="textarea textarea-bordered w-full text-sm h-24 bg-base-100 text-base-content/80"
@@ -235,10 +234,9 @@ const BasicDetail = ({ userInfo }) => {
                 onChange={(e) => onInputChange(e, 'bio')}
               />
             </div>
+
             <div>
-              <label className="label">
-                <span className="label-text text-xs text-base-content/70">Location</span>
-              </label>
+              <label className="label">Location</label>
               <input
                 type="text"
                 placeholder="Enter your location"
@@ -249,9 +247,7 @@ const BasicDetail = ({ userInfo }) => {
             </div>
 
             <div>
-              <label className="label">
-                <span className="label-text text-xs text-base-content/70">LinkedIn Profile</span>
-              </label>
+              <label className="label">LinkedIn Profile</label>
               <input
                 type="url"
                 placeholder="Enter your LinkedIn URL"
@@ -259,7 +255,51 @@ const BasicDetail = ({ userInfo }) => {
                 value={details.linkedIn}
                 onChange={(e) => onInputChange(e, 'linkedIn')}
               />
-              {isSaving && <p className="text-xs mt-1 text-primary">Saving changes...</p>}
+            </div>
+
+            {/* New fields */}
+            <div>
+              <label className="label">Phone Number</label>
+              <input
+                type="text"
+                placeholder="Enter your phone number"
+                className="input input-bordered input-sm w-full bg-base-100 text-base-content/80"
+                value={details.phoneNumber}
+                onChange={(e) => onInputChange(e, 'phoneNumber')}
+              />
+            </div>
+
+            <div>
+              <label className="label">Designation 1</label>
+              <input
+                type="text"
+                placeholder="Enter your first designation"
+                className="input input-bordered input-sm w-full bg-base-100 text-base-content/80"
+                value={details.designation1}
+                onChange={(e) => onInputChange(e, 'designation1')}
+              />
+            </div>
+
+            <div>
+              <label className="label">Designation 2</label>
+              <input
+                type="text"
+                placeholder="Enter your second designation"
+                className="input input-bordered input-sm w-full bg-base-100 text-base-content/80"
+                value={details.designation2}
+                onChange={(e) => onInputChange(e, 'designation2')}
+              />
+            </div>
+
+            <div>
+              <label className="label">Designation 3</label>
+              <input
+                type="text"
+                placeholder="Enter your third designation"
+                className="input input-bordered input-sm w-full bg-base-100 text-base-content/80"
+                value={details.designation3}
+                onChange={(e) => onInputChange(e, 'designation3')}
+              />
             </div>
           </div>
         </form>
