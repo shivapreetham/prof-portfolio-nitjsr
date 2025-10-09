@@ -4,10 +4,14 @@ import mongoose from 'mongoose';
 const ProfileSchema = new mongoose.Schema({
   name: { type: String, required: true, maxlength: 100 },
   email: { type: String, required: true, maxlength: 100 },
-  profileImage: { type: String },
+  bannerImages: [{ type: String }],  // Array of image URLs (for banner images)
   bio: { type: String },
   location: { type: String, maxlength: 100 },
   linkedIn: { type: String, maxlength: 255 },
+  phoneNumber: { type: String, maxlength: 15 }, // Added phone number field
+  designation1: { type: String, maxlength: 255 }, // First designation
+  designation2: { type: String, maxlength: 255 }, // Second designation
+  designation3: { type: String, maxlength: 255 }, // Third designation
 }, { timestamps: true });
 
 export const Profile = (mongoose.models && mongoose.models.Profile) || mongoose.model('Profile', ProfileSchema);

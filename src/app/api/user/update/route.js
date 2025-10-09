@@ -16,7 +16,19 @@ export async function PATCH(request) {
     }
 
     // Validate that the field is allowed to be updated
-    const allowedFields = ['name', 'email', 'bio', 'location', 'linkedIn', 'profileImage'];
+    const allowedFields = [
+      'name',
+      'email',
+      'bio',
+      'location',
+      'linkedIn',
+      'phoneNumber',
+      'designation1',
+      'designation2',
+      'designation3',
+      'bannerImages'
+    ];
+
     if (!allowedFields.includes(field)) {
       return NextResponse.json(
         { message: `Field "${field}" cannot be updated.` },
@@ -26,7 +38,7 @@ export async function PATCH(request) {
 
     // Find or create the single profile (since there's only one user)
     let profile = await Profile.findOne({});
-    
+
     if (!profile) {
       // Create profile if it doesn't exist with the initial field value
       const initialData = {
@@ -35,7 +47,11 @@ export async function PATCH(request) {
         bio: field === 'bio' ? value : '',
         location: field === 'location' ? value : '',
         linkedIn: field === 'linkedIn' ? value : '',
-        profileImage: field === 'profileImage' ? value : ''
+        phoneNumber: field === 'phoneNumber' ? value : '',
+        designation1: field === 'designation1' ? value : '',
+        designation2: field === 'designation2' ? value : '',
+        designation3: field === 'designation3' ? value : '',
+        bannerImages: field === 'bannerImages' ? value : [] // Default empty array for bannerImages
       };
       
       profile = new Profile(initialData);
