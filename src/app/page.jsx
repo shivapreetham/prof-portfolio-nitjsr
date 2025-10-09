@@ -1,29 +1,24 @@
-"use client";
+"use client"
 
-import { useState, useEffect } from "react";
-import { useUser } from "./Provider";
-import { Mail, Linkedin, ArrowRight } from "lucide-react";
-import Header from "./components/Header";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
+import { useState, useEffect } from "react"
+import { useUser } from "./Provider"
+import { Mail, Linkedin, ArrowRight } from "lucide-react"
+import Header from "./components/Header"
+import Navbar from "./components/Navbar"
+import Footer from "./components/Footer"
 
 export default function Home() {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const { userData } = useUser();
-
-  const slides = [
-    { id: 1, type: "image", src: "slides/img1.png" },
-    { id: 2, type: "image", src: "/slides/img2.jpeg" },
-    { id: 3, type: "image", src: "/slides/img3.jpeg" },
-    { id: 4, type: "image", src: "/slides/img4.png" },
-  ];
-
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const { userData } = useUser()
   useEffect(() => {
+    if (!userData?.user?.bannerImages?.length) return
+
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, [slides.length]);
+      setCurrentSlide(prev => (prev + 1) % userData.user.bannerImages.length)
+    }, 4000) 
+
+    return () => clearInterval(interval) 
+  }, [userData?.user?.bannerImages])
 
   if (!userData?.user) {
     return (
@@ -35,12 +30,13 @@ export default function Home() {
           </div>
         </div>
       </div>
-    );
+    )
   }
 
   const slides = (userData.user.bannerImages || []).map((src, index) => ({
     id: index + 1, type: "image", src
-  }));
+  }))
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 text-[#223843]">
@@ -86,12 +82,8 @@ export default function Home() {
 
                 <div className="space-y-2 text-sm border-t border-gray-200 pt-3">
                   <p className="text-gray-700 flex flex-col">
-                    <span className="font-semibold text-gray-800 mb-0.5">
-                      Email
-                    </span>
-                    <span className="break-all text-gray-600">
-                      {userData.user.email || "contact@example.com"}
-                    </span>
+                    <span className="font-semibold text-gray-800 mb-0.5">Email</span>
+                    <span className="break-all text-gray-600">{userData.user.email || "contact@example.com"}</span>
                   </p>
                   <p className="text-gray-700 flex flex-col">
                     <span className="font-semibold text-gray-800 mb-0.5">Phone</span>
@@ -169,14 +161,12 @@ export default function Home() {
           </div>
 
           <div className="prose prose-sm sm:prose-base max-w-none">
-            <p className="text-gray-800 text-sm sm:text-base leading-relaxed mb-4">
-              {userData.user.bio}
-            </p>
+            <p className="text-gray-800 text-sm sm:text-base leading-relaxed mb-4">{userData.user.bio}</p>
           </div>
         </section>
       </main>
 
-      <Footer user={userData.user} />
+      <Footer user={userData.user}/>
     </div>
-  );
+  )
 }
