@@ -1,7 +1,7 @@
 import React from 'react';
 import { Metadata } from 'next';
 
-export const metadata: Metadata = {
+export const metadata= {
   title: 'Blog Posts - Professor Portfolio',
   description: 'Read insights, research updates, and academic thoughts from the professor. Explore the latest blog posts covering various topics in computer science and research.',
   keywords: ['blog', 'research', 'computer science', 'academic writing', 'insights', 'professor'],
@@ -22,10 +22,6 @@ export const metadata: Metadata = {
   },
 };
 
-export default function BlogLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function BlogLayout({ children }) {
   return children;
 }
