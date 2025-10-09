@@ -58,8 +58,8 @@ const BlogPage = () => {
           transition={{ duration: 0.5 }}
           className="mb-8"
         >
-          <h1 className="text-4xl font-bold text-[#064A6E] mb-2">Blog Posts</h1>
-          <div className="h-[3px] w-24 bg-[#0284C7] rounded-full"></div>
+          <h1 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-bold text-black mb-2">Blog Posts</h1>
+          <div className="h-[3px] w-16 sm:w-20 md:w-24 lg:w-28 bg-[#0284C7] rounded-full"></div>
           <p className="text-gray-600 mt-4">Insights, research, and updates from the professor.</p>
         </motion.div>
 

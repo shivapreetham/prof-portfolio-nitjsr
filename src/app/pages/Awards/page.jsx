@@ -1,14 +1,14 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-import Link from "next/link"
-import { ChevronRight } from "lucide-react"
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 
 const textAnimation = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
-}
+};
 
 const itemAnimation = {
   hidden: { opacity: 0, y: 16 },
@@ -17,65 +17,78 @@ const itemAnimation = {
     y: 0,
     transition: { delay: index * 0.08, duration: 0.4, ease: "easeOut" },
   }),
-}
+};
 
 export default function AwardsPage() {
-  const [awards, setAwards] = useState([])
-  const [nitActivities, setNitActivities] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [awards, setAwards] = useState([]);
+  const [nitActivities, setNitActivities] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const getData = async () => {
       try {
         // Fetch from /api/awards first
         try {
-          const res = await fetch('/api/awards', { cache: 'no-store' })
+          const res = await fetch("/api/awards", { cache: "no-store" });
           if (res.ok) {
-            const data = await res.json()
+            const data = await res.json();
             if (Array.isArray(data)) {
-              setAwards(data)
+              setAwards(data);
             }
           }
         } catch (err) {
-          console.error('Error fetching from /api/awards:', err)
+          console.error("Error fetching from /api/awards:", err);
         }
 
         // Then fetch from NIT JSR API
         try {
-          const activitiesData = await fetch(`https://www.nitjsr.ac.in/backend/faculty/get_other_activities/CS103`)
-          const res = await activitiesData.json()
+          const activitiesData = await fetch(
+            `https://www.nitjsr.ac.in/backend/faculty/get_other_activities/CS103`
+          );
+          const res = await activitiesData.json();
           if (res.result && Array.isArray(res.result)) {
-            setNitActivities(res.result)
+            setNitActivities(res.result);
           }
         } catch (err) {
-          console.error('Error fetching from external API:', err)
+          console.error("Error fetching from external API:", err);
         }
 
-        setLoading(false)
+        setLoading(false);
       } catch (err) {
-        console.error('Error fetching awards:', err)
-        setError('Unable to load awards at the moment.')
-        setLoading(false)
+        console.error("Error fetching awards:", err);
+        setError("Unable to load awards at the moment.");
+        setLoading(false);
       }
-    }
-    getData()
-  }, [])
+    };
+    getData();
+  }, []);
 
   return (
     <div className="min-h-screen bg-white text-black">
       <main className="container mx-auto px-6 py-10 max-w-6xl">
         {/* Breadcrumb */}
         <nav className="flex items-center space-x-2 text-sm text-gray-600 mb-6">
-          <Link href="/" className="hover:text-[#0284C7] transition-colors">Home</Link>
+          <Link href="/" className="hover:text-[#0284C7] transition-colors">
+            Home
+          </Link>
           <ChevronRight className="w-4 h-4" />
-          <span className="text-[#0284C7] font-medium">Awards & Activities</span>
+          <span className="text-[#0284C7] font-medium">
+            Awards & Activities
+          </span>
         </nav>
 
         {/* Title */}
-        <motion.div initial="hidden" animate="visible" variants={textAnimation} className="mb-8">
-          <h1 className="text-4xl font-bold text-black mb-2">Awards & Academic Activities</h1>
-          <div className="h-[3px] w-24 bg-[#0284C7] rounded-full"></div>
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={textAnimation}
+          className="mb-8"
+        >
+          <h1 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-bold text-black mb-2">
+            Awards & Academic Activities
+          </h1>
+          <div className="h-[3px] w-24 sm:w-20 md:w-24 lg:w-28 bg-[#0284C7] rounded-full"></div>
         </motion.div>
 
         {loading ? (
@@ -102,13 +115,19 @@ export default function AwardsPage() {
                   >
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                       <div>
-                        <h2 className="text-xl font-semibold text-[#064A6E]">{award.title}</h2>
+                        <h2 className="text-xl font-semibold text-[#064A6E]">
+                          {award.title}
+                        </h2>
                         {award.organization && (
-                          <p className="text-sm text-gray-600 mt-1">{award.organization}</p>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {award.organization}
+                          </p>
                         )}
                       </div>
                       <div className="text-sm text-[#0284C7] font-medium">
-                        {award.date ? new Date(award.date).toLocaleDateString() : 'Date unavailable'}
+                        {award.date
+                          ? new Date(award.date).toLocaleDateString()
+                          : "Date unavailable"}
                       </div>
                     </div>
 
@@ -148,17 +167,22 @@ export default function AwardsPage() {
               >
                 <div
                   className="rich-content"
-                  dangerouslySetInnerHTML={{ __html: nitActivities[0]?.activities || "<p>No content available.</p>" }}
+                  dangerouslySetInnerHTML={{
+                    __html:
+                      nitActivities[0]?.activities ||
+                      "<p>No content available.</p>",
+                  }}
                 />
               </motion.div>
             )}
 
             {/* Show message if no data from either source */}
-            {awards.length === 0 && (!nitActivities || nitActivities.length === 0) && (
-              <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-8 text-center text-gray-600">
-                No awards recorded yet.
-              </div>
-            )}
+            {awards.length === 0 &&
+              (!nitActivities || nitActivities.length === 0) && (
+                <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-8 text-center text-gray-600">
+                  No awards recorded yet.
+                </div>
+              )}
           </div>
         )}
       </main>
@@ -191,10 +215,10 @@ export default function AwardsPage() {
           font-weight: bold;
         }
         :global(.rich-content a) {
-          color: #0284C7;
+          color: #0284c7;
           text-decoration: underline;
         }
       `}</style>
     </div>
-  )
+  );
 }
