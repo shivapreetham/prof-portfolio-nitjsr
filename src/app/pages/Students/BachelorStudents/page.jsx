@@ -13,12 +13,27 @@ const BachelorStudents = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-        // const res = await fetch("https://www.nitjsr.ac.in/backend/api/thesissupervised/btech?id=CS103")
-        // const result = await res.json()
-        const res = await fetch("/api/students?type=bachelor", { cache: "no-store" })
-        if (!res.ok) throw new Error("Failed to fetch bachelor students")
-        const result = await res.json()
-        const sorted = [...result].sort((a, b) => Number(b.completion_year || 0) - Number(a.completion_year || 0))
+        // Fetch from both APIs in parallel
+        const [externalRes, localRes] = await Promise.all([
+          fetch("https://www.nitjsr.ac.in/backend/api/thesissupervised/btech?id=CS103", { cache: "no-store" }),
+          fetch("/api/students?type=bachelor", { cache: "no-store" }),
+        ])
+
+        if (!externalRes.ok || !localRes.ok) {
+          throw new Error("Failed to fetch data from one or more APIs")
+        }
+
+        // Parse both JSON responses
+        const [externalData, localData] = await Promise.all([externalRes.json(), localRes.json()])
+
+        // Combine both datasets
+        const combinedData = [...externalData, ...localData]
+
+        // Sort by completion year (descending)
+        const sorted = combinedData.sort(
+          (a, b) => Number(b.completion_year || 0) - Number(a.completion_year || 0)
+        )
+
         setData(sorted)
       } catch (err) {
         console.error("Error fetching Bachelor data:", err)
@@ -26,6 +41,7 @@ const BachelorStudents = () => {
         setLoading(false)
       }
     }
+
     getData()
   }, [])
 
@@ -97,8 +113,12 @@ const BachelorStudents = () => {
                         transition={{ delay: index * 0.1 }}
                         className="hover:bg-gray-50 transition-colors"
                       >
-                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{thesis.research_topic}</td>
-                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{thesis.name_of_student}</td>
+                        <td className="border border-gray-300 px-4 py-3 text-gray-700">
+                          {thesis.research_topic || "N/A"}
+                        </td>
+                        <td className="border border-gray-300 px-4 py-3 text-gray-700">
+                          {thesis.name_of_student || "N/A"}
+                        </td>
                         <td className="border border-gray-300 px-4 py-3 text-gray-700">
                           {thesis.completion_year || "Ongoing"}
                         </td>
