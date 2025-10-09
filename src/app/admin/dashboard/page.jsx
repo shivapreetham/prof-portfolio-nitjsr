@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   Eye, Users, Clock, TrendingUp, FileText, Video,
   BookOpen, Image, GraduationCap, Award, Calendar,
-  Monitor, Smartphone, Tablet, RefreshCw, ArrowLeft
+  Monitor, Smartphone, Tablet, RefreshCw, ArrowLeft, Radio
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -25,6 +25,7 @@ export default function AnalyticsDashboard() {
   const [resourceStats, setResourceStats] = useState({ resources: [], summary: {} });
   const [timeline, setTimeline] = useState([]);
   const [deviceData, setDeviceData] = useState({ devices: [], browsers: [], operatingSystems: [] });
+  const [liveViewers, setLiveViewers] = useState(0);
 
   useEffect(() => {
     if (status === "loading") return;
@@ -36,8 +37,19 @@ export default function AnalyticsDashboard() {
   useEffect(() => {
     if (session) {
       fetchAnalytics();
+      fetchLiveViewers();
     }
   }, [session, dateRange]);
+
+  useEffect(() => {
+    if (!session) return;
+
+    const interval = setInterval(() => {
+      fetchLiveViewers();
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [session]);
 
   const fetchAnalytics = async () => {
     setLoading(true);
@@ -70,6 +82,16 @@ export default function AnalyticsDashboard() {
     }
   };
 
+  const fetchLiveViewers = async () => {
+    try {
+      const response = await fetch('/api/analytics/live');
+      const data = await response.json();
+      setLiveViewers(data.liveViewers || 0);
+    } catch (error) {
+      console.error('Error fetching live viewers:', error);
+    }
+  };
+
   if (status === "loading" || !session) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
@@ -93,7 +115,13 @@ export default function AnalyticsDashboard() {
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-4xl font-bold text-[#064A6E] mb-2">Analytics Dashboard</h1>
-              <p className="text-gray-600">Track your portfolio performance and visitor insights</p>
+              <div className="flex items-center gap-3">
+                <p className="text-gray-600">Track your portfolio performance and visitor insights</p>
+                <div className="flex items-center gap-2 bg-green-100 px-3 py-1 rounded-full">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <span className="text-sm font-medium text-green-700">{liveViewers} Live</span>
+                </div>
+              </div>
             </div>
             <div className="flex gap-3">
               <select
@@ -124,7 +152,15 @@ export default function AnalyticsDashboard() {
         ) : (
           <>
             {/* KPI Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+              <KPICard
+                title="Live Viewers"
+                value={liveViewers}
+                subtitle="Active now"
+                icon={Radio}
+                color="bg-green-500"
+                isLive={true}
+              />
               <KPICard
                 title="Total Views"
                 value={summary?.totalViews || 0}
@@ -138,7 +174,7 @@ export default function AnalyticsDashboard() {
                 subtitle={`Avg: ${summary?.avgDailyVisitors || 0}/day`}
                 growth={summary?.growth?.visitors}
                 icon={Users}
-                color="bg-green-500"
+                color="bg-cyan-500"
               />
               <KPICard
                 title="Avg Duration"
@@ -221,10 +257,10 @@ export default function AnalyticsDashboard() {
                 items={resourceStats.resources.filter(r => r.eventType === 'paper_view').slice(0, 5)}
               />
               <ContentCard
-                title="Student Profiles"
-                icon={GraduationCap}
-                count={resourceStats.summary.student_view || 0}
-                items={resourceStats.resources.filter(r => r.eventType === 'student_view').slice(0, 5)}
+                title="Gallery Images"
+                icon={Image}
+                count={resourceStats.summary.photo_view || 0}
+                items={resourceStats.resources.filter(r => r.eventType === 'photo_view').slice(0, 5)}
               />
             </div>
 
@@ -286,9 +322,9 @@ export default function AnalyticsDashboard() {
   );
 }
 
-function KPICard({ title, value, subtitle, growth, icon: Icon, color }) {
+function KPICard({ title, value, subtitle, growth, icon: Icon, color, isLive }) {
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6">
+    <div className={`bg-white rounded-xl shadow-lg p-6 ${isLive ? 'border-2 border-green-300' : ''}`}>
       <div className="flex items-center justify-between">
         <div>
           <p className="text-gray-600 text-sm mb-1">{title}</p>
@@ -305,8 +341,11 @@ function KPICard({ title, value, subtitle, growth, icon: Icon, color }) {
             </div>
           )}
         </div>
-        <div className={`${color} p-3 rounded-lg`}>
+        <div className={`${color} p-3 rounded-lg relative`}>
           <Icon className="w-6 h-6 text-white" />
+          {isLive && (
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+          )}
         </div>
       </div>
     </div>

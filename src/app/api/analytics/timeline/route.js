@@ -18,7 +18,7 @@ export async function GET(request) {
     startDate.setDate(startDate.getDate() - days);
 
     const timelineData = await AnalyticsEvent.aggregate([
-      { $match: { timestamp: { $gte: startDate } } },
+      { $match: { eventType: 'page_view', timestamp: { $gte: startDate } } },
       {
         $group: {
           _id: {

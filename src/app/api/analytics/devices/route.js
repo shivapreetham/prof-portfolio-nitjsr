@@ -18,7 +18,7 @@ export async function GET(request) {
     startDate.setDate(startDate.getDate() - days);
 
     const deviceStats = await AnalyticsEvent.aggregate([
-      { $match: { timestamp: { $gte: startDate } } },
+      { $match: { eventType: 'page_view', timestamp: { $gte: startDate } } },
       {
         $group: {
           _id: '$device',
@@ -29,7 +29,7 @@ export async function GET(request) {
     ]);
 
     const browserStats = await AnalyticsEvent.aggregate([
-      { $match: { timestamp: { $gte: startDate } } },
+      { $match: { eventType: 'page_view', timestamp: { $gte: startDate } } },
       {
         $group: {
           _id: '$browser',
@@ -40,7 +40,7 @@ export async function GET(request) {
     ]);
 
     const osStats = await AnalyticsEvent.aggregate([
-      { $match: { timestamp: { $gte: startDate } } },
+      { $match: { eventType: 'page_view', timestamp: { $gte: startDate } } },
       {
         $group: {
           _id: '$os',
