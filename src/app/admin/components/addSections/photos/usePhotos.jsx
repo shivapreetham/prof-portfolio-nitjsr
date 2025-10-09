@@ -9,6 +9,7 @@ export const usePhotos = () => {
   const [error, setError] = useState(null);
   const [editingPhoto, setEditingPhoto] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
 
   const getPhotosList = async () => {
@@ -34,7 +35,7 @@ export const usePhotos = () => {
 
   const handleEditPhoto = (photo) => {
     setEditingPhoto(photo);
-    setIsAddModalOpen(true);
+    setIsEditModalOpen(true);
   };
 
   const handleDeletePhoto = async (photoId) => {
@@ -54,18 +55,26 @@ export const usePhotos = () => {
 
   const handlePhotoAdded = () => {
     getPhotosList();
-    setEditingPhoto(null);
     setIsAddModalOpen(false);
     toast.success('Photo saved successfully!');
   };
 
-  const openAddModal = () => {
+  const handlePhotoUpdated = () => {
+    getPhotosList();
     setEditingPhoto(null);
+    setIsEditModalOpen(false);
+  };
+
+  const openAddModal = () => {
     setIsAddModalOpen(true);
   };
 
   const closeAddModal = () => {
     setIsAddModalOpen(false);
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
     setEditingPhoto(null);
   };
 
@@ -75,13 +84,16 @@ export const usePhotos = () => {
     error,
     editingPhoto,
     isAddModalOpen,
+    isEditModalOpen,
     handleEditPhoto,
     handleDeletePhoto,
     deletingId,
     handlePhotoAdded,
+    handlePhotoUpdated,
     getPhotosList,
     openAddModal,
     closeAddModal,
+    closeEditModal,
   };
 };
 

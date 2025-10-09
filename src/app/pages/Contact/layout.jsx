@@ -1,7 +1,6 @@
 import React from 'react';
-import { Metadata } from 'next';
 
-export const metadata: Metadata = {
+export const metadata = {
   title: 'Contact Information - Professor Portfolio',
   description: 'Get in touch with the professor. Find contact information, office location, email address, and other ways to connect for academic collaboration or inquiries.',
   keywords: ['contact', 'email', 'office', 'collaboration', 'academic inquiry', 'NIT Jamshedpur'],
@@ -24,8 +23,6 @@ export const metadata: Metadata = {
 
 export default function ContactLayout({
   children,
-}: {
-  children: React.ReactNode;
 }) {
   return children;
 }

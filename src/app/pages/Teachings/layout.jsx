@@ -1,7 +1,6 @@
 import React from 'react';
-import { Metadata } from 'next';
 
-export const metadata: Metadata = {
+export const metadata = {
   title: 'Teaching Experience - Professor Portfolio',
   description: 'Explore teaching experience, courses taught, academic responsibilities, and educational contributions at NIT Jamshedpur and other institutions.',
   keywords: ['teaching', 'courses', 'education', 'academic', 'NIT Jamshedpur', 'computer science courses'],
@@ -24,8 +23,6 @@ export const metadata: Metadata = {
 
 export default function TeachingsLayout({
   children,
-}: {
-  children: React.ReactNode;
 }) {
   return children;
 }

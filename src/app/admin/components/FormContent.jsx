@@ -36,32 +36,50 @@ const FormContent = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 py-4 overflow-auto">
       <div className="space-y-8">
-        <section>
+        <section id="basic-details">
           <h2 className="text-2xl font-semibold mb-4">Personal Information</h2>
           <BasicDetails userInfo={userInfo} />
         </section>
         {/* <div className="divider"></div>
         <ProjectSection /> */}
         <div className="divider"></div>
-        <ResearchPaperSection />
+        <section id="research-papers">
+          <ResearchPaperSection />
+        </section>
         <div className="divider"></div>
-        <ConferenceSection />
+        <section id="conferences">
+          <ConferenceSection />
+        </section>
         <div className="divider"></div>
-        <AwardSection />
+        <section id="awards">
+          <AwardSection />
+        </section>
         <div className="divider"></div>
         {/* <TeachingExperienceSection /> */}
         {/* <div className="divider"></div> */}
-        <BlogSection />
+        <section id="blogs">
+          <BlogSection />
+        </section>
         <div className="divider"></div>
-        <OpinionSection />
+        <section id="opinions">
+          <OpinionSection />
+        </section>
         <div className="divider"></div>
-        <MeetingRequestsSection />
+        <section id="meeting-requests">
+          <MeetingRequestsSection />
+        </section>
         <div className="divider"></div>
-        <StudentSection />
+        <section id="students">
+          <StudentSection />
+        </section>
         <div className="divider"></div>
-        <PhotoSection />
+        <section id="photos">
+          <PhotoSection />
+        </section>
         <div className="divider"></div>
-        <VideoSection />
+        <section id="videos">
+          <VideoSection />
+        </section>
         {/* <div className="divider"></div>
         <AchievementsSection /> */}
         {/* <div className="divider"></div>

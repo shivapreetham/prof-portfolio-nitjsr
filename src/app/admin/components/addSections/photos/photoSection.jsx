@@ -3,6 +3,7 @@ import React from 'react';
 import { usePhotos } from './usePhotos';
 import { AddPhoto } from './addPhoto';
 import { PhotoList } from './photoList';
+import { PhotoEditModal } from './photoEditModal';
 import { Toaster } from 'react-hot-toast';
 
 export const PhotoSection = () => {
@@ -12,13 +13,16 @@ export const PhotoSection = () => {
     error,
     editingPhoto,
     isAddModalOpen,
+    isEditModalOpen,
     handleEditPhoto,
     handleDeletePhoto,
     deletingId,
     handlePhotoAdded,
+    handlePhotoUpdated,
     getPhotosList,
     openAddModal,
     closeAddModal,
+    closeEditModal,
   } = usePhotos();
 
   return (
@@ -58,10 +62,16 @@ export const PhotoSection = () => {
         <AddPhoto
           isOpen={isAddModalOpen}
           onClose={closeAddModal}
-          editingPhoto={editingPhoto}
           onPhotoAdded={handlePhotoAdded}
         />
       )}
+
+      <PhotoEditModal
+        isOpen={isEditModalOpen}
+        onClose={closeEditModal}
+        photo={editingPhoto}
+        onPhotoUpdated={handlePhotoUpdated}
+      />
 
       <Toaster position="bottom-right" />
     </section>
