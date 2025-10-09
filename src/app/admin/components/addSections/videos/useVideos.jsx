@@ -9,6 +9,7 @@ export const useVideos = () => {
   const [error, setError] = useState(null);
   const [editingVideo, setEditingVideo] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
 
   const getVideosList = async () => {
@@ -34,7 +35,7 @@ export const useVideos = () => {
 
   const handleEditVideo = (video) => {
     setEditingVideo(video);
-    setIsAddModalOpen(true);
+    setIsEditModalOpen(true);
   };
 
   const handleDeleteVideo = async (videoId) => {
@@ -54,18 +55,26 @@ export const useVideos = () => {
 
   const handleVideoAdded = () => {
     getVideosList();
-    setEditingVideo(null);
     setIsAddModalOpen(false);
     toast.success('Video saved successfully!');
   };
 
-  const openAddModal = () => {
+  const handleVideoUpdated = () => {
+    getVideosList();
     setEditingVideo(null);
+    setIsEditModalOpen(false);
+  };
+
+  const openAddModal = () => {
     setIsAddModalOpen(true);
   };
 
   const closeAddModal = () => {
     setIsAddModalOpen(false);
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
     setEditingVideo(null);
   };
 
@@ -75,13 +84,16 @@ export const useVideos = () => {
     error,
     editingVideo,
     isAddModalOpen,
+    isEditModalOpen,
     handleEditVideo,
     handleDeleteVideo,
     deletingId,
     handleVideoAdded,
+    handleVideoUpdated,
     getVideosList,
     openAddModal,
     closeAddModal,
+    closeEditModal,
   };
 };
 

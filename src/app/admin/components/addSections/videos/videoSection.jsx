@@ -3,6 +3,7 @@ import React from 'react';
 import { useVideos } from './useVideos';
 import { AddVideo } from './addVideo';
 import { VideoList } from './videoList';
+import { VideoEditModal } from './videoEditModal';
 import { Toaster } from 'react-hot-toast';
 
 export const VideoSection = () => {
@@ -12,13 +13,16 @@ export const VideoSection = () => {
     error,
     editingVideo,
     isAddModalOpen,
+    isEditModalOpen,
     handleEditVideo,
     handleDeleteVideo,
     deletingId,
     handleVideoAdded,
+    handleVideoUpdated,
     getVideosList,
     openAddModal,
     closeAddModal,
+    closeEditModal,
   } = useVideos();
 
   return (
@@ -58,10 +62,16 @@ export const VideoSection = () => {
         <AddVideo
           isOpen={isAddModalOpen}
           onClose={closeAddModal}
-          editingVideo={editingVideo}
           onVideoAdded={handleVideoAdded}
         />
       )}
+
+      <VideoEditModal
+        isOpen={isEditModalOpen}
+        onClose={closeEditModal}
+        video={editingVideo}
+        onVideoUpdated={handleVideoUpdated}
+      />
 
       <Toaster position="bottom-right" />
     </section>
