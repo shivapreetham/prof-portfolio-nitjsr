@@ -29,7 +29,7 @@ const ProjectListEdit = ({ projectList, onEdit, onDelete }) => {
                 <button
                   className="btn btn-square btn-sm btn-ghost"
                   onClick={() => {
-                    console.log('Edit clicked:', project);
+                    // console.log('Edit clicked:', project);
                     onEdit(project);
                   }}
                 >

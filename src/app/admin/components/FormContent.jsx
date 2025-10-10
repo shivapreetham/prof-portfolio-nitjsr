@@ -18,7 +18,7 @@ import { AwardSection } from '@/app/admin/components/addSections/awards/awardSec
 
 const FormContent = () => {
   const { userData }= useUser();
-  console.log(userData);
+  // console.log(userData);
   const userInfo = userData?.user;
   if (!userInfo) {
     return (

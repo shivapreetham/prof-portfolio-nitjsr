@@ -47,7 +47,7 @@ export async function GET() {
       videos
     };
 
-    console.log(portfolioData);
+    // console.log(portfolioData);
     return NextResponse.json({ success: true, data: portfolioData });
   } catch (error) {
     console.error('Portfolio fetch error:', error);

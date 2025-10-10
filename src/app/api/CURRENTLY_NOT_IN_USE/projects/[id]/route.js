@@ -103,7 +103,7 @@ export async function DELETE(request, { params }) {
           body: JSON.stringify({ imageUrl: url })
         });
         const data = await res.json();
-        console.log(`Delete ${url}:`, data);
+        // console.log(`Delete ${url}:`, data);
         if (!data.success) console.warn('Deletion failed:', data.error);
       } catch (err) {
         console.error(`Error deleting ${url}:`, err);
