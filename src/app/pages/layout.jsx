@@ -2,8 +2,9 @@
 import React from "react";
 import Navbar from "../components/Navbar";
 import Header from "../components/Header";
-import { useUser } from "../Provider";     
+import { useUser } from "../Provider";
 import Footer from "../components/Footer";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 
 export default function PagesLayout({ children }) {
   const { userData } = useUser();
@@ -17,16 +18,18 @@ export default function PagesLayout({ children }) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header user={userData.user} />
-      <Navbar />
+    <ThemeProvider defaultTheme="light">
+      <div className="min-h-screen flex flex-col">
+        <Header user={userData.user} />
+        <Navbar />
 
-      {/* Main content */}
-      <main className="flex-grow">
-        <div className="min-h-full">{children}</div>
-      </main>
+        {/* Main content */}
+        <main className="flex-grow">
+          <div className="min-h-full">{children}</div>
+        </main>
 
-      <Footer />
-    </div>
+        <Footer user={userData.user} />
+      </div>
+    </ThemeProvider>
   );
 }

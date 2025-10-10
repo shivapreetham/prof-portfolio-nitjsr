@@ -21,21 +21,21 @@ const Footer = ({ user }) => {
   ]
 
   return (
-    <footer className="bg-[#0891B2] text-white py-12 px-6">
+    <footer className="bg-[#0891B2] dark:bg-gray-800 text-white py-12 px-6 transition-colors">
       <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
 
         {/* Contact Section */}
         <div className="space-y-4">
-          <h2 className="text-xl font-bold text-[#022B35] mb-4">Get in Touch</h2>
+          <h2 className="text-xl font-bold text-[#022B35] dark:text-white mb-4">Get in Touch</h2>
           <div className="space-y-3">
             <div className="flex items-center space-x-3">
-              <Mail className="w-5 h-5 text-[#022B35]" />
-              <a href={`mailto:${email}`} className="hover:text-[#022B35] transition-colors">
+              <Mail className="w-5 h-5 text-[#022B35] dark:text-gray-300" />
+              <a href={`mailto:${email}`} className="hover:text-[#022B35] dark:hover:text-gray-300 transition-colors">
                 {email}
               </a>
             </div>
             <div className="flex items-center space-x-3">
-              <Phone className="w-5 h-5 text-[#022B35]" />
+              <Phone className="w-5 h-5 text-[#022B35] dark:text-gray-300" />
               <span>(+91) XXX-XXXX-XXXX</span>
             </div>
           </div>
@@ -43,13 +43,13 @@ const Footer = ({ user }) => {
 
         {/* Social Links */}
         <div className="space-y-4">
-          <h2 className="text-xl font-bold text-[#022B35] mb-4">Connect</h2>
+          <h2 className="text-xl font-bold text-[#022B35] dark:text-white mb-4">Connect</h2>
           <div className="flex space-x-4">
             <a
               href={linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-10 h-10 bg-[#064A6E] rounded-full flex items-center justify-center hover:bg-[#022B35] transition-colors"
+              className="w-10 h-10 bg-[#064A6E] dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-[#022B35] dark:hover:bg-gray-600 transition-colors"
             >
               <FaLinkedin className="w-5 h-5" />
             </a>
@@ -57,7 +57,7 @@ const Footer = ({ user }) => {
               href={twitter}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-10 h-10 bg-[#064A6E] rounded-full flex items-center justify-center hover:bg-[#022B35] transition-colors"
+              className="w-10 h-10 bg-[#064A6E] dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-[#022B35] dark:hover:bg-gray-600 transition-colors"
             >
               <FaTwitter className="w-5 h-5" />
             </a>
@@ -65,13 +65,13 @@ const Footer = ({ user }) => {
               href={github}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-10 h-10 bg-[#064A6E] rounded-full flex items-center justify-center hover:bg-[#022B35] transition-colors"
+              className="w-10 h-10 bg-[#064A6E] dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-[#022B35] dark:hover:bg-gray-600 transition-colors"
             >
               <FaGithub className="w-5 h-5" />
             </a>
             <a
               href={`mailto:${email}`}
-              className="w-10 h-10 bg-[#064A6E] rounded-full flex items-center justify-center hover:bg-[#022B35] transition-colors"
+              className="w-10 h-10 bg-[#064A6E] dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-[#022B35] dark:hover:bg-gray-600 transition-colors"
             >
               <FaEnvelope className="w-5 h-5" />
             </a>
@@ -80,12 +80,12 @@ const Footer = ({ user }) => {
 
         {/* Quick Links */}
         <div className="space-y-4">
-          <h2 className="text-xl font-bold text-[#022B35] mb-4">Quick Links</h2>
+          <h2 className="text-xl font-bold text-[#022B35] dark:text-white mb-4">Quick Links</h2>
           <ul className="space-y-2">
             {navLinks.map((link, index) => (
               <li key={index}>
-                <Link href={link.path} className="hover:text-[#022B35] transition-colors flex items-center space-x-2">
-                  <span className="w-1 h-1 bg-[#022B35] rounded-full"></span>
+                <Link href={link.path} className="hover:text-[#022B35] dark:hover:text-gray-300 transition-colors flex items-center space-x-2">
+                  <span className="w-1 h-1 bg-[#022B35] dark:bg-gray-300 rounded-full"></span>
                   <span>{link.name}</span>
                 </Link>
               </li>
@@ -95,9 +95,9 @@ const Footer = ({ user }) => {
 
         {/* Office Address */}
         <div className="space-y-4">
-          <h2 className="text-xl font-bold text-[#022B35] mb-4">Office Address</h2>
+          <h2 className="text-xl font-bold text-[#022B35] dark:text-white mb-4">Office Address</h2>
           <div className="flex items-start space-x-3">
-            <MapPin className="w-5 h-5 text-[#022B35] mt-1 flex-shrink-0" />
+            <MapPin className="w-5 h-5 text-[#022B35] dark:text-gray-300 mt-1 flex-shrink-0" />
             <div className="space-y-1">
               <p>Computer Science & Engineering Department</p>
               <p>National Institute of Technology Jamshedpur</p>
@@ -108,7 +108,7 @@ const Footer = ({ user }) => {
         </div>
       </div>
 
-      <div className="mt-12 text-center border-t border-[#064A6E] pt-8">
+      <div className="mt-12 text-center border-t border-[#064A6E] dark:border-gray-700 pt-8">
         <p className="text-sm">
           &copy; {new Date().getFullYear()} KK singh Portfolio. All Rights Reserved.
         </p>

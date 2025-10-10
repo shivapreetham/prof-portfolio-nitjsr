@@ -3,7 +3,7 @@ import React from "react";
 
 export default function Header({ user }) {
   return (
-    <header className="bg-gradient-to-r from-[#064A6E] to-[#0891B2] text-white px-6 py-6 shadow-md">
+    <header className="bg-gradient-to-r from-[#064A6E] to-[#0891B2] dark:from-gray-800 dark:to-gray-700 text-white px-6 py-6 shadow-md transition-colors">
       <div className="max-w-screen-xl mx-auto">
         <h1 className="text-3xl sm:text-4xl font-bold mb-3">
           {user.name}

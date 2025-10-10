@@ -63,17 +63,17 @@ const AdminSidePanel = () => {
 
   return (
     <div
-      className={`fixed left-0 top-0 h-screen bg-base-200 shadow-lg transition-all duration-300 z-50 flex flex-col ${
+      className={`fixed left-0 top-0 h-screen bg-gray-800 shadow-lg transition-all duration-300 z-50 flex flex-col ${
         isCollapsed ? 'w-16' : 'w-64'
       }`}
     >
-      <div className="flex items-center justify-between p-4 border-b border-base-300">
+      <div className="flex items-center justify-between p-4 border-b border-gray-700">
         {!isCollapsed && (
-          <h2 className="text-lg font-semibold text-base-content">Admin Panel</h2>
+          <h2 className="text-lg font-semibold text-white">Admin Panel</h2>
         )}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="btn btn-ghost btn-sm btn-circle"
+          className="p-2 rounded-full hover:bg-gray-700 text-white transition-colors"
           aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
           {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
@@ -86,12 +86,12 @@ const AdminSidePanel = () => {
             <button
               key={section.id}
               onClick={() => scrollToSection(section.id)}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-base-300 transition-colors text-base-content group"
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-700 transition-colors text-gray-200 group"
               title={isCollapsed ? section.name : ''}
             >
               <section.icon
                 size={20}
-                className="flex-shrink-0 text-[#0891B2] group-hover:text-[#064A6E]"
+                className="flex-shrink-0 text-[#38BDF8] group-hover:text-[#0EA5E9]"
               />
               {!isCollapsed && (
                 <span className="text-sm font-medium truncate">{section.name}</span>
@@ -101,7 +101,7 @@ const AdminSidePanel = () => {
         </nav>
       </div>
 
-      <div className="border-t border-base-300 p-2">
+      <div className="border-t border-gray-700 p-2">
         <Link
           href="/admin/dashboard"
           className={`flex items-center gap-3 px-3 py-2.5 rounded-lg bg-[#0891B2] text-white hover:bg-[#064A6E] transition-colors ${
