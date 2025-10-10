@@ -93,39 +93,62 @@ const PhdStudents = () => {
             <div className="p-6">
               <h3 className="text-xl font-semibold mb-6 text-[#064A6E]">PhD Theses Supervised</h3>
 
-              {/* Table */}
-              <div className="overflow-x-auto">
-                <table className="min-w-full border border-gray-200">
-                  <thead className="bg-[#0891B2] text-white">
-                    <tr>
-                      <th className="border border-gray-300 px-4 py-3 text-left font-semibold">Research Topic</th>
-                      <th className="border border-gray-300 px-4 py-3 text-left font-semibold">Student</th>
-                      <th className="border border-gray-300 px-4 py-3 text-left font-semibold">Year of Completion</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {currentData.map((thesis, index) => (
-                      <motion.tr
-                        key={index}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: index * 0.1 }}
-                        className="hover:bg-gray-50 transition-colors cursor-pointer"
-                        onClick={() => trackStudentView(thesis._id || `phd-${index}`, thesis.name_of_student, 'PhD')}
-                      >
-                        <td className="border border-gray-300 px-4 py-3 text-gray-700">
-                          {thesis.research_topic || "N/A"}
-                        </td>
-                        <td className="border border-gray-300 px-4 py-3 text-gray-700">
-                          {thesis.name_of_student || "N/A"}
-                        </td>
-                        <td className="border border-gray-300 px-4 py-3 text-gray-700">
-                          {thesis.completion_year || "Ongoing"}
-                        </td>
-                      </motion.tr>
-                    ))}
-                  </tbody>
-                </table>
+              {/* Student Cards Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {currentData.map((student, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="bg-gradient-to-br from-white to-slate-50 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200 cursor-pointer"
+                    onClick={() => trackStudentView(student._id || `phd-${index}`, student.name_of_student, 'PhD')}
+                  >
+                    {/* Student Image */}
+                    <div className="w-full h-48 overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
+                      {student.image_url ? (
+                        <img
+                          src={student.image_url}
+                          alt={student.name_of_student}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-24 h-24 rounded-full bg-[#0891B2] flex items-center justify-center">
+                          <span className="text-white text-3xl font-bold">
+                            {student.name_of_student?.charAt(0)?.toUpperCase() || '?'}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Student Info */}
+                    <div className="p-5">
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="text-lg font-bold text-gray-900">
+                          {student.name_of_student || "N/A"}
+                        </h4>
+                        <span className="px-3 py-1 bg-[#0891B2] text-white text-xs font-semibold rounded-full">
+                          {student.completion_year || "Ongoing"}
+                        </span>
+                      </div>
+
+                      <div className="space-y-2">
+                        <div>
+                          <p className="text-xs text-gray-500 font-medium uppercase tracking-wide mb-1">Research Topic</p>
+                          <p className="text-sm text-gray-700 line-clamp-3">
+                            {student.research_topic || "N/A"}
+                          </p>
+                        </div>
+
+                        {student.id && (
+                          <div className="pt-2 border-t border-gray-200">
+                            <p className="text-xs text-gray-500">Student ID: <span className="font-medium text-gray-700">{student.id}</span></p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
               </div>
 
               {/* Pagination */}

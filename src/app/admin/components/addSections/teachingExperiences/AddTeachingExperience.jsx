@@ -57,12 +57,22 @@ export const AddTeachingExperience = ({ isOpen, onClose, editingExperience, onEx
   if (!isOpen) return null;
 
   return (
-    <div className="card bg-base-300 shadow-lg max-w-2xl mt-5">
-      <div className="card-body p-4">
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <h3 className="card-title text-base mb-2">
-            {editingExperience ? 'Edit Teaching Experience' : 'Add Teaching Experience'}
-          </h3>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+      <div className="card bg-base-300 shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div className="card-body p-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="text-xl font-bold">
+                {editingExperience ? 'Edit Teaching Experience' : 'Add Teaching Experience'}
+              </h3>
+              <button
+                type="button"
+                onClick={onClose}
+                className="btn btn-sm btn-circle btn-ghost"
+              >
+                ✕
+              </button>
+            </div>
           <div className="form-control w-full">
             <label className="label py-1">
               <span className="label-text text-sm">Subject</span>
@@ -118,13 +128,14 @@ export const AddTeachingExperience = ({ isOpen, onClose, editingExperience, onEx
               />
             </div>
           </div>
-          <div className="card-actions justify-end mt-4">
-            <button type="button" className="btn btn-sm btn-ghost" onClick={onClose}>Cancel</button>
-            <button type="submit" className="btn btn-sm btn-primary">
+          <div className="card-actions justify-end mt-6 pt-4 border-t border-base-content/10">
+            <button type="button" className="btn btn-ghost" onClick={onClose}>Cancel</button>
+            <button type="submit" className="btn btn-primary">
               {editingExperience ? 'Save Changes' : 'Add Experience'}
             </button>
           </div>
         </form>
+        </div>
       </div>
     </div>
   );

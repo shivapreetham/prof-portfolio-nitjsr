@@ -90,10 +90,9 @@ export const AddStudent = ({ isOpen, onClose, editingStudent, onStudentSaved }) 
       return;
     }
 
-    const numericId = Number(formData.id);
     const numericHeading = Number(formData.heading);
-    if (Number.isNaN(numericId) || Number.isNaN(numericHeading)) {
-      toast.error('Student ID and heading must be numbers.');
+    if (Number.isNaN(numericHeading)) {
+      toast.error('Heading must be a number.');
       return;
     }
 
@@ -124,7 +123,6 @@ export const AddStudent = ({ isOpen, onClose, editingStudent, onStudentSaved }) 
 
       const payload = {
         ...formData,
-        id: numericId,
         heading: numericHeading,
         student_type: formData.student_type.toLowerCase(),
         image_url: finalImageUrl || undefined
@@ -178,12 +176,22 @@ export const AddStudent = ({ isOpen, onClose, editingStudent, onStudentSaved }) 
   if (!isOpen) return null;
 
   return (
-    <div className="card bg-base-300 shadow-lg max-w-2xl mt-5">
-      <div className="card-body p-4">
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <h3 className="card-title text-base">
-            {editingStudent ? 'Edit Student' : 'Add New Student'}
-          </h3>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+      <div className="card bg-base-300 shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div className="card-body p-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="text-xl font-bold">
+                {editingStudent ? 'Edit Student' : 'Add New Student'}
+              </h3>
+              <button
+                type="button"
+                onClick={onClose}
+                className="btn btn-sm btn-circle btn-ghost"
+              >
+                ✕
+              </button>
+            </div>
 
           {/* Image Upload */}
           <div className="form-control w-full">
@@ -222,7 +230,7 @@ export const AddStudent = ({ isOpen, onClose, editingStudent, onStudentSaved }) 
           {/* Student Details */}
           <div className="form-control w-full grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
-              type="number"
+              type="text"
               name="id"
               placeholder="Student ID"
               value={formData.id}
@@ -283,16 +291,17 @@ export const AddStudent = ({ isOpen, onClose, editingStudent, onStudentSaved }) 
           </div>
 
           {/* Actions */}
-          <div className="card-actions justify-end mt-4">
-            <button type="button" className="btn btn-sm btn-ghost" onClick={onClose}>
+          <div className="card-actions justify-end mt-6 pt-4 border-t border-base-content/10">
+            <button type="button" className="btn btn-ghost" onClick={onClose}>
               Cancel
             </button>
-            <button type="submit" className="btn btn-sm btn-primary" disabled={isUploading || isSubmitting}>
-              {(isUploading || isSubmitting) && <span className="loading loading-spinner loading-xs" />}
+            <button type="submit" className="btn btn-primary" disabled={isUploading || isSubmitting}>
+              {(isUploading || isSubmitting) && <span className="loading loading-spinner loading-sm" />}
               {editingStudent ? 'Save Changes' : 'Add Student'}
             </button>
           </div>
         </form>
+        </div>
       </div>
     </div>
   );
