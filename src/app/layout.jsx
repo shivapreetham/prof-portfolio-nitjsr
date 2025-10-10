@@ -5,7 +5,7 @@ import Provider from "./Provider";
 import RouteTracker from "../components/analytics/RouteTracker";
 import AuthProvider from "../components/AuthProvider";
 import { useUser } from "./Provider";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 
 const merriweather = Merriweather({
   subsets: ["latin"],
@@ -25,7 +25,9 @@ function LayoutContent({ children }) {
 
   return (
     <body className={`${merriweather.variable} font-serif antialiased`} style={{ fontFamily: fontFamily }}>
-      <RouteTracker />
+      <Suspense fallback={null}>
+        <RouteTracker />
+      </Suspense>
       <main>{children}</main>
     </body>
   );
