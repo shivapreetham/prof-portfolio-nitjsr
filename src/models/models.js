@@ -190,6 +190,23 @@ const AwardSchema = new mongoose.Schema({
 
 export const Award = (mongoose.models && mongoose.models.Award) || mongoose.model('Award', AwardSchema);
 
+// Funded Project Model
+const FundedProjectSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  title: { type: String, required: true, maxlength: 500 },
+  role: { type: String, maxlength: 100 }, // P.I., Co-PI, etc.
+  fundingAgency: { type: String, required: true, maxlength: 300 },
+  amount: { type: String, maxlength: 100 }, // stored as string to handle various formats
+  duration: { type: String, maxlength: 100 }, // e.g., "2024-2026" or "2023 [On-going]"
+  projectType: { type: String, enum: ['Sponsored', 'International', 'Other'], default: 'Sponsored' },
+  description: { type: String, maxlength: 3000 },
+  collaborators: { type: String, maxlength: 500 }, // e.g., "with Prof. X, University Y"
+  status: { type: String, enum: ['Ongoing', 'Completed', 'Pending'], default: 'Ongoing' },
+  links: [{ type: String }]
+}, { timestamps: true });
+
+export const FundedProject = (mongoose.models && mongoose.models.FundedProject) || mongoose.model('FundedProject', FundedProjectSchema);
+
 // // Collaboration Model
 // const CollaborationSchema = new mongoose.Schema({
 //   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },

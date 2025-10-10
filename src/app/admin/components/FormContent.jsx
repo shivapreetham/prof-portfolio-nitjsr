@@ -14,6 +14,7 @@ import ResearchPaperSection from '@/app/admin/components/addSections/ResearchPap
 import { ConferenceSection } from '@/app/admin/components/addSections/conferances/conferanceSection';
 // import { AchievementsSection } from './addSections/achievements/achievementSection';
 import { AwardSection } from '@/app/admin/components/addSections/awards/awardSection';
+import { FundedProjectSection } from '@/app/admin/components/addSections/fundedProjects/fundedProjectSection';
 // import { CollaborationSection } from '@/app/admin/components/addSections/collaborations/collaborationSection';
 
 const FormContent = () => {
@@ -53,6 +54,10 @@ const FormContent = () => {
         <div className="divider"></div>
         <section id="awards">
           <AwardSection />
+        </section>
+        <div className="divider"></div>
+        <section id="funded-projects">
+          <FundedProjectSection />
         </section>
         <div className="divider"></div>
         {/* <TeachingExperienceSection /> */}

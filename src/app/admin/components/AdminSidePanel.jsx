@@ -13,7 +13,8 @@ import {
   Video,
   ChevronLeft,
   ChevronRight,
-  BarChart3
+  BarChart3,
+  Briefcase
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -44,6 +45,7 @@ const AdminSidePanel = () => {
     { id: 'research-papers', name: 'Research Papers', icon: FileText },
     { id: 'conferences', name: 'Conferences', icon: BookOpen },
     { id: 'awards', name: 'Awards', icon: Award },
+    { id: 'funded-projects', name: 'Funded Projects', icon: Briefcase },
     { id: 'blogs', name: 'Blogs', icon: Newspaper },
     { id: 'opinions', name: 'Opinion Pieces', icon: MessageSquare },
     { id: 'meeting-requests', name: 'Meeting Requests', icon: Calendar },

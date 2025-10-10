@@ -169,10 +169,20 @@ export const AddVideo = ({ isOpen, onClose, editingVideo, onVideoAdded }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="card bg-base-300 shadow-lg max-w-2xl mt-5">
-      <div className="card-body p-4">
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <h3 className="card-title text-base mb-2">{editingVideo ? 'Edit Video' : 'Add Video'}</h3>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+      <div className="card bg-base-300 shadow-2xl max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div className="card-body p-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="text-xl font-bold">{editingVideo ? 'Edit Video' : 'Add Video'}</h3>
+              <button
+                type="button"
+                onClick={onClose}
+                className="btn btn-sm btn-circle btn-ghost"
+              >
+                ✕
+              </button>
+            </div>
 
           {/* Upload to R2 */}
           <div className="form-control w-full">
@@ -247,8 +257,8 @@ export const AddVideo = ({ isOpen, onClose, editingVideo, onVideoAdded }) => {
             />
           </div>
 
-          <div className="flex justify-end">
-            <button type="button" className="btn btn-ghost mr-2" onClick={onClose}>
+          <div className="card-actions justify-end mt-6 pt-4 border-t border-base-content/10">
+            <button type="button" className="btn btn-ghost" onClick={onClose}>
               Cancel
             </button>
             <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
@@ -260,6 +270,7 @@ export const AddVideo = ({ isOpen, onClose, editingVideo, onVideoAdded }) => {
             </button>
           </div>
         </form>
+        </div>
       </div>
     </div>
   );
