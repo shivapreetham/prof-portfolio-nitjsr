@@ -96,18 +96,18 @@ const BlogPage = () => {
                   variants={cardAnimation}
                   transition={{ delay: index * 0.05 }}
                 >
-                  <div className="flex flex-col md:flex-row">
+                  <div className="flex flex-col md:flex-row md:h-full">
                     {post.imageUrl && (
-                      <div className="md:w-1/3 relative overflow-hidden">
+                      <div className="md:w-1/3 relative overflow-hidden h-48 md:h-auto">
                         <img
                           src={post.imageUrl || "/placeholder.svg"}
                           alt={post.title}
-                          className="w-full h-64 md:h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                          className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                         />
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/10"></div>
                       </div>
                     )}
-                    <div className={`${post.imageUrl ? 'md:w-2/3' : 'w-full'} p-8`}>
+                    <div className={`${post.imageUrl ? 'md:w-2/3' : 'w-full'} p-8 flex flex-col justify-center`}>
                       <div className="flex items-center space-x-2 text-sm text-gray-500 mb-3">
                         <Calendar className="w-4 h-4" />
                         <span>{new Date(post.createdAt).toLocaleDateString('en-US', {
