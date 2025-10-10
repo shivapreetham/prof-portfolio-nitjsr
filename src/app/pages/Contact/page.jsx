@@ -1,80 +1,98 @@
-"use client"
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-import Link from "next/link"
-import { ChevronRight, Mail, ExternalLink, Globe, User, Award, Calendar, Send } from "lucide-react"
-import { toast, Toaster } from "react-hot-toast"
+"use client";
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import {
+  ChevronRight,
+  Mail,
+  ExternalLink,
+  Globe,
+  User,
+  Award,
+  Calendar,
+  Send,
+  Phone,
+} from "lucide-react";
+import { toast, Toaster } from "react-hot-toast";
 
 const Contact = () => {
-  const [person, setPerson] = useState(null)
-  const [personLoaded, setPersonLoaded] = useState(false)
+  const [person, setPerson] = useState(null);
+  const [personLoaded, setPersonLoaded] = useState(false);
   const [meetingForm, setMeetingForm] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: '',
-    preferredDate: ''
-  })
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+    preferredDate: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const getData = async () => {
       try {
-        const personData = await fetch(`https://nitjsr.ac.in/backend/api/people/faculty?id=CS103`)
-        const res = await personData.json()
-        setPerson(res[0])
-        setPersonLoaded(true)
+        const personData = await fetch(
+          `https://nitjsr.ac.in/backend/api/people/faculty?id=CS103`
+        );
+        const res = await personData.json();
+        setPerson(res[0]);
+        setPersonLoaded(true);
       } catch (error) {
-        console.error("Error fetching contact data:", error)
-        setPersonLoaded(true)
+        console.error("Error fetching contact data:", error);
+        setPersonLoaded(true);
       }
-    }
-    getData()
-  }, [])
+    };
+    getData();
+  }, []);
 
   const handleMeetingFormChange = (e) => {
-    const { name, value } = e.target
-    setMeetingForm(prev => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setMeetingForm((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleMeetingSubmit = async (e) => {
-    e.preventDefault()
-    if (!meetingForm.name || !meetingForm.email || !meetingForm.subject || !meetingForm.message || !meetingForm.preferredDate) {
-      toast.error('Please fill in all fields')
-      return
+    e.preventDefault();
+    if (
+      !meetingForm.name ||
+      !meetingForm.email ||
+      !meetingForm.subject ||
+      !meetingForm.message ||
+      !meetingForm.preferredDate
+    ) {
+      toast.error("Please fill in all fields");
+      return;
     }
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
     try {
-      const response = await fetch('/api/meeting-requests', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(meetingForm)
-      })
+      const response = await fetch("/api/meeting-requests", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(meetingForm),
+      });
 
-      if (!response.ok) throw new Error('Failed to submit meeting request')
+      if (!response.ok) throw new Error("Failed to submit meeting request");
 
-      toast.success('Meeting request submitted successfully! We will get back to you soon.')
+      toast.success(
+        "Meeting request submitted successfully! We will get back to you soon."
+      );
       setMeetingForm({
-        name: '',
-        email: '',
-        subject: '',
-        message: '',
-        preferredDate: ''
-      })
+        name: "",
+        email: "",
+        subject: "",
+        message: "",
+        preferredDate: "",
+      });
     } catch (error) {
-      console.error('Error submitting meeting request:', error)
-      toast.error('Failed to submit meeting request. Please try again.')
+      console.error("Error submitting meeting request:", error);
+      toast.error("Failed to submit meeting request. Please try again.");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 text-[#223843]">
       {/* Header Section */}
-      
 
       {/* Main Content */}
       <main className="container mx-auto px-6 py-10 max-w-6xl">
@@ -94,8 +112,10 @@ const Contact = () => {
           transition={{ duration: 0.5 }}
           className="mb-8"
         >
-          <h1 className="text-4xl font-bold text-[#064A6E] mb-2">Contact Information</h1>
-          <div className="h-[3px] w-24 bg-[#0284C7] rounded-full"></div>
+          <h1 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-bold text-black mb-2">
+            Contact Information
+          </h1>
+          <div className="h-[3px] w-16 sm:w-20 md:w-24 lg:w-28 bg-[#0284C7] rounded-full"></div>
         </motion.div>
 
         {personLoaded ? (
@@ -120,11 +140,23 @@ const Contact = () => {
                       <p className="text-[#064A6E]">{person.email || "N/A"}</p>
                     </div>
                   </div>
+                  <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                    <Phone className="w-5 h-5 text-[#0284C7]" />
+                    <div>
+                      <span className="font-medium text-gray-700">Phone:</span>
+                      <p className="text-[#064A6E]">
+                        {person.phone || "(+91)-9102197734"}
+                      </p>
+                    </div>
+                  </div>
+
                   {person.fb_id && (
                     <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
                       <User className="w-5 h-5 text-[#0284C7]" />
                       <div>
-                        <span className="font-medium text-gray-700">Social:</span>
+                        <span className="font-medium text-gray-700">
+                          Social:
+                        </span>
                         <a
                           href={person.fb_id}
                           target="_blank"
@@ -169,7 +201,7 @@ const Contact = () => {
                     },
                     {
                       label: "Orcid",
-                      value: person.orcid_id,
+                      value: "https://orcid.org/0000-0002-5614-6098",
                       icon: User,
                     },
                     {
@@ -183,7 +215,7 @@ const Contact = () => {
                       icon: Globe,
                     },
                   ].map((item, index) => {
-                    const IconComponent = item.icon
+                    const IconComponent = item.icon;
                     return (
                       <motion.div
                         key={index}
@@ -194,7 +226,9 @@ const Contact = () => {
                       >
                         <div className="flex items-center space-x-3">
                           <IconComponent className="w-5 h-5 text-[#0284C7]" />
-                          <span className="font-medium text-gray-700">{item.label}:</span>
+                          <span className="font-medium text-gray-700">
+                            {item.label}:
+                          </span>
                         </div>
                         {item.value ? (
                           <a
@@ -210,7 +244,7 @@ const Contact = () => {
                           <span className="text-gray-500 text-sm">N/A</span>
                         )}
                       </motion.div>
-                    )
+                    );
                   })}
                 </div>
               </motion.div>
@@ -218,8 +252,12 @@ const Contact = () => {
           ) : (
             <div className="text-center py-12">
               <div className="text-gray-400 text-6xl mb-4">📞</div>
-              <h3 className="text-xl font-semibold text-gray-600 mb-2">Contact Information Not Available</h3>
-              <p className="text-gray-500">Contact details will appear here once available.</p>
+              <h3 className="text-xl font-semibold text-gray-600 mb-2">
+                Contact Information Not Available
+              </h3>
+              <p className="text-gray-500">
+                Contact details will appear here once available.
+              </p>
             </div>
           )
         ) : (
@@ -241,7 +279,8 @@ const Contact = () => {
             Request a Meeting
           </h2>
           <p className="text-gray-600 mb-6">
-            Fill out the form below to schedule a meeting. We'll get back to you as soon as possible.
+            Fill out the form below to schedule a meeting. We'll get back to you
+            as soon as possible.
           </p>
           <form onSubmit={handleMeetingSubmit} className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
@@ -299,7 +338,7 @@ const Contact = () => {
                   name="preferredDate"
                   value={meetingForm.preferredDate}
                   onChange={handleMeetingFormChange}
-                  min={new Date().toISOString().split('T')[0]}
+                  min={new Date().toISOString().split("T")[0]}
                   className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-[#0284C7] transition-colors bg-white text-gray-900"
                   required
                 />
@@ -345,7 +384,7 @@ const Contact = () => {
       </main>
       <Toaster position="bottom-right" />
     </div>
-  )
-}
+  );
+};
 
-export default Contact
+export default Contact;

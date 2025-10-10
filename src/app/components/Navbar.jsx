@@ -43,7 +43,7 @@ export default function Navbar() {
     // },
     {
       name: "Students",
-      path: "/",
+      path: "/pages/Students/PhdStudents",
       dropdownItems: [
         { name: "PhD Students", path: "/pages/Students/PhdStudents" },
         { name: "Masters Students", path: "/pages/Students/MastersStudents" },
