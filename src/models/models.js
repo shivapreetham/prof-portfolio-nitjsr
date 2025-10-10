@@ -24,7 +24,7 @@ export const Profile = (mongoose.models && mongoose.models.Profile) || mongoose.
 export const STUDENT_TYPES = ['bachelor', 'masters', 'phd'];
 
 const StudentSchema = new mongoose.Schema({
-    id: { type: Number, required: true },
+    id: { type: String, required: true },
     research_topic: { type: String, required: true },
     name_of_student: { type: String, required: true },
     completion_year: { type: String, required: true },
