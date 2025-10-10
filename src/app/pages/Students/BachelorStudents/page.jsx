@@ -9,7 +9,7 @@ const BachelorStudents = () => {
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(0)
-  const itemsPerPage = 5
+  const itemsPerPage = 6
 
   useEffect(() => {
     const getData = async () => {
@@ -159,7 +159,7 @@ const BachelorStudents = () => {
                   <button
                     onClick={() => handlePageChange(Math.max(0, currentPage - 1))}
                     disabled={currentPage === 0}
-                    className="px-3 py-1 border border-gray-300 rounded hover:bg-gray-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+                    className="px-3 py-1 border border-gray-300 rounded bg-white text-gray-700 hover:bg-gray-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </button>
@@ -169,7 +169,7 @@ const BachelorStudents = () => {
                       key={i}
                       onClick={() => handlePageChange(i)}
                       className={`px-3 py-1 border border-gray-300 rounded cursor-pointer transition-colors ${
-                        currentPage === i ? "bg-[#0891B2] text-white" : "hover:bg-gray-200"
+                        currentPage === i ? "bg-[#0891B2] text-white" : "bg-white text-gray-700 hover:bg-gray-200"
                       }`}
                     >
                       {i + 1}
@@ -179,7 +179,7 @@ const BachelorStudents = () => {
                   <button
                     onClick={() => handlePageChange(Math.min(pageCount - 1, currentPage + 1))}
                     disabled={currentPage === pageCount - 1}
-                    className="px-3 py-1 border border-gray-300 rounded hover:bg-gray-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+                    className="px-3 py-1 border border-gray-300 rounded bg-white text-gray-700 hover:bg-gray-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </button>

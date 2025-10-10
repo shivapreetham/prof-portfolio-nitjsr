@@ -25,7 +25,7 @@ export const StudentList = ({ students, onEdit, onDelete }) => {
           : 'N/A';
 
         return (
-          <div key={student._id} className="card bg-base-500 shadow-lg">
+          <div key={student._id} className="card bg-base-300 shadow-lg">
             <div className="card-body p-4">
               <div className="flex justify-between">
                 <div className="flex-1">

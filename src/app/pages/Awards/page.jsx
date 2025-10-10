@@ -21,39 +21,19 @@ const itemAnimation = {
 
 export default function AwardsPage() {
   const [awards, setAwards] = useState([]);
-  const [nitActivities, setNitActivities] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const getData = async () => {
       try {
-        // Fetch from /api/awards first
-        try {
-          const res = await fetch("/api/awards", { cache: "no-store" });
-          if (res.ok) {
-            const data = await res.json();
-            if (Array.isArray(data)) {
-              setAwards(data);
-            }
+        const res = await fetch("/api/awards", { cache: "no-store" });
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data)) {
+            setAwards(data);
           }
-        } catch (err) {
-          console.error("Error fetching from /api/awards:", err);
         }
-
-        // Then fetch from NIT JSR API
-        try {
-          const activitiesData = await fetch(
-            `https://www.nitjsr.ac.in/backend/faculty/get_other_activities/CS103`
-          );
-          const res = await activitiesData.json();
-          if (res.result && Array.isArray(res.result)) {
-            setNitActivities(res.result);
-          }
-        } catch (err) {
-          console.error("Error fetching from external API:", err);
-        }
-
         setLoading(false);
       } catch (err) {
         console.error("Error fetching awards:", err);
@@ -157,32 +137,12 @@ export default function AwardsPage() {
               </div>
             )}
 
-            {/* Display NIT JSR activities */}
-            {nitActivities && nitActivities.length > 0 && (
-              <motion.div
-                initial="hidden"
-                animate="visible"
-                variants={textAnimation}
-                className="bg-white rounded-xl shadow-lg border border-gray-100 p-8 text-sm leading-relaxed"
-              >
-                <div
-                  className="rich-content"
-                  dangerouslySetInnerHTML={{
-                    __html:
-                      nitActivities[0]?.activities ||
-                      "<p>No content available.</p>",
-                  }}
-                />
-              </motion.div>
+            {/* Show message if no awards */}
+            {awards.length === 0 && (
+              <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-8 text-center text-gray-600">
+                No awards recorded yet.
+              </div>
             )}
-
-            {/* Show message if no data from either source */}
-            {awards.length === 0 &&
-              (!nitActivities || nitActivities.length === 0) && (
-                <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-8 text-center text-gray-600">
-                  No awards recorded yet.
-                </div>
-              )}
           </div>
         )}
       </main>
