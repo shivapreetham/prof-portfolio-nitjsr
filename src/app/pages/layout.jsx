@@ -4,7 +4,6 @@ import Navbar from "../components/Navbar";
 import Header from "../components/Header";
 import { useUser } from "../Provider";
 import Footer from "../components/Footer";
-import { ThemeProvider } from "@/contexts/ThemeContext";
 
 export default function PagesLayout({ children }) {
   const { userData } = useUser();
@@ -17,19 +16,19 @@ export default function PagesLayout({ children }) {
     );
   }
 
+  const overallFont = userData.user.overallFont || 'Merriweather';
+
   return (
-    <ThemeProvider defaultTheme="light">
-      <div className="min-h-screen flex flex-col">
-        <Header user={userData.user} />
-        <Navbar />
+    <div className="min-h-screen flex flex-col" style={{ fontFamily: overallFont }}>
+      <Header user={userData.user} />
+      <Navbar />
 
-        {/* Main content */}
-        <main className="flex-grow">
-          <div className="min-h-full">{children}</div>
-        </main>
+      {/* Main content */}
+      <main className="flex-grow">
+        <div className="min-h-full">{children}</div>
+      </main>
 
-        <Footer user={userData.user} />
-      </div>
-    </ThemeProvider>
+      <Footer user={userData.user} />
+    </div>
   );
 }

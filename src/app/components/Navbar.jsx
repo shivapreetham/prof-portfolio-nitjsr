@@ -4,7 +4,6 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { FaBars, FaTimes, FaChevronDown } from "react-icons/fa"
 import { motion, AnimatePresence } from "framer-motion"
-import ThemeToggle from "@/components/ThemeToggle"
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -94,49 +93,45 @@ export default function Navbar() {
   ]
 
   return (
-    <nav className="w-full flex justify-center py-4 bg-white dark:bg-gray-900 z-10 transition-colors">
-      <div className="relative w-[95%] md:w-[90%] lg:w-[85%] max-w-[1200px] rounded-xl overflow-visible shadow-md bg-white dark:bg-gray-800 transition-colors">
+    <nav className="w-full flex justify-center py-4 bg-sky-50 z-10">
+      <div className="relative w-[95%] md:w-[90%] lg:w-[85%] max-w-[1200px] rounded-xl overflow-visible shadow-md bg-sky-50">
         <div className="flex justify-between items-center px-6 py-4">
-          {isMobile && <span className="text-lg font-bold text-black dark:text-white">Menu</span>}
+          {isMobile && <span className="text-lg font-bold text-black">Menu</span>}
           {isMobile && (
-            <div className="flex items-center gap-3">
-              <ThemeToggle />
-              <button onClick={() => setMenuOpen(!menuOpen)} className="text-2xl text-black dark:text-white">
-                {menuOpen ? <FaTimes /> : <FaBars />}
-              </button>
-            </div>
+            <button onClick={() => setMenuOpen(!menuOpen)} className="text-2xl text-black">
+              {menuOpen ? <FaTimes /> : <FaBars />}
+            </button>
           )}
 
           {/* Desktop Menu */}
           {!isMobile && (
-            <div className="flex items-center justify-between w-full">
-              <ul className="flex flex-wrap justify-center flex-1 gap-6 text-sm font-semibold text-black dark:text-white font-poppins">
-                {navLinks.map((item, index) => (
-                  <li key={index} className="relative group">
-                    <div className="flex items-center space-x-1 group cursor-pointer transition-colors duration-200">
-                      <Link
-                        href={item.path}
-                        className={`text-base transition-colors duration-200 ${
-                          pathname === item.path ? "text-[#0284C7] dark:text-[#38BDF8]" : "group-hover:text-[#0284C7] dark:group-hover:text-[#38BDF8]"
-                        }`}
-                      >
-                        {item.name}
-                      </Link>
-                      {item.dropdownItems && (
-                        <FaChevronDown className="w-4 h-4 mt-[3px] text-gray-600 dark:text-gray-400 group-hover:text-[#0284C7] dark:group-hover:text-[#38BDF8] transition-colors duration-200" />
-                      )}
-                    </div>
+            <ul className="flex flex-wrap justify-center w-full gap-6 text-sm font-semibold text-black font-poppins">
+              {navLinks.map((item, index) => (
+                <li key={index} className="relative group">
+                  <div className="flex items-center space-x-1 group cursor-pointer transition-colors duration-200">
+                    <Link
+                      href={item.path}
+                      className={`text-base transition-colors duration-200 ${
+                        pathname === item.path ? "text-[#0284C7]" : "group-hover:text-[#0284C7]"
+                      }`}
+                    >
+                      {item.name}
+                    </Link>
+                    {item.dropdownItems && (
+                      <FaChevronDown className="w-4 h-4 mt-[3px] text-gray-600 group-hover:text-[#0284C7] transition-colors duration-200" />
+                    )}
+                  </div>
 
                   {/* Desktop Dropdown - Centered and Fixed Width */}
                   {item.dropdownItems && (
-                    <div className="absolute left-1/2 transform -translate-x-1/2 top-full mt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 bg-[#0891B2] dark:bg-gray-700 shadow-xl z-50 rounded-lg p-6 w-[500px] text-sm text-black dark:text-white font-normal">
+                    <div className="absolute left-1/2 transform -translate-x-1/2 top-full mt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 bg-[#0891B2] shadow-xl z-50 rounded-lg p-6 w-[500px] text-sm text-black font-normal">
                       <div className="flex">
-                        <div className="w-1/2 pr-6 border-r border-gray-300 dark:border-gray-600">
+                        <div className="w-1/2 pr-6 border-r border-gray-300">
                           <p className="text-lg font-semibold mb-2 text-white">
                             Explore {item.name} section for detailed information
                           </p>
                           <Link href={item.dropdownItems[0]?.path || item.path}>
-                            <button className="mt-4 px-4 py-2 bg-[#064A6E] dark:bg-gray-600 text-white rounded-md hover:bg-[#334155] dark:hover:bg-gray-500 transition-colors">
+                            <button className="mt-4 px-4 py-2 bg-[#064A6E] text-white rounded-md hover:bg-[#334155] transition-colors">
                               {item.name === "Research" ? "List of Publications" : `View ${item.name}`}
                             </button>
                           </Link>
@@ -147,7 +142,7 @@ export default function Navbar() {
                               <Link
                                 key={subIndex}
                                 href={subItem.path}
-                                className="text-base hover:text-white transition-colors text-[#022B35] dark:text-gray-300 dark:hover:text-white"
+                                className="text-base hover:text-white transition-colors text-[#022B35]"
                               >
                                 {subItem.name}
                               </Link>
@@ -159,9 +154,7 @@ export default function Navbar() {
                   )}
                 </li>
               ))}
-              </ul>
-              <ThemeToggle />
-            </div>
+            </ul>
           )}
         </div>
 
@@ -173,14 +166,14 @@ export default function Navbar() {
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="bg-[#0891B2] dark:bg-gray-700 overflow-hidden px-6 pb-4 transition-colors"
+              className="bg-[#0891B2] overflow-hidden px-6 pb-4"
             >
               <div className="space-y-3">
                 {navLinks.map((item, index) => (
                   <div key={index}>
                     <div
                       onClick={() => setOpenDropdown(openDropdown === item.name ? null : item.name)}
-                      className="flex justify-between items-center cursor-pointer text-black dark:text-white text-base font-semibold py-2"
+                      className="flex justify-between items-center cursor-pointer text-black text-base font-semibold py-2"
                     >
                       <Link href={item.path} onClick={() => setMenuOpen(false)}>
                         <span>{item.name}</span>
@@ -206,7 +199,7 @@ export default function Navbar() {
                           Explore {item.name} section for detailed information
                         </p>
                         <Link href={item.dropdownItems[0]?.path || item.path}>
-                          <button className="mt-2 px-3 py-1 bg-[#064A6E] dark:bg-gray-600 text-white rounded-md text-xs hover:bg-[#334155] dark:hover:bg-gray-500 transition-colors">
+                          <button className="mt-2 px-3 py-1 bg-[#064A6E] text-white rounded-md text-xs hover:bg-[#334155] transition-colors">
                             {item.name === "Research" ? "List of Publications" : `View ${item.name}`}
                           </button>
                         </Link>
@@ -214,7 +207,7 @@ export default function Navbar() {
                           <Link
                             key={subIndex}
                             href={subItem.path}
-                            className="block text-[#022B35] dark:text-gray-300 hover:text-white transition-colors"
+                            className="block text-[#022B35] hover:text-white transition-colors"
                             onClick={() => setMenuOpen(false)}
                           >
                             {subItem.name}

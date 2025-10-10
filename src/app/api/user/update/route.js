@@ -7,6 +7,10 @@ export async function PATCH(request) {
     await connectDB();
     const { field, value } = await request.json();
 
+    console.log('=== UPDATE REQUEST ===');
+    console.log('Field:', field);
+    console.log('Value:', value);
+
     // Validate input
     if (!field || value === undefined) {
       return NextResponse.json(
@@ -26,7 +30,9 @@ export async function PATCH(request) {
       'designation1',
       'designation2',
       'designation3',
-      'bannerImages'
+      'bannerImages',
+      'nameFont',
+      'overallFont'
     ];
 
     if (!allowedFields.includes(field)) {
@@ -58,8 +64,16 @@ export async function PATCH(request) {
       await profile.save({ runValidators: true });
     } else {
       // Update the existing profile field
+      console.log('Before update:', profile[field]);
       profile[field] = value;
+      profile.markModified(field);
+      console.log('After update (before save):', profile[field]);
       await profile.save({ runValidators: true });
+      console.log('After save:', profile[field]);
+
+      // Verify the update
+      const updatedProfile = await Profile.findOne({});
+      console.log('Fetched from DB:', updatedProfile[field]);
     }
 
     return NextResponse.json({

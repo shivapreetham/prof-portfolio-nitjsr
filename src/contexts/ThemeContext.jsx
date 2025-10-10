@@ -12,16 +12,16 @@ export const useTheme = () => {
   return context;
 };
 
-export const ThemeProvider = ({ children, defaultTheme = 'light' }) => {
+export const ThemeProvider = ({ children, defaultTheme = 'dark' }) => {
   const [theme, setTheme] = useState(defaultTheme);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
       setTheme(savedTheme);
-      document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+      document.documentElement.setAttribute('data-theme', savedTheme);
     } else {
-      document.documentElement.classList.toggle('dark', defaultTheme === 'dark');
+      document.documentElement.setAttribute('data-theme', defaultTheme);
     }
   }, [defaultTheme]);
 
@@ -29,7 +29,7 @@ export const ThemeProvider = ({ children, defaultTheme = 'light' }) => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
     localStorage.setItem('theme', newTheme);
-    document.documentElement.classList.toggle('dark', newTheme === 'dark');
+    document.documentElement.setAttribute('data-theme', newTheme);
   };
 
   return (

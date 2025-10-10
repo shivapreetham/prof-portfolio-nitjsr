@@ -1,87 +1,51 @@
-import { Geist, Geist_Mono } from "next/font/google";
+'use client';
+import { Merriweather, Lora } from "next/font/google";
 import "./globals.css";
 import Provider from "./Provider";
 import RouteTracker from "../components/analytics/RouteTracker";
 import AuthProvider from "../components/AuthProvider";
-import { Poppins } from "next/font/google";
+import { useUser } from "./Provider";
+import { useEffect, useState } from "react";
 
-// import Navbar from "./components/Navbar";
-// import Footer from "./components/Footer";
-const poppins = Poppins({
+const merriweather = Merriweather({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"], 
-  variable: "--font-poppins",
+  weight: ["300", "400", "700", "900"],
+  variable: "--font-merriweather",
 });
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+function LayoutContent({ children }) {
+  const { userData } = useUser();
+  const [fontFamily, setFontFamily] = useState('Merriweather');
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+  useEffect(() => {
+    if (userData?.user?.overallFont) {
+      setFontFamily(userData.user.overallFont);
+    }
+  }, [userData]);
 
-export const metadata = {
-  title: {
-    default: "Professor Portfolio - KK Sir",
-    template: "%s | Professor Portfolio"
-  },
-  description: "Official portfolio of Professor at NIT Jamshedpur. Explore research publications, teaching experience, student supervision, and academic contributions in computer science.",
-  keywords: [
-    "professor", "NIT Jamshedpur", "computer science", "research", "publications", 
-    "teaching", "PhD supervision", "academic", "faculty", "computer centre"
-  ],
-  authors: [{ name: "Professor Portfolio" }],
-  creator: "Professor Portfolio",
-  publisher: "NIT Jamshedpur",
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'),
-  openGraph: {
-    type: 'website',
-    locale: 'en_US',
-    url: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
-    title: 'Professor Portfolio - KK Sir',
-    description: 'Official portfolio of Professor at NIT Jamshedpur. Explore research publications, teaching experience, and academic contributions.',
-    siteName: 'Professor Portfolio',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Professor Portfolio - KK Sir',
-    description: 'Official portfolio of Professor at NIT Jamshedpur. Explore research publications and academic contributions.',
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
-  },
-  verification: {
-    google: 'your-google-verification-code',
-  },
-};
+  return (
+    <body className={`${merriweather.variable} font-serif antialiased`} style={{ fontFamily: fontFamily }}>
+      <RouteTracker />
+      <main>{children}</main>
+    </body>
+  );
+}
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className={`${poppins.variable} font-sans antialiased`} data-theme="dark">
-        <AuthProvider>
-          <Provider>
-            <RouteTracker />
-            <main>{children}</main>
-          </Provider>
-        </AuthProvider>
-      </body>
+    <html lang="en" data-theme="dark">
+      <head>
+        <title>Professor Portfolio - KK Sir</title>
+        <meta name="description" content="Official portfolio of Professor at NIT Jamshedpur. Explore research publications, teaching experience, student supervision, and academic contributions in computer science." />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Lora:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800;900&family=Crimson+Text:wght@400;600;700&family=Open+Sans:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Source+Sans+Pro:wght@300;400;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+      </head>
+      <AuthProvider>
+        <Provider>
+          <LayoutContent>{children}</LayoutContent>
+        </Provider>
+      </AuthProvider>
     </html>
   );
 }

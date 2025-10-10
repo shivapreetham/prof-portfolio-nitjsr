@@ -6,7 +6,6 @@ import { Mail, Linkedin, ArrowRight } from "lucide-react"
 import Header from "./components/Header"
 import Navbar from "./components/Navbar"
 import Footer from "./components/Footer"
-import { ThemeProvider } from "@/contexts/ThemeContext"
 
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0)
@@ -14,7 +13,7 @@ export default function Home() {
 
   if (!userData?.user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:bg-gray-900">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
         <div className="relative">
           <div className="w-16 h-16 border-4 border-[#0093cb] border-t-transparent rounded-full animate-spin"></div>
           <div className="absolute inset-0 flex items-center justify-center">
@@ -29,16 +28,16 @@ export default function Home() {
     id: index + 1, type: "image", src
   }));
 
+  const overallFont = userData.user.overallFont || 'Merriweather';
+
   return (
-    <ThemeProvider defaultTheme="light">
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800 text-[#223843] dark:text-gray-100 transition-colors">
-      {/* Header Section */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 text-[#223843]" style={{ fontFamily: overallFont }}>
       <Header user={userData.user} />
 
       <section className="relative">
         <Navbar />
-        <div className="w-full flex -mt-5 justify-center bg-white dark:bg-gray-900 px-2 sm:px-4 transition-colors">
-          <div className="relative w-full sm:w-[95%] md:w-[90%] lg:w-[85%] max-w-[1200px] rounded-b-xl shadow-md bg-white dark:bg-gray-800 transition-colors">
+        <div className="w-full flex -mt-5 justify-center bg-white px-2 sm:px-4">
+          <div className="relative w-full sm:w-[95%] md:w-[90%] lg:w-[85%] max-w-[1200px] rounded-b-xl shadow-md bg-white">
             <div className="w-full h-[250px] sm:h-[300px] md:h-[350px] lg:h-[400px] bg-gray-100 relative rounded-b-xl overflow-hidden">
               {slides.length > 0 && slides[currentSlide] ? (
                 <img
@@ -54,14 +53,14 @@ export default function Home() {
                 />
               )}
 
-              <div className="hidden md:block absolute top-1 right-6 lg:top-5 lg:right-8 bg-white dark:bg-gray-800 rounded-lg p-5 lg:p-6 shadow-xl border border-gray-200 dark:border-gray-700 w-2/6 lg:w-3/12 transition-colors">
-                <div className="border-b border-gray-200 dark:border-gray-700 pb-3 mb-3">
-                  <h3 className="text-base md:text-lg font-semibold text-[#064A6E] dark:text-white leading-tight">
+              <div className="hidden md:block absolute top-1 right-6 lg:top-5 lg:right-8 bg-white rounded-lg p-5 lg:p-6 shadow-xl border border-gray-200 w-2/6 lg:w-3/12">
+                <div className="border-b border-gray-200 pb-3 mb-3">
+                  <h3 className="text-base md:text-lg font-semibold text-[#064A6E] leading-tight">
                     {userData.user.designation1 || "Your Name Here"}
                   </h3>
                 </div>
 
-                <div className="space-y-1.5 mb-4 text-sm text-gray-700 dark:text-gray-300">
+                <div className="space-y-1.5 mb-4 text-sm text-gray-700">
                   <p className="flex items-start">
                     <span className="mr-2">•</span>
                     <span>{userData.user.designation2 || "Your Designation Here"}</span>
@@ -72,18 +71,18 @@ export default function Home() {
                   </p>
                 </div>
 
-                <div className="space-y-2 text-sm border-t border-gray-200 dark:border-gray-700 pt-3">
-                  <p className="text-gray-700 dark:text-gray-300 flex flex-col">
-                    <span className="font-semibold text-gray-800 dark:text-white mb-0.5">Email</span>
-                    <span className="break-all text-gray-600 dark:text-gray-400">{userData.user.email || "contact@example.com"}</span>
+                <div className="space-y-2 text-sm border-t border-gray-200 pt-3">
+                  <p className="text-gray-700 flex flex-col">
+                    <span className="font-semibold text-gray-800 mb-0.5">Email</span>
+                    <span className="break-all text-gray-600">{userData.user.email || "contact@example.com"}</span>
                   </p>
-                  <p className="text-gray-700 dark:text-gray-300 flex flex-col">
-                    <span className="font-semibold text-gray-800 dark:text-white mb-0.5">Phone</span>
-                    <span className="text-gray-600 dark:text-gray-400">(+91){userData.user.phoneNumber || " XXXXXXXXXX"}</span>
+                  <p className="text-gray-700 flex flex-col">
+                    <span className="font-semibold text-gray-800 mb-0.5">Phone</span>
+                    <span className="text-gray-600">(+91){userData.user.phoneNumber || " XXXXXXXXXX"}</span>
                   </p>
                 </div>
 
-                <div className="flex gap-3 mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
+                <div className="flex gap-3 mt-4 pt-3 border-t border-gray-200">
                   {userData.user.linkedIn && (
                     <a
                       href={userData.user.linkedIn}
@@ -119,7 +118,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Dot Indicators */}
             <div className="absolute bottom-2 sm:bottom-3 md:bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 sm:gap-3">
               {slides.length > 1 &&
                 slides.map((_, index) => (
@@ -138,28 +136,26 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Main Content */}
       <main className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 md:py-10 z-10 relative">
         <section className="mb-12 sm:mb-16 md:mb-20 px-2 sm:px-4 md:px-6 max-w-5xl mx-auto text-left">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-[#064A6E] dark:text-white mb-2 leading-tight">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-[#064A6E] mb-2 leading-tight">
             Welcome to my Homepage
           </h2>
-          <div className="h-[2px] w-16 sm:w-24 md:w-32 bg-[#0284C7] dark:bg-[#38BDF8] mb-4 sm:mb-6" />
+          <div className="h-[2px] w-16 sm:w-24 md:w-32 bg-[#0284C7] mb-4 sm:mb-6" />
 
-          <div className="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-lg border-l-4 border-[#0891B2] dark:border-[#38BDF8] shadow-sm mb-4 sm:mb-6 transition-colors">
-            <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
-              <span className="font-semibold text-[#064A6E] dark:text-white">Current Position:</span>{` ${userData.user.designation1 || "Your Designation Here"}, ${userData.user.designation2 || "Your Designation Here"}, ${userData.user.designation3 || "Your Designation Here"}`}
+          <div className="bg-white p-4 sm:p-5 rounded-lg border-l-4 border-[#0891B2] shadow-sm mb-4 sm:mb-6">
+            <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
+              <span className="font-semibold text-[#064A6E]">Current Position:</span>{` ${userData.user.designation1 || "Your Designation Here"}, ${userData.user.designation2 || "Your Designation Here"}, ${userData.user.designation3 || "Your Designation Here"}`}
             </p>
           </div>
 
           <div className="prose prose-sm sm:prose-base max-w-none">
-            <p className="text-gray-800 dark:text-gray-200 text-sm sm:text-base leading-relaxed mb-4">{userData.user.bio}</p>
+            <p className="text-gray-800 text-sm sm:text-base leading-relaxed mb-4">{userData.user.bio}</p>
           </div>
         </section>
       </main>
 
       <Footer user={userData.user}/>
-      </div>
-    </ThemeProvider>
+    </div>
   )
 }

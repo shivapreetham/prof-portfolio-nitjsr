@@ -12,6 +12,10 @@ const ProfileSchema = new mongoose.Schema({
   designation1: { type: String, maxlength: 255 }, // First designation
   designation2: { type: String, maxlength: 255 }, // Second designation
   designation3: { type: String, maxlength: 255 }, // Third designation
+
+  // Customization fields
+  nameFont: { type: String, default: 'Merriweather' },
+  overallFont: { type: String, default: 'Merriweather' }
 }, { timestamps: true });
 
 export const Profile = (mongoose.models && mongoose.models.Profile) || mongoose.model('Profile', ProfileSchema);
