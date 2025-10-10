@@ -50,11 +50,6 @@ export default function Navbar() {
         { name: "Bachelor Students", path: "/pages/Students/BachelorStudents" },
       ],
     },
-    // {
-    //   name: "Teachings",
-    //   path: "/pages/Teachings",
-    //   dropdownItems: [{ name: "Courses", path: "/pages/Teachings" }],
-    // },
     {
       name: "Responsibilities",
       path: "/pages/Responsibilities",
@@ -67,7 +62,6 @@ export default function Navbar() {
       name: "Achievements",
       path: "/pages/Awards",
       dropdownItems: [
-        { name: "Funded Projects", path: "/pages/Awards" },
         { name: "Conferences", path: "/pages/Conferences" },
         { name: "Awards & Honors", path: "/pages/Awards" },
       ],
@@ -99,8 +93,8 @@ export default function Navbar() {
   ]
 
   return (
-    <nav className="w-full flex justify-center py-4 bg-white z-10">
-      <div className="relative w-[95%] md:w-[90%] lg:w-[85%] max-w-[1200px] rounded-xl overflow-visible shadow-md bg-white">
+    <nav className="w-full flex justify-center py-4 bg-sky-50 z-10">
+      <div className="relative w-[95%] md:w-[90%] lg:w-[85%] max-w-[1200px] rounded-xl overflow-visible shadow-md bg-sky-50">
         <div className="flex justify-between items-center px-6 py-4">
           {isMobile && <span className="text-lg font-bold text-black">Menu</span>}
           {isMobile && (

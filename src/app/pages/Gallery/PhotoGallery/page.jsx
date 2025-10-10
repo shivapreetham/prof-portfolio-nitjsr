@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useUser } from "../../../Provider";
+import { trackPhotoView } from "@/hooks/useAnalytics";
 
 const PhotoGalleryPage = () => {
   const { userData } = useUser();
@@ -12,15 +13,28 @@ const PhotoGalleryPage = () => {
   );
   const [currentIndex, setCurrentIndex] = useState(null);
 
-  const openModal = (index) => setCurrentIndex(index);
+  const openModal = (index) => {
+    setCurrentIndex(index);
+    const photo = photos[index];
+    trackPhotoView(photo._id, photo.caption || `Photo ${index + 1}`);
+  };
+
   const closeModal = () => setCurrentIndex(null);
+
   const showPrev = (e) => {
     e.stopPropagation();
-    setCurrentIndex((currentIndex + photos.length - 1) % photos.length);
+    const newIndex = (currentIndex + photos.length - 1) % photos.length;
+    setCurrentIndex(newIndex);
+    const photo = photos[newIndex];
+    trackPhotoView(photo._id, photo.caption || `Photo ${newIndex + 1}`);
   };
+
   const showNext = (e) => {
     e.stopPropagation();
-    setCurrentIndex((currentIndex + 1) % photos.length);
+    const newIndex = (currentIndex + 1) % photos.length;
+    setCurrentIndex(newIndex);
+    const photo = photos[newIndex];
+    trackPhotoView(photo._id, photo.caption || `Photo ${newIndex + 1}`);
   };
 
   return (
@@ -113,6 +127,7 @@ const PhotoGalleryPage = () => {
                   onClick={(e) => {
                     e.stopPropagation();
                     setCurrentIndex(idx);
+                    trackPhotoView(p._id, p.caption || `Photo ${idx + 1}`);
                   }}
                   className={`h-16 w-16 object-cover rounded cursor-pointer flex-shrink-0 transition-all ${idx === currentIndex ? 'ring-2 ring-white scale-105' : 'hover:scale-105'}`}
                 />

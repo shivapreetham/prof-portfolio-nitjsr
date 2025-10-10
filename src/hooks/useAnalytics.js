@@ -1,5 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
-import { usePathname } from 'next/navigation';
+import { useCallback } from 'react';
 
 let sessionId = null;
 
@@ -7,62 +6,92 @@ function getSessionId() {
   if (typeof window === 'undefined') return null;
 
   if (!sessionId) {
-    sessionId = sessionStorage.getItem('analytics_session_id');
-    if (!sessionId) {
-      sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const storedSession = sessionStorage.getItem('analytics_session_id');
+    const sessionTimestamp = sessionStorage.getItem('analytics_session_timestamp');
+
+    const SESSION_TIMEOUT = 30 * 60 * 1000;
+    const now = Date.now();
+
+    if (storedSession && sessionTimestamp) {
+      const lastActivity = parseInt(sessionTimestamp);
+      if (now - lastActivity < SESSION_TIMEOUT) {
+        sessionId = storedSession;
+        sessionStorage.setItem('analytics_session_timestamp', now.toString());
+      } else {
+        sessionId = `session_${now}_${Math.random().toString(36).substr(2, 9)}`;
+        sessionStorage.setItem('analytics_session_id', sessionId);
+        sessionStorage.setItem('analytics_session_timestamp', now.toString());
+      }
+    } else {
+      sessionId = `session_${now}_${Math.random().toString(36).substr(2, 9)}`;
       sessionStorage.setItem('analytics_session_id', sessionId);
+      sessionStorage.setItem('analytics_session_timestamp', now.toString());
     }
+  } else {
+    sessionStorage.setItem('analytics_session_timestamp', Date.now().toString());
   }
+
   return sessionId;
 }
 
+function getPageTitle(pathname) {
+  const pathSegments = pathname.split('/').filter(Boolean);
+
+  if (pathname === '/') {
+    return 'Home - Professor Portfolio';
+  }
+
+  if (pathname.startsWith('/pages/')) {
+    const pageName = pathSegments[pathSegments.length - 1];
+    switch (pageName) {
+      case 'Blogs':
+        return 'Blog Posts - Professor Portfolio';
+      case 'VideoGallery':
+        return 'Video Gallery - Professor Portfolio';
+      case 'PhotoGallery':
+        return 'Photo Gallery - Professor Portfolio';
+      case 'ResearchPublications':
+        return 'Research Publications - Professor Portfolio';
+      case 'ResearchArea':
+        return 'Research Area - Professor Portfolio';
+      case 'Awards':
+        return 'Awards - Professor Portfolio';
+      case 'Conferences':
+        return 'Conferences - Professor Portfolio';
+      case 'OpinionPieces':
+        return 'Opinion Pieces - Professor Portfolio';
+      case 'Teachings':
+        return 'Teaching Experience - Professor Portfolio';
+      case 'Students':
+        return 'Students - Professor Portfolio';
+      case 'PhdStudents':
+        return 'PhD Students - Professor Portfolio';
+      case 'MastersStudents':
+        return 'Masters Students - Professor Portfolio';
+      case 'BachelorStudents':
+        return 'Bachelor Students - Professor Portfolio';
+      case 'Contact':
+        return 'Contact - Professor Portfolio';
+      case 'Responsibilities':
+        return 'Responsibilities - Professor Portfolio';
+      case 'Projects':
+        return 'Projects - Professor Portfolio';
+      default:
+        return `${pageName} - Professor Portfolio`;
+    }
+  }
+
+  if (pathname.startsWith('/admin')) {
+    if (pathname.includes('dashboard')) {
+      return 'Analytics Dashboard - Admin';
+    }
+    return 'Admin Panel';
+  }
+
+  return 'Professor Portfolio';
+}
+
 export function useAnalytics() {
-  const pathname = usePathname();
-  const startTimeRef = useRef(Date.now());
-  const maxScrollRef = useRef(0);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const handleScroll = () => {
-      const scrollPercentage = Math.round(
-        (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100
-      );
-      if (scrollPercentage > maxScrollRef.current) {
-        maxScrollRef.current = Math.min(scrollPercentage, 100);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
-    if (!pathname) return;
-
-    startTimeRef.current = Date.now();
-    maxScrollRef.current = 0;
-
-    trackEvent({
-      eventType: 'page_view',
-      pagePath: pathname,
-      pageTitle: document.title
-    });
-
-    return () => {
-      const duration = Math.round((Date.now() - startTimeRef.current) / 1000);
-      if (duration > 0) {
-        trackEvent({
-          eventType: 'page_view',
-          pagePath: pathname,
-          pageTitle: document.title,
-          duration,
-          scrollDepth: maxScrollRef.current
-        });
-      }
-    };
-  }, [pathname]);
-
   const trackEvent = useCallback(async (eventData) => {
     if (typeof window === 'undefined') return;
 
@@ -99,9 +128,10 @@ export function trackBlogView(blogId, blogTitle) {
       resourceId: blogId,
       resourceTitle: blogTitle,
       pagePath: window.location.pathname,
-      pageTitle: document.title,
+      pageTitle: getPageTitle(window.location.pathname),
       sessionId: getSessionId(),
-      referrer: document.referrer
+      referrer: document.referrer,
+      timestamp: new Date().toISOString()
     }),
     keepalive: true
   }).catch(err => console.error('Blog tracking error:', err));
@@ -118,9 +148,10 @@ export function trackVideoPlay(videoId, videoTitle) {
       resourceId: videoId,
       resourceTitle: videoTitle,
       pagePath: window.location.pathname,
-      pageTitle: document.title,
+      pageTitle: getPageTitle(window.location.pathname),
       sessionId: getSessionId(),
-      referrer: document.referrer
+      referrer: document.referrer,
+      timestamp: new Date().toISOString()
     }),
     keepalive: true
   }).catch(err => console.error('Video tracking error:', err));
@@ -137,9 +168,10 @@ export function trackPaperView(paperId, paperTitle) {
       resourceId: paperId,
       resourceTitle: paperTitle,
       pagePath: window.location.pathname,
-      pageTitle: document.title,
+      pageTitle: getPageTitle(window.location.pathname),
       sessionId: getSessionId(),
-      referrer: document.referrer
+      referrer: document.referrer,
+      timestamp: new Date().toISOString()
     }),
     keepalive: true
   }).catch(err => console.error('Paper tracking error:', err));
@@ -156,9 +188,10 @@ export function trackPhotoView(photoId, photoCaption) {
       resourceId: photoId,
       resourceTitle: photoCaption,
       pagePath: window.location.pathname,
-      pageTitle: document.title,
+      pageTitle: getPageTitle(window.location.pathname),
       sessionId: getSessionId(),
-      referrer: document.referrer
+      referrer: document.referrer,
+      timestamp: new Date().toISOString()
     }),
     keepalive: true
   }).catch(err => console.error('Photo tracking error:', err));
@@ -176,9 +209,10 @@ export function trackStudentView(studentId, studentName, studentType) {
       resourceTitle: studentName,
       resourceType: studentType,
       pagePath: window.location.pathname,
-      pageTitle: document.title,
+      pageTitle: getPageTitle(window.location.pathname),
       sessionId: getSessionId(),
-      referrer: document.referrer
+      referrer: document.referrer,
+      timestamp: new Date().toISOString()
     }),
     keepalive: true
   }).catch(err => console.error('Student tracking error:', err));
@@ -195,9 +229,10 @@ export function trackConferenceView(conferenceId, conferenceName) {
       resourceId: conferenceId,
       resourceTitle: conferenceName,
       pagePath: window.location.pathname,
-      pageTitle: document.title,
+      pageTitle: getPageTitle(window.location.pathname),
       sessionId: getSessionId(),
-      referrer: document.referrer
+      referrer: document.referrer,
+      timestamp: new Date().toISOString()
     }),
     keepalive: true
   }).catch(err => console.error('Conference tracking error:', err));
@@ -214,9 +249,10 @@ export function trackAwardView(awardId, awardTitle) {
       resourceId: awardId,
       resourceTitle: awardTitle,
       pagePath: window.location.pathname,
-      pageTitle: document.title,
+      pageTitle: getPageTitle(window.location.pathname),
       sessionId: getSessionId(),
-      referrer: document.referrer
+      referrer: document.referrer,
+      timestamp: new Date().toISOString()
     }),
     keepalive: true
   }).catch(err => console.error('Award tracking error:', err));
@@ -233,9 +269,10 @@ export function trackOpinionView(opinionId, opinionTitle) {
       resourceId: opinionId,
       resourceTitle: opinionTitle,
       pagePath: window.location.pathname,
-      pageTitle: document.title,
+      pageTitle: getPageTitle(window.location.pathname),
       sessionId: getSessionId(),
-      referrer: document.referrer
+      referrer: document.referrer,
+      timestamp: new Date().toISOString()
     }),
     keepalive: true
   }).catch(err => console.error('Opinion tracking error:', err));

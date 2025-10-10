@@ -38,9 +38,10 @@ export default function Home() {
   }))
 
 
+  const overallFont = userData.user.overallFont || 'Merriweather';
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 text-[#223843]">
-      {/* Header Section */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 text-[#223843]" style={{ fontFamily: overallFont }}>
       <Header user={userData.user} />
 
       <section className="relative">
@@ -62,7 +63,7 @@ export default function Home() {
                 />
               )}
 
-              <div className="hidden md:block absolute top-1 right-6 lg:top-5 lg:right-8 bg-white rounded-lg p-5 lg:p-6 shadow-xl border border-gray-200 w-2/6 lg:w-3/12 ">
+              <div className="hidden md:block absolute top-1 right-6 lg:top-5 lg:right-8 bg-white rounded-lg p-5 lg:p-6 shadow-xl border border-gray-200 w-2/6 lg:w-3/12">
                 <div className="border-b border-gray-200 pb-3 mb-3">
                   <h3 className="text-base md:text-lg font-semibold text-[#064A6E] leading-tight">
                     {userData.user.designation1 || "Your Name Here"}
@@ -127,7 +128,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Dot Indicators */}
             <div className="absolute bottom-2 sm:bottom-3 md:bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 sm:gap-3">
               {slides.length > 1 &&
                 slides.map((_, index) => (
@@ -146,7 +146,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Main Content */}
       <main className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 md:py-10 z-10 relative">
         <section className="mb-12 sm:mb-16 md:mb-20 px-2 sm:px-4 md:px-6 max-w-5xl mx-auto text-left">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-[#064A6E] mb-2 leading-tight">

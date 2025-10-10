@@ -18,11 +18,10 @@ export async function GET(request) {
     startDate.setDate(startDate.getDate() - days);
 
     const pageStats = await AnalyticsEvent.aggregate([
-      { $match: { timestamp: { $gte: startDate } } },
+      { $match: { eventType: 'page_view', timestamp: { $gte: startDate } } },
       {
         $group: {
           _id: '$pagePath',
-          title: { $first: '$pageTitle' },
           totalViews: { $sum: 1 },
           uniqueVisitors: { $addToSet: '$sessionId' },
           avgDuration: { $avg: '$duration' },
@@ -32,7 +31,6 @@ export async function GET(request) {
       {
         $project: {
           pagePath: '$_id',
-          title: 1,
           totalViews: 1,
           uniqueVisitors: { $size: '$uniqueVisitors' },
           avgDuration: 1,
@@ -42,7 +40,27 @@ export async function GET(request) {
       { $sort: { totalViews: -1 } }
     ]);
 
-    return NextResponse.json(pageStats);
+    function formatPageTitle(path) {
+      if (path === '/') return 'Home';
+      if (path.startsWith('/pages/')) {
+        const segments = path.split('/').filter(Boolean);
+        const pageName = segments[segments.length - 1];
+        return pageName.replace(/([A-Z])/g, ' $1').trim();
+      }
+      if (path.startsWith('/admin')) {
+        if (path.includes('dashboard')) return 'Admin Dashboard';
+        return 'Admin Panel';
+      }
+      if (path.startsWith('/login')) return 'Login';
+      return path.split('/').filter(Boolean).pop() || 'Unknown';
+    }
+
+    const formattedStats = pageStats.map(stat => ({
+      ...stat,
+      title: formatPageTitle(stat.pagePath)
+    }));
+
+    return NextResponse.json(formattedStats);
   } catch (error) {
     console.error('Error fetching page analytics:', error);
     return NextResponse.json({ error: 'Failed to fetch page analytics' }, { status: 500 });

@@ -18,7 +18,9 @@ const BasicDetail = ({ userInfo }) => {
     designation1: '',
     designation2: '',
     designation3: '',
-    bannerImages: [] // Banner images array
+    bannerImages: [], // Banner images array
+    nameFont: 'Merriweather',
+    overallFont: 'Merriweather'
   });
 
   const [isUploading, setIsUploading] = useState(false);
@@ -28,6 +30,9 @@ const BasicDetail = ({ userInfo }) => {
 
   useEffect(() => {
     if (userInfo) {
+      console.log('UserInfo updated:', userInfo);
+      console.log('nameFont from userInfo:', userInfo.nameFont);
+      console.log('overallFont from userInfo:', userInfo.overallFont);
       setDetails({
         name: userInfo.name || '',
         email: userInfo.email || '',
@@ -38,7 +43,9 @@ const BasicDetail = ({ userInfo }) => {
         designation1: userInfo.designation1 || '',
         designation2: userInfo.designation2 || '',
         designation3: userInfo.designation3 || '',
-        bannerImages: userInfo.bannerImages || [] // Initialize with current banner images
+        bannerImages: userInfo.bannerImages || [], // Initialize with current banner images
+        nameFont: userInfo.nameFont || 'Merriweather',
+        overallFont: userInfo.overallFont || 'Merriweather'
       });
     }
   }, [userInfo]);
@@ -46,6 +53,7 @@ const BasicDetail = ({ userInfo }) => {
   const updateUserField = async (fieldName, value) => {
     setIsSaving(true);
     try {
+      console.log('Updating field:', fieldName, 'with value:', value);
       const response = await fetch('/api/user/update', {
         method: 'PATCH',
         headers: {
@@ -58,6 +66,7 @@ const BasicDetail = ({ userInfo }) => {
       });
 
       const data = await response.json();
+      console.log('API response:', data);
 
       if (!response.ok) {
         throw new Error(data.message || 'Failed to update user information');
@@ -300,6 +309,66 @@ const BasicDetail = ({ userInfo }) => {
                 value={details.designation3}
                 onChange={(e) => onInputChange(e, 'designation3')}
               />
+            </div>
+
+            <div className="divider">Customization Settings</div>
+
+            <div>
+              <label className="label">
+                <span className="label-text text-xs text-base-content/70">Profile Name Font</span>
+              </label>
+              <select
+                className="select select-bordered select-sm w-full bg-base-100 text-base-content/80"
+                value={details.nameFont}
+                onChange={(e) => onInputChange(e, 'nameFont')}
+              >
+                <option value="Merriweather">Merriweather</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Garamond">Garamond</option>
+                <option value="Palatino">Palatino</option>
+                <option value="Baskerville">Baskerville</option>
+                <option value="Cambria">Cambria</option>
+                <option value="Lora">Lora</option>
+                <option value="Playfair Display">Playfair Display</option>
+                <option value="Crimson Text">Crimson Text</option>
+                <option value="Open Sans">Open Sans</option>
+                <option value="Roboto">Roboto</option>
+                <option value="Inter">Inter</option>
+                <option value="Montserrat">Montserrat</option>
+                <option value="Poppins">Poppins</option>
+                <option value="Source Sans Pro">Source Sans Pro</option>
+                <option value="Raleway">Raleway</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="label">
+                <span className="label-text text-xs text-base-content/70">Overall Site Font</span>
+              </label>
+              <select
+                className="select select-bordered select-sm w-full bg-base-100 text-base-content/80"
+                value={details.overallFont}
+                onChange={(e) => onInputChange(e, 'overallFont')}
+              >
+                <option value="Merriweather">Merriweather</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Garamond">Garamond</option>
+                <option value="Palatino">Palatino</option>
+                <option value="Baskerville">Baskerville</option>
+                <option value="Cambria">Cambria</option>
+                <option value="Lora">Lora</option>
+                <option value="Open Sans">Open Sans</option>
+                <option value="Roboto">Roboto</option>
+                <option value="Inter">Inter</option>
+                <option value="Montserrat">Montserrat</option>
+                <option value="Poppins">Poppins</option>
+                <option value="Source Sans Pro">Source Sans Pro</option>
+                <option value="Raleway">Raleway</option>
+                <option value="Playfair Display">Playfair Display</option>
+                <option value="Crimson Text">Crimson Text</option>
+              </select>
             </div>
           </div>
         </form>

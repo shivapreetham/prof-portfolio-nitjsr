@@ -1,19 +1,15 @@
 "use client"
 import React from 'react';
-import { SessionProvider } from "next-auth/react";
-// import SideNav from './components/SideNav';
+import AdminSidePanel from './components/AdminSidePanel';
 import { Toaster } from 'react-hot-toast';
+
 export default function AdminLayout({ children }) {
     return (
-        <div>
+        <div className="min-h-screen bg-gray-900 text-white">
             <Toaster position="bottom-right" />
-            <div className="w-24 fixed">
-                {/* <SideNav/> */}
-            </div>
-            <div className="ml-24">
-                <SessionProvider>
+            <AdminSidePanel />
+            <div className="transition-all duration-300" style={{ marginLeft: 'var(--sidebar-width, 16rem)' }}>
                 {children}
-                </SessionProvider>
             </div>
         </div>
     );

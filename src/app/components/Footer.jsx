@@ -24,7 +24,6 @@ const Footer = ({ user }) => {
     <footer className="bg-[#0891B2] text-white py-12 px-6">
       <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
 
-        {/* Contact Section */}
         <div className="space-y-4">
           <h2 className="text-xl font-bold text-[#022B35] mb-4">Get in Touch</h2>
           <div className="space-y-3">
@@ -41,7 +40,6 @@ const Footer = ({ user }) => {
           </div>
         </div>
 
-        {/* Social Links */}
         <div className="space-y-4">
           <h2 className="text-xl font-bold text-[#022B35] mb-4">Connect</h2>
           <div className="flex space-x-4">
@@ -78,7 +76,6 @@ const Footer = ({ user }) => {
           </div>
         </div>
 
-        {/* Quick Links */}
         <div className="space-y-4">
           <h2 className="text-xl font-bold text-[#022B35] mb-4">Quick Links</h2>
           <ul className="space-y-2">
@@ -93,7 +90,6 @@ const Footer = ({ user }) => {
           </ul>
         </div>
 
-        {/* Office Address */}
         <div className="space-y-4">
           <h2 className="text-xl font-bold text-[#022B35] mb-4">Office Address</h2>
           <div className="flex items-start space-x-3">
