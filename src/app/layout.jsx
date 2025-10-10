@@ -37,7 +37,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" data-theme="dark">
       <head>
-        <title>Professor Portfolio - KK Sir</title>
+        <title>Kaushalendra Kushal Kumar</title>
         <meta name="description" content="Official portfolio of Professor at NIT Jamshedpur. Explore research publications, teaching experience, student supervision, and academic contributions in computer science." />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
