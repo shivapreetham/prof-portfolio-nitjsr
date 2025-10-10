@@ -44,8 +44,8 @@ const ResponsibilitiesPage = () => {
 
         {/* Page Title */}
         <motion.div initial="hidden" animate="visible" variants={textAnimation} className="mb-8">
-          <h1 className="text-4xl font-bold text-[#064A6E] mb-2">Responsibilities</h1>
-          <div className="h-[3px] w-24 bg-[#0284C7] rounded-full mb-4"></div>
+          <h1 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-bold text-black mb-2">Responsibilities</h1>
+          <div className="h-[3px] w-16 sm:w-20 md:w-24 lg:w-28 bg-[#0284C7] rounded-full mb-4"></div>
           <p className="text-gray-600">Administrative and academic responsibilities</p>
         </motion.div>
 

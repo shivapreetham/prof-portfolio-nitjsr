@@ -14,12 +14,26 @@ const PhdStudents = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-        // const res = await fetch("https://www.nitjsr.ac.in/backend/api/thesissupervised/phd?id=CS103")
-        // const result = await res.json()
-        const res = await fetch("/api/students?type=phd", { cache: "no-store" })
-        if (!res.ok) throw new Error("Failed to fetch PhD students")
-        const result = await res.json()
-        const sorted = [...result].sort((a, b) => Number(b.completion_year || 0) - Number(a.completion_year || 0))
+        // Fetch from both APIs in parallel
+        const [externalRes, localRes] = await Promise.all([
+          fetch("https://www.nitjsr.ac.in/backend/api/thesissupervised/phd?id=CS103", { cache: "no-store" }),
+          fetch("/api/students?type=phd", { cache: "no-store" }),
+        ])
+
+        if (!externalRes.ok || !localRes.ok) {
+          throw new Error("Failed to fetch data from one or more APIs")
+        }
+
+        const [externalData, localData] = await Promise.all([externalRes.json(), localRes.json()])
+
+        // Combine both datasets
+        const combinedData = [...externalData, ...localData]
+
+        // Sort by completion year (descending)
+        const sorted = combinedData.sort(
+          (a, b) => Number(b.completion_year || 0) - Number(a.completion_year || 0)
+        )
+
         setData(sorted)
       } catch (err) {
         console.error("Error fetching PhD data:", err)
@@ -27,6 +41,7 @@ const PhdStudents = () => {
         setLoading(false)
       }
     }
+
     getData()
   }, [])
 
@@ -43,7 +58,6 @@ const PhdStudents = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      {/* Main Content */}
       <main className="container mx-auto px-6 py-10 max-w-6xl">
         {/* Breadcrumb */}
         <nav className="flex items-center space-x-2 text-sm text-gray-600 mb-6">
@@ -65,8 +79,8 @@ const PhdStudents = () => {
           transition={{ duration: 0.5 }}
           className="mb-8"
         >
-          <h1 className="text-4xl font-bold text-[#064A6E] mb-2">PhD Students</h1>
-          <div className="h-[3px] w-24 bg-[#0284C7] rounded-full mb-4"></div>
+          <h1 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-bold text-black mb-2">PhD Students</h1>
+          <div className="h-[3px] w-24 sm:w-20 md:w-24 lg:w-28 bg-[#0284C7] rounded-full mb-4"></div>
           <p className="text-gray-600">Doctoral thesis supervision and guidance</p>
         </motion.div>
 
@@ -99,8 +113,12 @@ const PhdStudents = () => {
                         className="hover:bg-gray-50 transition-colors cursor-pointer"
                         onClick={() => trackStudentView(thesis._id || `phd-${index}`, thesis.name_of_student, 'PhD')}
                       >
-                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{thesis.research_topic}</td>
-                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{thesis.name_of_student}</td>
+                        <td className="border border-gray-300 px-4 py-3 text-gray-700">
+                          {thesis.research_topic || "N/A"}
+                        </td>
+                        <td className="border border-gray-300 px-4 py-3 text-gray-700">
+                          {thesis.name_of_student || "N/A"}
+                        </td>
                         <td className="border border-gray-300 px-4 py-3 text-gray-700">
                           {thesis.completion_year || "Ongoing"}
                         </td>

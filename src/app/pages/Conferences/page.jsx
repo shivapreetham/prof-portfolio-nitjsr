@@ -81,8 +81,8 @@ export default function ConferencesPage() {
           transition={{ duration: 0.5 }}
           className="mb-8"
         >
-          <h1 className="text-4xl font-bold text-[#064A6E] mb-2">Conferences & Invited Talks</h1>
-          <div className="h-[3px] w-24 bg-[#0284C7] rounded-full" />
+          <h1 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-bold text-black mb-2">Conferences & Invited Talks</h1>
+          <div className="h-[3px] w-16 sm:w-20 md:w-24 lg:w-28 bg-[#0284C7] rounded-full" />
           <p className="mt-3 text-gray-600 max-w-3xl">
             A curated list of conferences, workshops, and invited talks featuring the faculty member. Each entry includes location details, presentation status, and supporting resources where available.
           </p>

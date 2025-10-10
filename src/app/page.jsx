@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useUser } from "./Provider"
 import { Mail, Linkedin, ArrowRight } from "lucide-react"
 import Header from "./components/Header"
@@ -10,6 +10,15 @@ import Footer from "./components/Footer"
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const { userData } = useUser()
+  useEffect(() => {
+    if (!userData?.user?.bannerImages?.length) return
+
+    const interval = setInterval(() => {
+      setCurrentSlide(prev => (prev + 1) % userData.user.bannerImages.length)
+    }, 4000) 
+
+    return () => clearInterval(interval) 
+  }, [userData?.user?.bannerImages])
 
   if (!userData?.user) {
     return (
@@ -26,7 +35,8 @@ export default function Home() {
 
   const slides = (userData.user.bannerImages || []).map((src, index) => ({
     id: index + 1, type: "image", src
-  }));
+  }))
+
 
   const overallFont = userData.user.overallFont || 'Merriweather';
 
