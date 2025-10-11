@@ -95,13 +95,13 @@ const Contact = () => {
       {/* Header Section */}
 
       {/* Main Content */}
-      <main className="container mx-auto px-6 py-10 max-w-6xl">
+      <main className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 md:py-10 max-w-6xl">
         {/* Breadcrumb */}
-        <nav className="flex items-center space-x-2 text-sm text-gray-600 mb-6">
+        <nav className="flex items-center space-x-2 text-xs sm:text-sm text-gray-600 mb-4 sm:mb-6">
           <Link href="/" className="hover:text-[#0284C7] transition-colors">
             Home
           </Link>
-          <ChevronRight className="w-4 h-4" />
+          <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
           <span className="text-[#0284C7] font-medium">Contact</span>
         </nav>
 
@@ -110,60 +110,60 @@ const Contact = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="mb-8"
+          className="mb-6 sm:mb-8"
         >
-          <h1 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-bold text-black mb-2">
+          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-black mb-2">
             Contact Information
           </h1>
-          <div className="h-[3px] w-16 sm:w-20 md:w-24 lg:w-28 bg-[#0284C7] rounded-full"></div>
+          <div className="h-[3px] w-16 sm:w-20 md:w-24 bg-[#0284C7] rounded-full"></div>
         </motion.div>
 
         {personLoaded ? (
           person ? (
-            <div className="grid md:grid-cols-2 gap-8">
+            <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
               {/* Contact Details */}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.2 }}
-                className="bg-white rounded-xl shadow-lg p-6 border border-gray-100"
+                className="bg-white rounded-xl shadow-lg p-4 sm:p-5 md:p-6 border border-gray-100"
               >
-                <h2 className="text-2xl font-semibold text-[#064A6E] mb-6 flex items-center">
-                  <Mail className="w-6 h-6 mr-3 text-[#0284C7]" />
+                <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-[#064A6E] mb-4 sm:mb-6 flex items-center">
+                  <Mail className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3 text-[#0284C7]" />
                   Contact Details
                 </h2>
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                    <Mail className="w-5 h-5 text-[#0284C7]" />
-                    <div>
-                      <span className="font-medium text-gray-700">Email:</span>
-                      <p className="text-[#064A6E]">{person.email || "N/A"}</p>
+                <div className="space-y-3 sm:space-y-4">
+                  <div className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
+                    <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-[#0284C7] mt-0.5" />
+                    <div className="min-w-0 flex-1">
+                      <span className="font-medium text-xs sm:text-sm text-gray-700">Email:</span>
+                      <p className="text-sm sm:text-base text-[#064A6E] break-words">{person.email || "N/A"}</p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                    <Phone className="w-5 h-5 text-[#0284C7]" />
+                  <div className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
+                    <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-[#0284C7] mt-0.5" />
                     <div>
-                      <span className="font-medium text-gray-700">Phone:</span>
-                      <p className="text-[#064A6E]">
+                      <span className="font-medium text-xs sm:text-sm text-gray-700">Phone:</span>
+                      <p className="text-sm sm:text-base text-[#064A6E]">
                         {person.phone || "(+91)-9102197734"}
                       </p>
                     </div>
                   </div>
 
                   {person.fb_id && (
-                    <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                      <User className="w-5 h-5 text-[#0284C7]" />
+                    <div className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
+                      <User className="w-4 h-4 sm:w-5 sm:h-5 text-[#0284C7] mt-0.5" />
                       <div>
-                        <span className="font-medium text-gray-700">
+                        <span className="font-medium text-xs sm:text-sm text-gray-700">
                           Social:
                         </span>
                         <a
                           href={person.fb_id}
                           target="_blank"
                           rel="noreferrer"
-                          className="text-[#0284C7] hover:underline ml-2 flex items-center"
+                          className="text-sm sm:text-base text-[#0284C7] hover:underline ml-2 flex items-center"
                         >
-                          Facebook <ExternalLink className="w-4 h-4 ml-1" />
+                          Facebook <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 ml-1" />
                         </a>
                       </div>
                     </div>
@@ -176,13 +176,13 @@ const Contact = () => {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4 }}
-                className="bg-white rounded-xl shadow-lg p-6 border border-gray-100"
+                className="bg-white rounded-xl shadow-lg p-4 sm:p-5 md:p-6 border border-gray-100"
               >
-                <h3 className="text-2xl font-semibold text-[#064A6E] mb-6 flex items-center">
-                  <Globe className="w-6 h-6 mr-3 text-[#0284C7]" />
+                <h3 className="text-lg sm:text-xl md:text-2xl font-semibold text-[#064A6E] mb-4 sm:mb-6 flex items-center">
+                  <Globe className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3 text-[#0284C7]" />
                   Professional Links
                 </h3>
-                <div className="grid gap-3">
+                <div className="grid gap-2 sm:gap-3">
                   {[
                     {
                       label: "Google Scholar",
@@ -224,9 +224,9 @@ const Contact = () => {
                         transition={{ delay: 0.5 + index * 0.1 }}
                         className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                       >
-                        <div className="flex items-center space-x-3">
-                          <IconComponent className="w-5 h-5 text-[#0284C7]" />
-                          <span className="font-medium text-gray-700">
+                        <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
+                          <IconComponent className="w-4 h-4 sm:w-5 sm:h-5 text-[#0284C7] flex-shrink-0" />
+                          <span className="font-medium text-xs sm:text-sm text-gray-700 truncate">
                             {item.label}:
                           </span>
                         </div>
@@ -235,13 +235,13 @@ const Contact = () => {
                             href={item.value}
                             target="_blank"
                             rel="noreferrer"
-                            className="flex items-center space-x-1 px-3 py-1 bg-[#0891B2] text-white rounded-md hover:bg-[#064A6E] transition-colors text-sm"
+                            className="flex items-center space-x-1 px-2 sm:px-3 py-1 bg-[#0891B2] text-white rounded-md hover:bg-[#064A6E] transition-colors text-xs sm:text-sm flex-shrink-0 touch-manipulation"
                           >
                             <span>View</span>
                             <ExternalLink className="w-3 h-3" />
                           </a>
                         ) : (
-                          <span className="text-gray-500 text-sm">N/A</span>
+                          <span className="text-gray-500 text-xs sm:text-sm flex-shrink-0">N/A</span>
                         )}
                       </motion.div>
                     );
@@ -250,19 +250,19 @@ const Contact = () => {
               </motion.div>
             </div>
           ) : (
-            <div className="text-center py-12">
-              <div className="text-gray-400 text-6xl mb-4">📞</div>
-              <h3 className="text-xl font-semibold text-gray-600 mb-2">
+            <div className="text-center py-8 sm:py-12">
+              <div className="text-gray-400 text-4xl sm:text-5xl md:text-6xl mb-3 sm:mb-4">📞</div>
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-600 mb-2 px-4">
                 Contact Information Not Available
               </h3>
-              <p className="text-gray-500">
+              <p className="text-sm sm:text-base text-gray-500 px-4">
                 Contact details will appear here once available.
               </p>
             </div>
           )
         ) : (
-          <div className="flex items-center justify-center py-20">
-            <div className="w-12 h-12 border-4 border-[#0891B2] border-t-transparent rounded-full animate-spin"></div>
+          <div className="flex items-center justify-center py-12 sm:py-20">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 border-4 border-[#0891B2] border-t-transparent rounded-full animate-spin"></div>
           </div>
         )}
 
@@ -272,20 +272,20 @@ const Contact = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="mt-12 bg-white rounded-xl shadow-lg p-8 border border-gray-100"
+          className="mt-8 sm:mt-10 md:mt-12 bg-white rounded-xl shadow-lg p-4 sm:p-6 md:p-8 border border-gray-100"
         >
-          <h2 className="text-2xl font-semibold text-[#064A6E] mb-6 flex items-center">
-            <Calendar className="w-6 h-6 mr-3 text-[#0284C7]" />
+          <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-[#064A6E] mb-4 sm:mb-6 flex items-center">
+            <Calendar className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3 text-[#0284C7]" />
             Request a Meeting
           </h2>
-          <p className="text-gray-600 mb-6">
+          <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">
             Fill out the form below to schedule a meeting. We'll get back to you
             as soon as possible.
           </p>
-          <form onSubmit={handleMeetingSubmit} className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-6">
+          <form onSubmit={handleMeetingSubmit} className="space-y-4 sm:space-y-6">
+            <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                   Full Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -293,13 +293,13 @@ const Contact = () => {
                   name="name"
                   value={meetingForm.name}
                   onChange={handleMeetingFormChange}
-                  className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-[#0284C7] transition-colors bg-white text-gray-900 placeholder-gray-400"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border-2 border-gray-200 focus:outline-none focus:border-[#0284C7] transition-colors bg-white text-gray-900 placeholder-gray-400"
                   placeholder="Enter your name"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                   Email Address <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -307,16 +307,16 @@ const Contact = () => {
                   name="email"
                   value={meetingForm.email}
                   onChange={handleMeetingFormChange}
-                  className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-[#0284C7] transition-colors bg-white text-gray-900 placeholder-gray-400"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border-2 border-gray-200 focus:outline-none focus:border-[#0284C7] transition-colors bg-white text-gray-900 placeholder-gray-400"
                   placeholder="your.email@example.com"
                   required
                 />
               </div>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                   Subject <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -324,13 +324,13 @@ const Contact = () => {
                   name="subject"
                   value={meetingForm.subject}
                   onChange={handleMeetingFormChange}
-                  className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-[#0284C7] transition-colors bg-white text-gray-900 placeholder-gray-400"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border-2 border-gray-200 focus:outline-none focus:border-[#0284C7] transition-colors bg-white text-gray-900 placeholder-gray-400"
                   placeholder="Meeting subject"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                   Preferred Date <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -339,14 +339,14 @@ const Contact = () => {
                   value={meetingForm.preferredDate}
                   onChange={handleMeetingFormChange}
                   min={new Date().toISOString().split("T")[0]}
-                  className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-[#0284C7] transition-colors bg-white text-gray-900"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border-2 border-gray-200 focus:outline-none focus:border-[#0284C7] transition-colors bg-white text-gray-900"
                   required
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                 Message <span className="text-red-500">*</span>
               </label>
               <textarea
@@ -354,7 +354,7 @@ const Contact = () => {
                 value={meetingForm.message}
                 onChange={handleMeetingFormChange}
                 rows={5}
-                className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-[#0284C7] transition-colors resize-none bg-white text-gray-900 placeholder-gray-400"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border-2 border-gray-200 focus:outline-none focus:border-[#0284C7] transition-colors resize-none bg-white text-gray-900 placeholder-gray-400"
                 placeholder="Please provide details about the purpose of the meeting..."
                 required
               />
@@ -364,7 +364,7 @@ const Contact = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="inline-flex items-center space-x-2 px-8 py-3 bg-gradient-to-r from-[#0284C7] to-[#0891B2] text-white rounded-lg hover:from-[#064A6E] hover:to-[#0284C7] transition-all duration-300 font-medium shadow-md hover:shadow-lg transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center space-x-2 px-6 sm:px-8 py-2 sm:py-3 text-sm sm:text-base bg-gradient-to-r from-[#0284C7] to-[#0891B2] text-white rounded-lg hover:from-[#064A6E] hover:to-[#0284C7] transition-all duration-300 font-medium shadow-md hover:shadow-lg transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
               >
                 {isSubmitting ? (
                   <>

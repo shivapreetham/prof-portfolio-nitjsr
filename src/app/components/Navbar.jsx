@@ -94,25 +94,25 @@ export default function Navbar() {
   ]
 
   return (
-    <nav className="w-full flex justify-center py-4 bg-sky-50 z-10">
+    <nav className="w-full flex justify-center py-2 sm:py-3 md:py-4 bg-sky-50 z-10">
       <div className="relative w-[95%] md:w-[90%] lg:w-[85%] max-w-[1200px] rounded-xl overflow-visible shadow-md bg-sky-50">
-        <div className="flex justify-between items-center px-6 py-4">
-          {isMobile && <span className="text-lg font-bold text-black">Menu</span>}
+        <div className="flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4">
+          {isMobile && <span className="text-base sm:text-lg font-bold text-black">Menu</span>}
           {isMobile && (
-            <button onClick={() => setMenuOpen(!menuOpen)} className="text-2xl text-black">
+            <button onClick={() => setMenuOpen(!menuOpen)} className="text-xl sm:text-2xl text-black p-2">
               {menuOpen ? <FaTimes /> : <FaBars />}
             </button>
           )}
 
           {/* Desktop Menu */}
           {!isMobile && (
-            <ul className="flex flex-wrap justify-center w-full gap-6 text-sm font-semibold text-black font-poppins">
+            <ul className="flex flex-wrap justify-center w-full gap-3 md:gap-4 lg:gap-6 text-sm md:text-base font-semibold text-black font-poppins">
               {navLinks.map((item, index) => (
                 <li key={index} className="relative group">
                   <div className="flex items-center space-x-1 group cursor-pointer transition-colors duration-200">
                     <Link
                       href={item.path}
-                      className={`text-base transition-colors duration-200 ${
+                      className={`text-sm md:text-base transition-colors duration-200 ${
                         pathname === item.path ? "text-[#0284C7]" : "group-hover:text-[#0284C7]"
                       }`}
                     >
@@ -167,14 +167,14 @@ export default function Navbar() {
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="bg-[#0891B2] overflow-hidden px-6 pb-4"
+              className="bg-[#0891B2] overflow-hidden px-4 sm:px-6 pb-4"
             >
-              <div className="space-y-3">
+              <div className="space-y-2 sm:space-y-3">
                 {navLinks.map((item, index) => (
                   <div key={index}>
                     <div
                       onClick={() => setOpenDropdown(openDropdown === item.name ? null : item.name)}
-                      className="flex justify-between items-center cursor-pointer text-black text-base font-semibold py-2"
+                      className="flex justify-between items-center cursor-pointer text-white text-sm sm:text-base font-semibold py-2"
                     >
                       <Link href={item.path} onClick={() => setMenuOpen(false)}>
                         <span>{item.name}</span>
@@ -194,13 +194,13 @@ export default function Navbar() {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="pl-4 space-y-2 text-sm"
+                        className="pl-3 sm:pl-4 space-y-2 text-xs sm:text-sm"
                       >
-                        <p className="text-[13px] mt-2 text-white">
+                        <p className="text-xs sm:text-sm mt-2 text-white">
                           Explore {item.name} section for detailed information
                         </p>
                         <Link href={item.dropdownItems[0]?.path || item.path}>
-                          <button className="mt-2 px-3 py-1 bg-[#064A6E] text-white rounded-md text-xs hover:bg-[#334155] transition-colors">
+                          <button className="mt-2 px-3 py-1.5 bg-[#064A6E] text-white rounded-md text-xs sm:text-sm hover:bg-[#334155] transition-colors">
                             {item.name === "Research" ? "List of Publications" : `View ${item.name}`}
                           </button>
                         </Link>

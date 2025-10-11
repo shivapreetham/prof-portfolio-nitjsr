@@ -55,13 +55,13 @@ export default function FundedProjectsPage() {
 
   return (
     <div className="min-h-screen bg-white text-black">
-      <main className="container mx-auto px-6 py-10 max-w-6xl">
+      <main className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 md:py-10 max-w-6xl">
         {/* Breadcrumb */}
-        <nav className="flex items-center space-x-2 text-sm text-gray-600 mb-6">
+        <nav className="flex items-center space-x-2 text-xs sm:text-sm text-gray-600 mb-4 sm:mb-6">
           <Link href="/" className="hover:text-[#0284C7] transition-colors">
             Home
           </Link>
-          <ChevronRight className="w-4 h-4" />
+          <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
           <span className="text-[#0284C7] font-medium">
             Funded Projects
           </span>
@@ -72,13 +72,13 @@ export default function FundedProjectsPage() {
           initial="hidden"
           animate="visible"
           variants={textAnimation}
-          className="mb-8"
+          className="mb-6 sm:mb-8"
         >
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-black mb-2 flex items-center gap-3">
-            <Briefcase className="w-8 h-8 text-[#0284C7]" />
+          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-black mb-2 flex items-center gap-2 sm:gap-3">
+            <Briefcase className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-[#0284C7]" />
             Funded Projects
           </h1>
-          <div className="h-[3px] w-24 bg-[#0284C7] rounded-full mb-4"></div>
+          <div className="h-[3px] w-16 sm:w-20 md:w-24 bg-[#0284C7] rounded-full mb-3 sm:mb-4"></div>
           <p className="text-gray-600 text-sm sm:text-base">
             Sponsored and international research projects
           </p>
@@ -89,13 +89,13 @@ export default function FundedProjectsPage() {
             <div className="w-12 h-12 border-4 border-[#0891B2] border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : error ? (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+          <div className="bg-red-50 border border-red-200 text-red-700 px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base">
             {error}
           </div>
         ) : (
-          <div className="space-y-8">
+          <div className="space-y-6 sm:space-y-8">
             {Object.keys(groupedProjects).length === 0 ? (
-              <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-8 text-center text-gray-600">
+              <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 sm:p-8 text-center text-gray-600 text-sm sm:text-base">
                 No funded projects recorded yet.
               </div>
             ) : (
@@ -105,13 +105,13 @@ export default function FundedProjectsPage() {
                     initial="hidden"
                     animate="visible"
                     variants={textAnimation}
-                    className="text-xl font-bold text-[#064A6E] mb-4 flex items-center gap-2"
+                    className="text-lg sm:text-xl font-bold text-[#064A6E] mb-3 sm:mb-4 flex flex-wrap items-center gap-2"
                   >
                     {type} Projects
-                    <span className="badge badge-primary">{typeProjects.length}</span>
+                    <span className="badge badge-primary text-xs sm:text-sm">{typeProjects.length}</span>
                   </motion.h2>
 
-                  <div className="space-y-4">
+                  <div className="space-y-3 sm:space-y-4">
                     {typeProjects.map((project, index) => (
                       <motion.div
                         key={project._id}
@@ -121,19 +121,19 @@ export default function FundedProjectsPage() {
                         variants={itemAnimation}
                         className="bg-white rounded-xl shadow-md hover:shadow-xl border border-gray-200 overflow-hidden transition-all duration-300"
                       >
-                        <div className="p-6">
+                        <div className="p-4 sm:p-5 md:p-6">
                           {/* Header */}
-                          <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
-                            <div className="flex-1">
-                              <h3 className="text-lg font-bold text-gray-900 mb-1">
+                          <div className="flex flex-wrap items-start justify-between gap-3 mb-3 sm:mb-4">
+                            <div className="flex-1 min-w-0">
+                              <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1">
                                 {project.title}
                               </h3>
-                              <p className="text-sm text-[#0284C7] font-medium">
+                              <p className="text-xs sm:text-sm text-[#0284C7] font-medium">
                                 {project.fundingAgency}
                               </p>
                             </div>
                             <div className="flex gap-2">
-                              <span className={`badge ${
+                              <span className={`badge text-xs sm:text-sm ${
                                 project.status === 'Ongoing' ? 'badge-success' :
                                 project.status === 'Completed' ? 'badge-info' :
                                 'badge-warning'
@@ -144,36 +144,36 @@ export default function FundedProjectsPage() {
                           </div>
 
                           {/* Project Details Grid */}
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-4">
                             {project.role && (
                               <div className="flex items-start gap-2">
-                                <span className="font-semibold text-sm text-gray-700">Role:</span>
-                                <span className="text-sm text-gray-600">{project.role}</span>
+                                <span className="font-semibold text-xs sm:text-sm text-gray-700">Role:</span>
+                                <span className="text-xs sm:text-sm text-gray-600">{project.role}</span>
                               </div>
                             )}
                             {project.amount && (
                               <div className="flex items-center gap-2">
-                                <DollarSign className="w-4 h-4 text-[#0284C7]" />
-                                <span className="text-sm text-gray-600">{project.amount}</span>
+                                <DollarSign className="w-3 h-3 sm:w-4 sm:h-4 text-[#0284C7]" />
+                                <span className="text-xs sm:text-sm text-gray-600">{project.amount}</span>
                               </div>
                             )}
                             {project.duration && (
                               <div className="flex items-center gap-2">
-                                <Clock className="w-4 h-4 text-[#0284C7]" />
-                                <span className="text-sm text-gray-600">{project.duration}</span>
+                                <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-[#0284C7]" />
+                                <span className="text-xs sm:text-sm text-gray-600">{project.duration}</span>
                               </div>
                             )}
                             {project.collaborators && (
                               <div className="flex items-start gap-2 md:col-span-2">
-                                <Users className="w-4 h-4 text-[#0284C7] mt-0.5" />
-                                <span className="text-sm text-gray-600">{project.collaborators}</span>
+                                <Users className="w-3 h-3 sm:w-4 sm:h-4 text-[#0284C7] mt-0.5" />
+                                <span className="text-xs sm:text-sm text-gray-600">{project.collaborators}</span>
                               </div>
                             )}
                           </div>
 
                           {/* Description */}
                           {project.description && (
-                            <p className="text-sm text-gray-700 mb-4 whitespace-pre-wrap leading-relaxed">
+                            <p className="text-xs sm:text-sm text-gray-700 mb-3 sm:mb-4 whitespace-pre-wrap leading-relaxed">
                               {project.description}
                             </p>
                           )}
@@ -187,7 +187,7 @@ export default function FundedProjectsPage() {
                                   href={link}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1 text-xs font-medium text-[#0284C7] border border-[#0284C7]/40 px-3 py-1 rounded-full hover:bg-[#0284C7] hover:text-white transition-colors"
+                                  className="inline-flex items-center gap-1 text-xs font-medium text-[#0284C7] border border-[#0284C7]/40 px-3 py-1.5 rounded-full hover:bg-[#0284C7] hover:text-white transition-colors touch-manipulation"
                                 >
                                   External Link {linkIndex + 1}
                                 </a>

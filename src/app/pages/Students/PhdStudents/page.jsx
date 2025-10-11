@@ -58,17 +58,17 @@ const PhdStudents = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      <main className="container mx-auto px-6 py-10 max-w-6xl">
+      <main className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 md:py-10 max-w-6xl">
         {/* Breadcrumb */}
-        <nav className="flex items-center space-x-2 text-sm text-gray-600 mb-6">
+        <nav className="flex items-center space-x-2 text-xs sm:text-sm text-gray-600 mb-4 sm:mb-6">
           <Link href="/" className="hover:text-[#0284C7] transition-colors">
             Home
           </Link>
-          <ChevronRight className="w-4 h-4" />
+          <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
           <Link href="/pages/Students" className="hover:text-[#0284C7] transition-colors">
             Students
           </Link>
-          <ChevronRight className="w-4 h-4" />
+          <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
           <span className="text-[#0284C7] font-medium">PhD Students</span>
         </nav>
 
@@ -77,11 +77,11 @@ const PhdStudents = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="mb-8"
+          className="mb-6 sm:mb-8"
         >
-          <h1 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-bold text-black mb-2">PhD Students</h1>
-          <div className="h-[3px] w-24 sm:w-20 md:w-24 lg:w-28 bg-[#0284C7] rounded-full mb-4"></div>
-          <p className="text-gray-600">Doctoral thesis supervision and guidance</p>
+          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-black mb-2">PhD Students</h1>
+          <div className="h-[3px] w-16 sm:w-20 md:w-24 bg-[#0284C7] rounded-full mb-3 sm:mb-4"></div>
+          <p className="text-sm sm:text-base text-gray-600">Doctoral thesis supervision and guidance</p>
         </motion.div>
 
         {loading ? (
@@ -90,11 +90,11 @@ const PhdStudents = () => {
           </div>
         ) : (
           <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-            <div className="p-6">
-              <h3 className="text-xl font-semibold mb-6 text-[#064A6E]">PhD Theses Supervised</h3>
+            <div className="p-4 sm:p-6">
+              <h3 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6 text-[#064A6E]">PhD Theses Supervised</h3>
 
               {/* Student Cards Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
                 {currentData.map((student, index) => (
                   <motion.div
                     key={index}
@@ -105,7 +105,7 @@ const PhdStudents = () => {
                     onClick={() => trackStudentView(student._id || `phd-${index}`, student.name_of_student, 'PhD')}
                   >
                     {/* Student Image */}
-                    <div className="w-full h-48 overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
+                    <div className="w-full h-40 sm:h-48 overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
                       {student.image_url ? (
                         <img
                           src={student.image_url}
@@ -113,8 +113,8 @@ const PhdStudents = () => {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <div className="w-24 h-24 rounded-full bg-[#0891B2] flex items-center justify-center">
-                          <span className="text-white text-3xl font-bold">
+                        <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#0891B2] flex items-center justify-center">
+                          <span className="text-white text-2xl sm:text-3xl font-bold">
                             {student.name_of_student?.charAt(0)?.toUpperCase() || '?'}
                           </span>
                         </div>
@@ -122,12 +122,12 @@ const PhdStudents = () => {
                     </div>
 
                     {/* Student Info */}
-                    <div className="p-5">
-                      <div className="flex items-center justify-between mb-3">
-                        <h4 className="text-lg font-bold text-gray-900">
+                    <div className="p-4 sm:p-5">
+                      <div className="flex items-center justify-between mb-2 sm:mb-3 gap-2">
+                        <h4 className="text-base sm:text-lg font-bold text-gray-900 truncate">
                           {student.name_of_student || "N/A"}
                         </h4>
-                        <span className="px-3 py-1 bg-[#0891B2] text-white text-xs font-semibold rounded-full">
+                        <span className="px-2 sm:px-3 py-1 bg-[#0891B2] text-white text-xs font-semibold rounded-full whitespace-nowrap flex-shrink-0">
                           {student.completion_year || "Ongoing"}
                         </span>
                       </div>
@@ -135,7 +135,7 @@ const PhdStudents = () => {
                       <div className="space-y-2">
                         <div>
                           <p className="text-xs text-gray-500 font-medium uppercase tracking-wide mb-1">Research Topic</p>
-                          <p className="text-sm text-gray-700 line-clamp-3">
+                          <p className="text-xs sm:text-sm text-gray-700 line-clamp-3">
                             {student.research_topic || "N/A"}
                           </p>
                         </div>
@@ -153,11 +153,11 @@ const PhdStudents = () => {
 
               {/* Pagination */}
               {pageCount > 1 && (
-                <div className="flex justify-center items-center gap-2 mt-6">
+                <div className="flex justify-center items-center gap-2 flex-wrap mt-6">
                   <button
                     onClick={() => handlePageChange(Math.max(0, currentPage - 1))}
                     disabled={currentPage === 0}
-                    className="px-3 py-1 border border-gray-300 rounded bg-white text-gray-700 hover:bg-gray-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+                    className="px-2 sm:px-3 py-1 text-sm border border-gray-300 rounded bg-white text-gray-700 hover:bg-gray-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center touch-manipulation"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </button>
@@ -166,7 +166,7 @@ const PhdStudents = () => {
                     <button
                       key={i}
                       onClick={() => handlePageChange(i)}
-                      className={`px-3 py-1 border border-gray-300 rounded cursor-pointer transition-colors ${
+                      className={`px-2 sm:px-3 py-1 text-sm border border-gray-300 rounded cursor-pointer transition-colors touch-manipulation ${
                         currentPage === i ? "bg-[#0891B2] text-white" : "bg-white text-gray-700 hover:bg-gray-200"
                       }`}
                     >
@@ -177,7 +177,7 @@ const PhdStudents = () => {
                   <button
                     onClick={() => handlePageChange(Math.min(pageCount - 1, currentPage + 1))}
                     disabled={currentPage === pageCount - 1}
-                    className="px-3 py-1 border border-gray-300 rounded bg-white text-gray-700 hover:bg-gray-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+                    className="px-2 sm:px-3 py-1 text-sm border border-gray-300 rounded bg-white text-gray-700 hover:bg-gray-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center touch-manipulation"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </button>

@@ -94,17 +94,17 @@ const ResearchPublications = () => {
      
 
       {/* Main Content */}
-      <main className="container mx-auto px-6 py-10 max-w-6xl">
+      <main className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 md:py-10 max-w-6xl">
         {/* Breadcrumb */}
-        <nav className="flex items-center space-x-2 text-sm text-gray-600 mb-6">
+        <nav className="flex items-center space-x-2 text-xs sm:text-sm text-gray-600 mb-4 sm:mb-6">
           <Link href="/" className="hover:text-[#0284C7] transition-colors">
             Home
           </Link>
-          <ChevronRight className="w-4 h-4" />
+          <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
           <Link href="/pages/ResearchArea" className="hover:text-[#0284C7] transition-colors">
             Research
           </Link>
-          <ChevronRight className="w-4 h-4" />
+          <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
           <span className="text-[#0284C7] font-medium">Publications</span>
         </nav>
 
@@ -113,21 +113,21 @@ const ResearchPublications = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="mb-8"
+          className="mb-6 sm:mb-8"
         >
-          <h1 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-bold text-black mb-2">Research Publications</h1>
-          <div className="h-[3px] w-16 sm:w-20 md:w-24 lg:w-28 bg-[#0284C7] rounded-full"></div>
+          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-black mb-2">Research Publications</h1>
+          <div className="h-[3px] w-16 sm:w-20 md:w-24 bg-[#0284C7] rounded-full"></div>
         </motion.div>
 
         {/* Content */}
-        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+        <div className="bg-white rounded-xl shadow-lg p-4 sm:p-5 md:p-6 border border-gray-100">
           {/* Tabs */}
-          <div className="overflow-x-auto mb-8">
+          <div className="overflow-x-auto mb-6 sm:mb-8">
             <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg min-w-max">
               {pubTypes.map((subTab, index) => (
                 <button
                   key={index}
-                  className={`px-4 py-3 text-sm font-medium rounded-md transition-all duration-300 whitespace-nowrap ${
+                  className={`px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-medium rounded-md transition-all duration-300 whitespace-nowrap touch-manipulation ${
                     activeSubTab === index
                       ? "bg-[#0891B2] text-white shadow-md"
                       : "text-gray-600 hover:text-[#064A6E] hover:bg-white"
@@ -145,10 +145,10 @@ const ResearchPublications = () => {
             {publicationLoaded ? (
               <>
                 {publications.length === 0 ? (
-                  <div className="text-center py-12">
-                    <div className="text-gray-400 text-6xl mb-4">📚</div>
-                    <h3 className="text-xl font-semibold text-gray-600 mb-2">No Publications Found</h3>
-                    <p className="text-gray-500">Publications will appear here once they are added.</p>
+                  <div className="text-center py-8 sm:py-12">
+                    <div className="text-gray-400 text-4xl sm:text-5xl md:text-6xl mb-3 sm:mb-4">📚</div>
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-600 mb-2 px-4">No Publications Found</h3>
+                    <p className="text-sm sm:text-base text-gray-500 px-4">Publications will appear here once they are added.</p>
                   </div>
                 ) : (
                   <motion.div
@@ -162,8 +162,8 @@ const ResearchPublications = () => {
                 )}
               </>
             ) : (
-              <div className="flex items-center justify-center py-20">
-                <div className="w-12 h-12 border-4 border-[#0891B2] border-t-transparent rounded-full animate-spin"></div>
+              <div className="flex items-center justify-center py-12 sm:py-20">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 border-4 border-[#0891B2] border-t-transparent rounded-full animate-spin"></div>
               </div>
             )}
           </div>
