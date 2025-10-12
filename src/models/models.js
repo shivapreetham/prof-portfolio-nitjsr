@@ -108,18 +108,6 @@ const VideoSchema = new mongoose.Schema({
 
 export const Video = (mongoose.models && mongoose.models.Video) || mongoose.model('Video', VideoSchema);
 
-// Project Model
-// const ProjectSchema = new mongoose.Schema({
-//   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-//   collaborators: { type: String },
-//   title: { type: String, required: true, maxlength: 200 },
-//   description: { type: String, required: true },
-//   banner: { type: String },
-//   videoUrl: { type: String },
-// }, { timestamps: true });
-
-// export const Project = (mongoose.models && mongoose.models.Project) || mongoose.model('Project', ProjectSchema);
-
 // Research Paper Model
 const ResearchPaperSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
@@ -167,17 +155,6 @@ const ConferenceSchema = new mongoose.Schema({
 
 export const Conference = (mongoose.models && mongoose.models.Conference) || mongoose.model('Conference', ConferenceSchema);
 
-// // Achievement Model
-// const AchievementSchema = new mongoose.Schema({
-//   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-//   title: { type: String, required: true, maxlength: 200 },
-//   description: { type: String, required: true },
-//   date: { type: Date, required: true },
-// }, { timestamps: true });
-
-// export const Achievement = (mongoose.models && mongoose.models.Achievement) || mongoose.model('Achievement', AchievementSchema);
-
-
 // // Award Model
 const AwardSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
@@ -206,18 +183,6 @@ const FundedProjectSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 export const FundedProject = (mongoose.models && mongoose.models.FundedProject) || mongoose.model('FundedProject', FundedProjectSchema);
-
-// // Collaboration Model
-// const CollaborationSchema = new mongoose.Schema({
-//   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-//   collaboratorName: { type: String, required: true, maxlength: 200 },
-//   institution: { type: String, maxlength: 200 },
-//   projectTitle: { type: String, required: true, maxlength: 200 },
-//   startDate: { type: Date, required: true },
-//   endDate: { type: Date },
-// }, { timestamps: true });
-
-// export const Collaboration = (mongoose.models && mongoose.models.Collaboration) || mongoose.model('Collaboration', CollaborationSchema);
 
 // Analytics Event Model
 export const EVENT_TYPES = ['page_view', 'page_exit', 'blog_view', 'video_play', 'paper_view', 'photo_view', 'student_view', 'conference_view', 'award_view', 'opinion_view'];
