@@ -11,12 +11,19 @@ const Footer = ({ user }) => {
 
   const navLinks = [
     { name: "Research", path: "/pages/ResearchArea" },
-    { name: "Projects", path: "/pages/Projects" },
-    { name: "Students", path: "/pages/Students/PhdStudents" },
+    { name: "Publications", path: "/pages/ResearchPublications" },
+    { name: "PhD Students", path: "/pages/Students/PhdStudents" },
+    { name: "Masters Students", path: "/pages/Students/MastersStudents" },
+    { name: "Bachelor Students", path: "/pages/Students/BachelorStudents" },
     { name: "Teachings", path: "/pages/Teachings" },
     { name: "Responsibilities", path: "/pages/Responsibilities" },
-    { name: "Achievements", path: "/pages/Awards" },
+    { name: "Conferences", path: "/pages/Conferences" },
+    { name: "Awards & Honors", path: "/pages/Awards" },
+    { name: "Funded Projects", path: "/pages/FundedProjects" },
     { name: "Blog Posts", path: "/pages/Blogs" },
+    { name: "Opinion Pieces", path: "/pages/OpinionPieces" },
+    { name: "Photo Gallery", path: "/pages/Gallery/PhotoGallery" },
+    { name: "Video Gallery", path: "/pages/Gallery/VideoGallery" },
     { name: "Contact", path: "/pages/Contact" },
   ]
 

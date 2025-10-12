@@ -15,6 +15,7 @@ const OpinionPiecesPage = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [filteredOpinions, setFilteredOpinions] = useState([])
   const [expandedOpinion, setExpandedOpinion] = useState(null)
+  const [fullImageView, setFullImageView] = useState(null)
 
   useEffect(() => {
     const fetchOpinionPieces = async () => {
@@ -190,7 +191,11 @@ const OpinionPiecesPage = () => {
                 <img
                   src={expandedOpinion.imageUrl || "/placeholder.svg"}
                   alt={expandedOpinion.title}
-                  className="w-full h-48 sm:h-56 md:h-64 object-cover rounded-lg mb-4 sm:mb-6"
+                  className="w-full h-48 sm:h-56 md:h-64 object-cover rounded-lg mb-4 sm:mb-6 cursor-pointer hover:opacity-90 transition-opacity"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setFullImageView(expandedOpinion.imageUrl)
+                  }}
                 />
               )}
               <div className="prose max-w-none">
@@ -207,7 +212,11 @@ const OpinionPiecesPage = () => {
                           <img
                             src={file.url}
                             alt={file.filename || `Media ${index + 1}`}
-                            className="w-full h-auto object-cover"
+                            className="w-full h-auto object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setFullImageView(file.url)
+                            }}
                           />
                         ) : (
                           <video
@@ -230,6 +239,34 @@ const OpinionPiecesPage = () => {
                 </div>
               )}
             </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Full Image Viewer Modal */}
+      {fullImageView && (
+        <div
+          className="fixed inset-0 bg-black/90 flex items-center justify-center z-[60] p-4"
+          onClick={() => setFullImageView(null)}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            className="relative max-w-7xl w-full max-h-[90vh] flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="absolute top-4 right-4 text-white hover:text-gray-300 p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors z-10 touch-manipulation"
+              onClick={() => setFullImageView(null)}
+            >
+              <X className="w-6 h-6 sm:w-8 sm:h-8" />
+            </button>
+            <img
+              src={fullImageView}
+              alt="Full size view"
+              className="max-w-full max-h-[90vh] w-auto h-auto object-contain rounded-lg shadow-2xl"
+            />
           </motion.div>
         </div>
       )}
