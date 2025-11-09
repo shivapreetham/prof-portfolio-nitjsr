@@ -1,0 +1,118 @@
+GNU AFFERO GENERAL PUBLIC LICENSE
+                       Version 3, 19 November 2007
+
+ Copyright (C) 2007 Free Software Foundation, Inc. 
+                         51 Franklin Street, Fifth Floor
+                         Boston, MA 02110-1301, USA
+                 Everyone is permitted to copy and distribute verbatim copies
+                 of this license document, but changing it is not allowed.
+ 
+ 0. This License applies to any program or other work which contains a
+  notice placed by the copyright holder saying it can be distributed
+  under the terms of this General Public License. The "Program", below,
+  refers to any such program or work, and a "work based on the Program"
+  means either the Program or any derivative work under copyright law:
+  that is to say, a work containing the Program or a portion of it, either
+  verbatim or with modifications and/or translated into another language.
+
+  (For example, a source code file is a "work based on the Program" if it
+  could be included in a library program to provide a routine that is
+  used by some other program.)
+
+  Other kinds of works are also eligible, and these terms apply to them,
+  too.
+ 
+    "Copyright holder" means the individual, individuals, or organization
+  named in the copyright notice at the start of the Program.
+
+    "This License" refers to version 3 of the GNU General Public License.
+
+    "The Program" refers to any copyrightable work licensed under this
+  License.
+ 
+  1. You may copy and distribute verbatim copies of the Program's source
+  code as you receive it, in any medium, provided that you conspicuously
+  and appropriately publish on each copy an appropriate copyright notice;
+  say that you changed the Program; and keep intact all of the notices that
+  refer to this License and to the warranty disclaimers.  A copy of this
+  License must be included in each copy of the Program.
+ 
+  2. You may not copy, modify, sublicense, or distribute the Program except
+  as expressly provided under this License. Any attempt otherwise to copy,
+  modify, sublicense, or distribute the Program is void, and will automatically
+  terminate your rights under this License. However, parties who have received
+  copies, or rights, from you under this License will not have their licenses
+  terminated so long as such parties remain in full compliance.
+
+  3. You may make, run and propagate covered works that you do not convey,
+  without conditions so long as your license otherwise remains in force.  This
+  section is not a license for you to run or propagate covered works.
+ 
+  4. You may copy and distribute the Program (or a work based on it, under
+  Section 2) in object code or executable form under the terms of Sections 1
+  and 2 above provided that you also do one of the following:
+
+   a) Accompany it with the corresponding source code, which must be distributed
+  under the terms of this License, in one of these ways:
+
+   b) Accompany it with a written offer, valid for at least three years, to give
+  anyone who possesses the object code or executable form the source code.
+
+   c) If the object code or executable form is posted online, offer equivalent
+  access to the corresponding source code.
+
+   d) In the cases of combined works, you may give the user a copy of the object
+  code or executable form along with the copy of the corresponding source code.
+
+  5. You may not impose any further restrictions on the exercise of the rights
+  granted or affirmed under this License.  You may not convince others to
+  accept warranty or conditions of more restrictive license terms.
+
+  6. This License encompasses the entire agreement between the parties
+  regarding the subject matter hereof, and no other understanding, agreement or
+  representation, written or oral, may be amended, modified or added to this
+  License. If any provision of this License is held to be invalid or unenforceable,
+  such provision shall be interpreted to give effect to the intent of the parties
+  to the fullest extent permitted by law, and the remaining provisions of this
+  License shall remain in full force and effect.
+ 
+  7. Each time you redistribute the Program (or any work based on the Program),
+  the recipient automatically receives a license from the original licensor to run,
+  study, change and distribute the Program subject to this License. You may not
+  impose any further restrictions on the recipients' exercise of the rights granted
+  herein.
+
+  8. If you wish to incorporate parts of the Program into other free programs
+  whose distribution conditions are different, write to the author to ask for
+  permission.  For software which is copyrighted and owned by the Free Software
+  Foundation, write to the Free Software Foundation; we sometimes make exceptions
+  for this.  Our decision will be guided by the two goals of preserving the
+  free status of all derivatives of our free software and of promoting the sharing
+  and reuse of software generally.
+ 
+  9. THE PROGRAM IS DISTRIBUTED WITH THE HOPE THAT IT WILL BE USEFUL,
+  BUT WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTIBILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+ 
+  10. If you are unable to comply with the terms of this License, but have
+  other legal rights granting you permission to use the Program, those
+  rights take precedence over this License.  This License does not grant you permission to use the trademarks of the copyright holder or the author, unless they have made it clear that you can do so.
+ 
+  11. To the extent possible, the author or copyright holder disclaims
+  any warranties or conditions that are indistinguishable from the above; any added
+  terms that are not clear to everyone, any descriptions of what the Program does,
+  and all conditions not expressly stated in this License. 
+ 
+  12. If your rights under this License are terminated, you may not make another
+  request for permission. However, an explicit permission in writing from the
+  copyright holder, will restore your rights.
+
+  13. If the Program is indeed an executable, you must make the continued license
+  for the executables of the program obvious to all users.  To be considered an
+  executable, the program must be runnable by the end user without modification,
+  and must not make any significant and conspicuous modifications.
+
+  14. If you do not accept the terms of this License, do not use or distribute the Program.
+
+ END OF TERMS AND CONDITIONS
